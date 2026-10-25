@@ -1,0 +1,14 @@
+POWERGRADE - LUTs "MA Vivo" (look estilo @marcoalbanny) - DJI Osmo Pocket 4P
+============================================================================
+Nombre de cada LUT = MA_Vivo _ PERFIL CON QUE GRABASTE _ LUZ DE LA TOMA
+
+D-Log/   (APROBADAS)
+  MA_Vivo_DLog_NOCHE.cube  -> Clips D-Log de noche / interiores oscuros. Colores vivos, sombras teal, piel calida.
+  MA_Vivo_DLog_DIA.cube    -> Clips D-Log con luz de dia. Mismo look, cielo turquesa como el reel.
+
+D-Log 2 (sin probar)/
+  MA_Vivo_DLog2_NOCHE.cube / MA_Vivo_DLog2_DIA.cube -> Para clips en D-Log 2. Falta probarlas con un clip real.
+
+Uso: UNA sola LUT por clip, al 100%, directo sobre el clip LOG (sin otro filtro).
+Ejemplos/: comparaciones contra el reel.
+_Fuente/: scripts y parametros para regenerar o ajustar las LUTs.
