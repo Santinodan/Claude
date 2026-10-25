@@ -1,9 +1,9 @@
 ---
-name: crear-lut
+name: creador-de-luts
 description: Crear, ajustar o regenerar LUTs .cube de color grading para clips LOG (DJI D-Log / D-Log 2, DJI Osmo Pocket 4P), en especial la familia "MA Vivo" (look estilo reel de @marcoalbanny - colores vivos, sombras teal, piel calida, cielo turquesa). Usar SIEMPRE que el usuario pida una LUT, un LUT, "loot", un powergrade, un look de color, "que se vea como el reel", una version de dia/noche, o retocar una LUT existente (mas calida, mas brillo, menos saturada, etc.).
 ---
 
-# Crear LUTs (familia "MA Vivo")
+# Creador de LUTs (familia "MA Vivo")
 
 Esta skill guarda la receta que FUNCIONO para crear las LUTs de `Powergrade/` de este repo.
 Usala para crear LUTs nuevas, retocar las aprobadas o regenerarlas.
@@ -24,7 +24,7 @@ Nombre: `MA_Vivo_<PERFIL>_<LUZ>.cube` (PERFIL = DLog | DLog2, LUZ = DIA | NOCHE)
 
 ## Herramientas (en `scripts/` de esta skill)
 
-Instalar una vez: `pip install -r .claude/skills/crear-lut/scripts/requirements.txt` (numpy, colour-science, pillow).
+Instalar una vez: `pip install -r .claude/skills/creador-de-luts/scripts/requirements.txt` (numpy, colour-science, pillow).
 
 - `generar_familia.py` – genera LUTs desde cero con el pipeline original.
   - `DLog_NOCHE` sale **identica byte a byte** a la aprobada (verificado).
@@ -88,7 +88,7 @@ Este fue el "v2" que se aprobo frente al "v1" (ver `Powergrade/Ejemplos/NOCHE_tu
 Comandos ejemplo (desde la raiz del repo):
 
 ```bash
-S=.claude/skills/crear-lut/scripts
+S=.claude/skills/creador-de-luts/scripts
 # Regenerar la familia en una carpeta temporal
 python3 $S/generar_familia.py --out /tmp/luts
 # Dia aprobada un poco mas calida y clara, como v2
