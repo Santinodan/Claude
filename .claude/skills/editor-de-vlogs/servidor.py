@@ -118,6 +118,70 @@ def resumen_proyecto(carpeta):
             "thumb": str(Path(carpeta) / thumb) if thumb else None}
 
 
+# ---------- linea de tiempo ----------
+import hashlib
+
+def ruta_plan(carpeta):
+    return Path(carpeta).expanduser() / "_edicion" / "plan.json"
+
+def guardar_plan(carpeta, plan):
+    p = ruta_plan(carpeta)
+    if p.exists():                      # la primera vez que se toca a mano, se guarda la version de Claude
+        viejo = json.loads(p.read_text(encoding="utf-8"))
+        if not viejo.get("editado_a_mano"):
+            (p.parent / "planes").mkdir(exist_ok=True)
+            shutil.copy(p, p.parent / "planes" / f"plan_claude_{time.strftime('%Y%m%d_%H%M%S')}.json")
+    plan["editado_a_mano"] = True
+    plan["editado"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+    tmp = p.with_suffix(".tmp")
+    tmp.write_text(json.dumps(plan, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(p)
+
+def ondas(archivo, por_seg=20):
+    """Picos del audio (0..1), por_seg valores por segundo. Se cachean."""
+    f = Path(archivo).expanduser()
+    if not f.is_file():
+        return None
+    clave = hashlib.sha1(f"{f}|{f.stat().st_mtime}|{por_seg}".encode()).hexdigest()[:16]
+    cache = Path.home() / ".cache" / "editor_vlogs" / "ondas" / f"{clave}.json"
+    if cache.exists():
+        return json.loads(cache.read_text())
+    sr = por_seg * 50
+    r = subprocess.run(["ffmpeg", "-v", "error", "-nostdin", "-i", str(f), "-vn", "-ac", "1", "-ar", str(sr),
+                        "-f", "f32le", "-"], capture_output=True)
+    import array
+    a = array.array("f"); a.frombytes(r.stdout[: len(r.stdout) // 4 * 4])
+    picos = [round(min(1.0, max((abs(x) for x in a[i:i + 50]), default=0) * 1.4), 3) for i in range(0, len(a), 50)]
+    out = {"por_seg": por_seg, "picos": picos}
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    cache.write_text(json.dumps(out))
+    return out
+
+def lanzar_render(carpeta, preview):
+    vp = ruta_vlog(carpeta)
+    job = uuid.uuid4().hex[:10]
+    JOBS[job] = {"eventos": [], "proc": None, "fin": False}
+    def emitir(ev):
+        ev["t"] = time.time()
+        with LOCK:
+            JOBS[job]["eventos"].append(ev)
+    def correr():
+        cmd = [sys.executable, str(SCRIPTS / "render.py"), str(vp)] + (["--preview"] if preview else []) + ["--nota", "desde la linea de tiempo"]
+        proc = subprocess.Popen(cmd, cwd=str(REPO), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+        JOBS[job]["proc"] = proc
+        emitir({"tipo": "inicio", "texto": "Exportando " + ("preview" if preview else "versión final")})
+        threading.Thread(target=seguir_progreso, args=(vp.parent / "progreso.log", job, emitir), daemon=True).start()
+        ultimas = []
+        for l in proc.stdout:
+            ultimas = (ultimas + [l.strip()])[-8:]
+        code = proc.wait()
+        ok = code == 0
+        emitir({"tipo": "fin", "ok": ok, "texto": ultimas[-1] if ok and ultimas else ("\n".join(ultimas) if not ok else "")})
+        JOBS[job]["fin"] = True
+    threading.Thread(target=correr, daemon=True).start()
+    return job
+
+
 # ---------- Claude Code ----------
 def version_claude():
     exe = shutil.which("claude")
@@ -293,6 +357,12 @@ class H(BaseHTTPRequestHandler):
                                "ffmpeg": bool(shutil.which("ffmpeg")), "repo": str(REPO)})
         if u.path == "/api/vlog":
             return self._json({"vlog": leer_vlog(q.get("carpeta", [""])[0])})
+        if u.path == "/api/plan":
+            p = ruta_plan(q.get("carpeta", [""])[0])
+            return self._json({"plan": json.loads(p.read_text(encoding="utf-8")) if p.exists() else None})
+        if u.path == "/api/ondas":
+            o = ondas(q.get("p", [""])[0])
+            return self._json(o or {"error": "no existe"}, 200 if o else 404)
         if u.path == "/api/perfiles":
             return self._json({"perfiles": listar_perfiles()})
         if u.path == "/api/proyectos":
@@ -337,6 +407,15 @@ class H(BaseHTTPRequestHandler):
                 pf["proyectos"].insert(0, carpeta)
                 guardar_perfil(pf)
             return self._json({"ok": True})
+        if u.path == "/api/plan":
+            if not ruta_plan(carpeta).parent.is_dir():
+                return self._json({"error": "La carpeta no existe"}, 400)
+            guardar_plan(carpeta, d["plan"])
+            return self._json({"ok": True})
+        if u.path == "/api/render":
+            if not ruta_plan(carpeta).exists():
+                return self._json({"error": "Todavía no hay edición para exportar"}, 400)
+            return self._json({"job": lanzar_render(carpeta, bool(d.get("preview", True)))})
         if u.path == "/api/perfil":
             p = d["perfil"]
             if not p.get("id"):
