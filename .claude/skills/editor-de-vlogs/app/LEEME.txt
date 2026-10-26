@@ -1,18 +1,24 @@
-SALA DE COLOR - elegir LUT e intensidad para el vlog
-=====================================================
+SALA DE COLOR - el apartado de color del editor de vlogs
+=========================================================
 Que hace: cargas un clip o una captura, elegis el perfil (D-Log / D-Log 2 / Rec709),
-la LUT y el % de intensidad mirando antes/despues. Tambien previsualizas las barras negras
-y cargas los datos del vlog (titulo, carpeta, musica, notas). Todo queda en un JSON
-("Configuracion") que se pega en el chat o se guarda como vlog.json en la carpeta del dia.
+la LUT y el % de intensidad mirando antes/despues, y previsualizas las barras negras.
+Con "Usar este look" la eleccion queda guardada para ese perfil.
 
-Como abrirla:
-  - Web: https://claude.ai/artifact/LuZiicQii7ba9eCzMg2Joh (ya trae las 7 LUTs del repo).
-  - Local: desde la raiz del repo levantar un servidor web simple (python3 -m http.server 8000)
-           y abrir http://localhost:8000/.claude/skills/editor-de-vlogs/app/sala_de_color.html
-           (lee las LUTs directo de Powergrade/). Tambien podes arrastrar cualquier .cube.
+Conexion con Claude:
+  - Web: https://claude.ai/artifact/LuZiicQii7ba9eCzMg2Joh
+  - La app guarda en su base de datos (capacidad "db" del artifact):
+      looks/dlog, looks/dlog2, looks/rec709 -> {lut, lutArchivo, lutNombre, intensidad, guardado}
+      ajustes/barras                        -> {formato, donde, guardado}
+  - Claude la lee con la herramienta ArtifactData (action "list", collection "looks").
+    No hace falta copiar ni pegar nada.
+
+Uso local (sin conexion con Claude, guarda solo en el navegador):
+  desde la raiz del repo levantar un servidor web simple (python3 -m http.server 8000) y abrir
+  http://localhost:8000/.claude/skills/editor-de-vlogs/app/sala_de_color.html
 
 Notas:
   - Los clips H.265 10-bit de la Osmo pueden no abrirse en el navegador: en ese caso subi una captura.
   - Intensidad X% = mezcla entre el original y la LUT. En ffmpeg:
     ffmpeg -i clip.mp4 -filter_complex "[0:v]split[a][b];[b]lut3d=LUT.cube[g];[a][g]blend=all_mode=normal:all_opacity=0.X" ...
   - La carta de ejemplo es sintetica (ColorChecker 24 + rampa de exposicion codificada en D-Log / D-Gamut).
+  - A futuro: app nativa para Mac / iOS (todavia no).

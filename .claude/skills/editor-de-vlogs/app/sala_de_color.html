@@ -71,6 +71,19 @@ textarea{min-height:56px;resize:vertical}
 button.btn{font:600 13px var(--f-body);background:var(--fg);color:var(--bg);border:0;padding:9px 12px;cursor:pointer}
 button.btn.sec{background:transparent;color:var(--fg);border:1px solid var(--line)}
 .row{display:flex;gap:8px;flex-wrap:wrap}
+.link{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);padding:4px 8px;display:inline-flex;gap:6px;align-items:center}
+.link::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.link[data-on="1"]{color:var(--ok);border-color:rgba(95,211,154,.35)}
+.link[data-on="1"]::before{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.btn.save{width:100%;padding:11px 12px;background:var(--accent);color:#fff}
+.btn.save:disabled{background:var(--line);color:var(--muted);cursor:default}
+.looks{display:grid;gap:6px}
+.look{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;background:var(--bg);border:1px solid var(--line);color:var(--fg);padding:9px 10px;cursor:pointer;font:13px var(--f-body)}
+.look[aria-current=true]{border-color:var(--fg)}
+.look b{font:800 18px var(--f-display);letter-spacing:.03em;text-transform:uppercase}
+.look span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.look em{font:normal 11px var(--f-mono);color:var(--muted)}
+.look em.ok{color:var(--ok)}.look em.pend{color:var(--accent)}
 pre{margin:0;background:var(--bg);border:1px solid var(--line);padding:10px;font:11.5px/1.5 var(--f-mono);color:var(--fg);overflow-x:auto;white-space:pre;max-height:220px}
 .note{font-size:12px;color:var(--muted);margin:0}
 .toast{font:12px var(--f-mono);color:var(--ok);min-height:1em}
@@ -82,7 +95,7 @@ input[type=file]{display:none}
 <div class="wrap">
   <header>
     <h1>Sala de <b>Color</b></h1>
-    <p>Cargá un clip o una captura, elegí la LUT y la intensidad mirando el antes y después. Lo que elijas queda en la configuración del vlog.</p>
+    <span class="link" id="link" data-on="0">Solo en este navegador</span>
   </header>
 
   <div class="grid">
@@ -123,6 +136,8 @@ input[type=file]{display:none}
         <h2>Intensidad</h2>
         <div class="big" id="pct">100%</div>
         <input type="range" id="amt" min="0" max="100" value="100" aria-label="Intensidad de la LUT">
+        <button class="btn save" type="button" id="saveLook">Usar este look</button>
+        <div class="toast" id="toast" role="status"></div>
       </section>
       <section>
         <h2>Barras</h2>
@@ -138,21 +153,9 @@ input[type=file]{display:none}
         </select>
       </section>
       <section>
-        <h2>Vlog</h2>
-        <label class="f">Título<input type="text" id="titulo" placeholder="ej. Un día cerrando clientes en Madrid"></label>
-        <label class="f">Carpeta del día<input type="text" id="carpeta" placeholder="ej. D:/Vlogs/2026-10-26"></label>
-        <label class="f">Música (temas o carpeta)<input type="text" id="musica" placeholder="ej. instrumentales/drake_passionfruit.mp3"></label>
-        <label class="f">Notas para la edición<textarea id="notas" placeholder="ej. el gancho es la parte del auto"></textarea></label>
-      </section>
-      <section>
-        <h2>Configuración</h2>
-        <pre id="out"></pre>
-        <div class="row">
-          <button class="btn" type="button" id="copy">Copiar</button>
-          <button class="btn sec" type="button" id="dl">Descargar vlog.json</button>
-        </div>
-        <div class="toast" id="toast" role="status"></div>
-        <p class="note">Pegá esto en el chat o guardá el archivo en la carpeta del día. Claude aplica la LUT con ffmpeg a la intensidad elegida.</p>
+        <h2>Looks del vlog</h2>
+        <div class="looks" id="looks"></div>
+        <p class="note">Tocá un perfil para revisarlo. Lo que guardes es lo que Claude usa al editar.</p>
       </section>
     </aside>
   </div>
@@ -174,7 +177,8 @@ const PERFILES=[["dlog","D-Log"],["dlog2","D-Log 2"],["rec709","Rec709"]];
 const $=id=>document.getElementById(id);
 const store={get(){try{return JSON.parse(localStorage.getItem("saladecolor")||"{}")}catch(e){return{}}},set(v){try{localStorage.setItem("saladecolor",JSON.stringify(v))}catch(e){}}};
 
-let st=Object.assign({perfil:"dlog",eleccion:{},barras:"2",barrasDonde:"todo",titulo:"",carpeta:"",musica:"",notas:""},store.get());
+let st=Object.assign({perfil:"dlog",eleccion:{},barras:"2",barrasDonde:"todo"},store.get());
+let db=null, saved=st.saved||{}; delete st.saved;
 let split=0.5, srcEl=null, video=null, cache={};
 
 /* ---------- WebGL ---------- */
@@ -248,12 +252,7 @@ function renderPerfiles(){const box=$("perfiles");box.innerHTML="";
     b.setAttribute("aria-pressed",String(st.perfil===k));b.onclick=()=>{st.perfil=k;save();renderPerfiles();restoreLut()};box.appendChild(b)}}
 function layoutBars(){const r=parseFloat(st.barras);const ar=cv.width/cv.height;
   const h=r&&r>ar?(1-ar/r)/2*100:0;$("barT").style.height=$("barB").style.height=h+"%"}
-function config(){const perfiles={};
-  for(const[k]of PERFILES){const e=st.eleccion[k];if(e&&e.lut){const l=[...LUTS,...custom].find(x=>x.id===e.lut);
-    perfiles[k]={lut:l?(l.custom?l.file:"Powergrade/"+l.repo):e.lut,intensidad:e.intensidad??100}}}
-  return{titulo:st.titulo,carpeta:st.carpeta,musica:st.musica,notas:st.notas,color:perfiles,
-    barras:{formato:st.barras==="0"?null:st.barras+":1",donde:st.barrasDonde},formato:"16:9 horizontal"}}
-function save(){store.set(st);$("out").textContent=JSON.stringify(config(),null,2)}
+function save(){store.set({...st,saved:db?undefined:saved});renderLooks()}
 
 const stage=$("stage");
 function moveSplit(e){const r=stage.getBoundingClientRect();split=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));draw()}
@@ -265,9 +264,8 @@ stage.tabIndex=0;stage.setAttribute("aria-label","Comparador antes y después. F
 $("amt").oninput=e=>{const v=+e.target.value;$("pct").textContent=v+"%";
   st.eleccion[st.perfil]={...(st.eleccion[st.perfil]||{lut:""}),intensidad:v};save();draw()};
 $("barras").value=st.barras;$("barrasDonde").value=st.barrasDonde;
-$("barras").onchange=e=>{st.barras=e.target.value;save();layoutBars()};
-$("barrasDonde").onchange=e=>{st.barrasDonde=e.target.value;save()};
-for(const k of["titulo","carpeta","musica","notas"]){$(k).value=st[k]||"";$(k).oninput=e=>{st[k]=e.target.value;save()}}
+$("barras").onchange=e=>{st.barras=e.target.value;save();layoutBars();saveBarras()};
+$("barrasDonde").onchange=e=>{st.barrasDonde=e.target.value;save();saveBarras()};
 
 function loadFile(f){if(!f)return;$("srcName").textContent=f.name;const url=URL.createObjectURL(f);
   if(f.type.startsWith("video")){video=document.createElement("video");video.muted=true;video.playsInline=true;video.src=url;
@@ -292,12 +290,40 @@ async function addCubes(files){for(const f of files){try{const l=parseCube(await
 $("pickLut").onclick=()=>$("lutFile").click();$("lutFile").onchange=e=>addCubes([...e.target.files]);
 
 function toast(t){$("toast").textContent=t;clearTimeout(toast.t);toast.t=setTimeout(()=>$("toast").textContent="",3000)}
-$("copy").onclick=()=>{const t=$("out").textContent;
-  navigator.clipboard.writeText(t).then(()=>toast("Copiado")).catch(()=>{const r=document.createRange();r.selectNodeContents($("out"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Seleccionado: copialo con Ctrl+C")})};
-$("dl").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([$("out").textContent],{type:"application/json"}));a.download="vlog.json";a.click();toast("Si no se descargó, usá Copiar")};
-
-/* dentro del visor web no se pueden descargar archivos: queda solo Copiar */
-if(window.top!==window)$("dl").hidden=true;
+/* ---------- looks guardados: los lee Claude ---------- */
+const allLuts=()=>[...LUTS,...custom];
+function lutLabel(id){const l=allLuts().find(x=>x.id===id);return l?l.name:"Sin LUT"}
+function same(a,b){return !!(a&&b)&&(a.lut||"")===(b.lut||"")&&(a.intensidad??100)===(b.intensidad??100)}
+function renderLooks(){const box=$("looks");if(!box)return;box.innerHTML="";
+  for(const[k,v]of PERFILES){const sv=saved[k], e=st.eleccion[k];
+    const b=document.createElement("button");b.type="button";b.className="look";b.setAttribute("aria-current",String(st.perfil===k));
+    let estado="sin elegir", cls="";
+    if(sv&&same(sv,e)){estado="guardado";cls="ok"}else if(sv){estado="sin guardar";cls="pend"}else if(e&&e.lut){estado="sin guardar";cls="pend"}
+    const show=e&&e.lut?e:sv;
+    b.innerHTML=`<b>${v}</b><span>${show&&show.lut?lutLabel(show.lut)+" · "+(show.intensidad??100)+"%":"–"}</span><em class="${cls}">${estado}</em>`;
+    b.onclick=()=>{st.perfil=k;save();renderPerfiles();restoreLut()};box.appendChild(b)}
+  const e=st.eleccion[st.perfil], btn=$("saveLook"), ok=same(saved[st.perfil],e);
+  btn.disabled=!(e&&e.lut)||ok;
+  btn.textContent=ok?"Look guardado":"Usar este look para "+PERFILES.find(p=>p[0]===st.perfil)[1]}
+$("saveLook").onclick=async()=>{const e=st.eleccion[st.perfil];if(!e||!e.lut)return;
+  const l=allLuts().find(x=>x.id===e.lut)||{};
+  const body={perfil:st.perfil,lut:e.lut,lutArchivo:l.repo?"Powergrade/"+l.repo:(l.file||e.lut),lutNombre:lutLabel(e.lut),intensidad:e.intensidad??100,guardado:new Date().toISOString()};
+  if(!db){saved[st.perfil]=body;save();toast("Guardado en este navegador");return}
+  $("saveLook").disabled=true;
+  try{await db.doc("looks/"+st.perfil).set(body);toast("Guardado. Claude ya lo ve.")}
+  catch(err){toast(err&&err.code==="invalid_argument"?"No tenés permiso para guardar en esta app":"No se pudo guardar, probá de nuevo");renderLooks()}};
+let barrasT;
+function saveBarras(){if(!db)return;clearTimeout(barrasT);barrasT=setTimeout(()=>{
+  db.doc("ajustes/barras").set({formato:st.barras==="0"?null:st.barras+":1",donde:st.barrasDonde,guardado:new Date().toISOString()})
+    .then(()=>toast("Barras guardadas")).catch(()=>{})},600)}
+(async()=>{renderLooks();
+  if(!window.claude||!window.claude.use)return;
+  db=await window.claude.use("db");if(!db)return;
+  const L=$("link");L.dataset.on="1";L.textContent="Conectado con Claude";
+  db.collection("looks").onSnapshot(q=>{saved={};q.docs.forEach(d=>{saved[d.id]=d.data()});renderLooks()},()=>{L.dataset.on="0";L.textContent="Sin conexión con Claude"});
+  db.doc("ajustes/barras").get().then(d=>{if(d.exists){const v=d.data();st.barras=v.formato?String(parseFloat(v.formato)):"0";st.barrasDonde=v.donde||"todo";
+    $("barras").value=st.barras;$("barrasDonde").value=st.barrasDonde;layoutBars();save()}}).catch(()=>{});
+})();
 /* ---------- arranque: carta de ejemplo + MA Vivo Día ---------- */
 if(!st.eleccion.dlog)st.eleccion.dlog={lut:"ma_dlog_dia",intensidad:100};
 renderPerfiles();save();
