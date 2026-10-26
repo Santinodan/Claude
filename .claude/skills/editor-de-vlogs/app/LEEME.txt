@@ -1,24 +1,26 @@
-SALA DE COLOR - el apartado de color del editor de vlogs
-=========================================================
-Que hace: cargas un clip o una captura, elegis el perfil (D-Log / D-Log 2 / Rec709),
-la LUT y el % de intensidad mirando antes/despues, y previsualizas las barras negras.
-Con "Usar este look" la eleccion queda guardada para ese perfil.
+EDITOR DE VLOGS - app local conectada con Claude Code
+=====================================================
+Que es: la interfaz para editar vlogs. Elegis en pestanas (Vlog, Material, Historia, Cortes,
+Color, Audio, Musica, Textos, Exportar) y con "Editar con Claude" Claude Code edita en tu Mac.
 
-Conexion con Claude:
-  - Web: https://claude.ai/artifact/LuZiicQii7ba9eCzMg2Joh
-  - La app guarda en su base de datos (capacidad "db" del artifact):
-      looks/dlog, looks/dlog2, looks/rec709 -> {lut, lutArchivo, lutNombre, intensidad, guardado}
-      ajustes/barras                        -> {formato, donde, guardado}
-  - Claude la lee con la herramienta ArtifactData (action "list", collection "looks").
-    No hace falta copiar ni pegar nada.
+Como abrirla (Mac):
+  Doble clic en  .claude/skills/editor-de-vlogs/Abrir Editor de Vlogs.command
+  (o en Terminal, parado en el repo:  python3 .claude/skills/editor-de-vlogs/servidor.py)
+  Se abre http://localhost:8787 . Solo escucha en tu Mac.
 
-Uso local (sin conexion con Claude, guarda solo en el navegador):
-  desde la raiz del repo levantar un servidor web simple (python3 -m http.server 8000) y abrir
-  http://localhost:8000/.claude/skills/editor-de-vlogs/app/sala_de_color.html
+Que necesita la Mac (una sola vez):
+  1. Claude Code instalado y logueado con tu plan:  curl -fsSL https://claude.ai/install.sh | bash   y despues  claude  (login)
+  2. ffmpeg:  brew install ffmpeg
+  3. Python 3 + librerias:  pip3 install -r .claude/skills/editor-de-vlogs/requirements.txt
 
-Notas:
-  - Los clips H.265 10-bit de la Osmo pueden no abrirse en el navegador: en ese caso subi una captura.
-  - Intensidad X% = mezcla entre el original y la LUT. En ffmpeg:
-    ffmpeg -i clip.mp4 -filter_complex "[0:v]split[a][b];[b]lut3d=LUT.cube[g];[a][g]blend=all_mode=normal:all_opacity=0.X" ...
-  - La carta de ejemplo es sintetica (ColorChecker 24 + rampa de exposicion codificada en D-Log / D-Gamut).
-  - A futuro: app nativa para Mac / iOS (todavia no).
+Como funciona por dentro:
+  - Todo lo que elegis se guarda en  <carpeta del dia>/_edicion/vlog.json  (formato: references/vlog_json.md).
+  - "Editar con Claude" corre:  claude -p "/editor-de-vlogs <ruta>/vlog.json <tu pedido>"
+    con --output-format stream-json, permisos fijos (acceptEdits + ffmpeg/ffprobe/python3) y
+    --resume para seguir la misma conversacion. El avance se ve en el panel de la derecha.
+  - "Escanear carpeta" corre directo scripts/edicion/escanear.py (sin Claude).
+
+Archivos:
+  index.html          la app (todas las pestanas + Sala de Color integrada)
+  sala_de_color.html  version suelta de la Sala de Color (la publicada en claude.ai, solo vista previa)
+  ../servidor.py      servidor local (puente app <-> archivos <-> Claude Code)
