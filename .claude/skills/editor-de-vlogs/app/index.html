@@ -499,7 +499,8 @@ const Store={
 /* =========================================================
    Color: LUT .cube -> WebGL (visor interactivo y miniaturas)
    ========================================================= */
-const baseFor=cam=>Store.img(PERFIL?.fotos_base?.[cam])||(cam==="dlog"||cam==="dlog2"||!cam?CARTA:CARTA);
+const FOTO_BASE={dlog:"app/foto_base_dlog.jpg",dlog2:"app/foto_base_dlog2.jpg",rec709:"app/foto_base_rec709.jpg"};
+const baseFor=cam=>Store.img(PERFIL?.fotos_base?.[cam])||FOTO_BASE[cam]||FOTO_BASE.dlog;
 function parseCube(t){let n=0;const v=[];for(const line of t.split(/\r?\n/)){const s=line.trim();if(!s||s[0]=="#")continue;if(/^LUT_3D_SIZE/i.test(s)){n=parseInt(s.split(/\s+/)[1]);continue}if(/^[A-Z_]/i.test(s))continue;const p=s.split(/\s+/);if(p.length>=3)v.push(+p[0],+p[1],+p[2],1)}if(!n||v.length!==n*n*n*4)throw Error("El archivo no es una LUT 3D válida");return{n,data:new Float32Array(v)}}
 const lutCache={};
 async function lutOf(look){const k=look.archivo;if(!k)return null;return lutCache[k]||(lutCache[k]=Store.cube(look).then(parseCube).catch(e=>{delete lutCache[k];throw e}))}
@@ -568,7 +569,7 @@ async function render(){stopViewer();const v=$("view");if(VIEW==="editor"&&!V)VI
 function lookCard(l,opts={}){const def=Object.entries(PERFIL.predeterminados||{}).filter(([k,v])=>v===l.id).map(([k])=>camName(k));
   return `<button type="button" class="icard ${opts.sel?"sel":""}" data-look="${esc(l.id)}"><div class="img" data-cover="${esc(l.id)}"><span class="noimg">cargando…</span></div><div class="shade"></div>
    <div class="badges"><span class="pill">${camName(l.perfil_camara)}</span>${def.length?`<span class="pill a">Predeterminado</span>`:""}</div>
-   <div class="meta"><b>${esc(l.nombre)}</b><span>${l.intensidad??100}%${l.foto?"":" · sin foto de ejemplo"}</span></div></button>`}
+   <div class="meta"><b>${esc(l.nombre)}</b><span>${l.intensidad??100}%</span></div></button>`}
 function addLookCard(){return `<button type="button" class="icard add" data-newlook><div class="plus"><i>+</i>Nuevo look<span class="note">Subí un .cube y una foto</span></div></button>`}
 function projCard(p){return `<button type="button" class="icard pcard" data-proj="${esc(p.carpeta)}" ${p.disponible?"":"aria-disabled=true"}>
   <div class="img">${p.thumb&&SERVER?`<img class="after" src="${Store.media(p.thumb)}" alt="">`:`<span class="noimg">${p.disponible?"sin miniatura":"carpeta no conectada"}</span>`}</div>
@@ -599,8 +600,8 @@ async perfil(){const p=PERFIL;
   <div style="display:grid;gap:4px;min-width:0;flex:1"><div class="eyebrow">Perfil</div><input class="name" type="text" id="pNombre" value="${esc(p.nombre)}" aria-label="Nombre del perfil"><span class="note">${esc(p.camara||"")} · ${p.looks.length} looks · ${(p.proyectos||[]).length} proyectos</span></div>
   <button class="btn ghost" type="button" id="switchP">Cambiar de perfil</button></div>
  <div class="card"><h3>Looks por defecto <small>Se cargan solos en cada vlog nuevo</small></h3><div class="defaults">${CAMS.map(([k,l])=>`<div class="drow"><b>${l}</b><div class="minilooks">${[{id:"",nombre:"Sin LUT"},...p.looks.filter(x=>x.perfil_camara===k)].map(x=>`<button type="button" class="ml" data-def="${k}" data-id="${esc(x.id)}" aria-pressed="${(p.predeterminados?.[k]||"")===x.id}"><div class="im" ${x.id?`data-cover="${esc(x.id)}"`:""}></div><span>${esc(x.nombre)}</span></button>`).join("")}</div></div>`).join("")}</div></div>
- <div class="card"><h3>Fotos de prueba <small>Una captura tuya sin color de cada perfil. Se usa para mostrar los looks.</small></h3>
-  <div class="fbase">${CAMS.map(([k,l])=>{const f=p.fotos_base?.[k];return `<div class="fb"><button type="button" class="fbimg" data-fb="${k}" aria-label="Cargar foto de prueba ${l}">${f?`<img src="${Store.img(f)}" alt="">`:`<span>${icon.img}<br>Cargar foto</span>`}</button><div class="row" style="justify-content:space-between"><b>${l}</b>${f?`<button type="button" class="mini" data-fbdel="${k}">Quitar</button>`:""}</div></div>`}).join("")}</div></div>
+ <div class="card"><h3>Fotos de prueba <small>Sobre estas fotos se muestran tus looks. Podés reemplazarlas por capturas tuyas sin color.</small></h3>
+  <div class="fbase">${CAMS.map(([k,l])=>{const f=p.fotos_base?.[k];return `<div class="fb"><button type="button" class="fbimg" data-fb="${k}" aria-label="Cargar foto de prueba ${l}"><img src="${f?Store.img(f):FOTO_BASE[k]}" alt=""></button><div class="row" style="justify-content:space-between"><b>${l}</b>${f?`<button type="button" class="mini" data-fbdel="${k}">Volver a la predeterminada</button>`:`<span class="note">Predeterminada · tocá para cambiarla</span>`}</div></div>`}).join("")}</div></div>
  <div class="grid2"><div class="card"><h3>Cámara</h3><label class="field"><span>Cámara principal</span><input type="text" id="pCam" value="${esc(p.camara||"")}" placeholder="DJI Osmo Pocket 4P"></label><label class="field"><span>Color del perfil</span><input type="color" id="pColor" value="${esc(p.color||"#C96442")}" style="width:56px;height:36px;border:0;background:none;padding:0"></label></div>
  <div class="card"><h3>Barras por defecto</h3>${segRaw("pb",[[null,"Sin"],["2:1","2:1"],["2.22:1","2.22:1"],["2.39:1","2.39:1"]],p.ajustes?.barras?.formato)}${segRaw("pd",[["todo","Todo el video"],["montajes","Solo montajes"]],p.ajustes?.barras?.donde)}</div></div>`}
 };
@@ -680,7 +681,7 @@ function lookModal(look){const nuevo=!look;const L=nuevo?{id:"",nombre:"",perfil
   document.body.appendChild(m);
   const g=makeGL($("mCv"));
   const draw=()=>{if(!g)return;g.draw(tipo==="ref"?0:L.intensidad/100,tipo==="ref"?1:split);$("mSplit").style.left=`calc(${split*100}% - 1px)`;$("mSplit").hidden=tipo==="ref"};
-  const hint=()=>{$("mHint").textContent=tipo==="ref"?"La foto ya tiene el look: se muestra tal cual.":fotoSrc?"Antes y después sobre tu foto. Arrastrá la línea.":PERFIL?.fotos_base?.[L.perfil_camara]?"Sin foto propia: se usa tu foto de prueba de "+camName(L.perfil_camara)+".":"Sin foto: se muestra la carta de color. Cargá una foto de prueba en tu Perfil."};
+  const hint=()=>{$("mHint").textContent=tipo==="ref"?"La foto ya tiene el look: se muestra tal cual.":fotoSrc?"Antes y después sobre tu foto. Arrastrá la línea.":"Sin foto propia: se usa la foto de prueba de "+camName(L.perfil_camara)+(PERFIL?.fotos_base?.[L.perfil_camara]?" de tu perfil.":" (predeterminada).")};
   async function loadImgSrc(){try{const im=await loadImg(fotoSrc||baseFor(L.perfil_camara));g?.setImage(im);draw()}catch(e){}}
   async function loadLut(){try{lut=cube?parseCube(cube):(L.archivo?await lutOf(L):null);g?.setLut(lut);draw()}catch(e){toast(e.message)}}
   loadImgSrc();loadLut();hint();
@@ -843,7 +844,7 @@ function colorStep(P){const g=makeGL($("cv"));if(!g){$("stage").innerHTML='<div 
     try{const l=await lutOf(look);if(VIEWER===me){g.setLut(l);draw()}}catch(err){toast(err.message)}}
   async function src(u){try{const im=await loadImg(u);if(VIEWER!==me)return;g.setImage(im);bars();draw()}catch(e){}}
   function strip(){const cs=V.material.clips.filter(c=>c.perfil===CAM&&c.thumb&&!c.descartado);
-    const fb=PERFIL?.fotos_base?.[CAM];const items=cs.length&&SERVER?cs.map(c=>[Store.media(abs(c.thumb)),c.archivo]):[[baseFor(CAM),fb?"Foto de prueba":"Carta"]];
+    const items=cs.length&&SERVER?cs.map(c=>[Store.media(abs(c.thumb)),c.archivo]):[[baseFor(CAM),"Foto de prueba"],[CARTA,"Carta de color"]];
     $("strip").innerHTML=items.map(([u,n],i)=>`<button type="button" data-src="${esc(u)}" aria-pressed="${i===0}" title="${esc(n)}">${u===CARTA?"Carta":`<img src="${esc(u)}" alt="">`}</button>`).join("");
     $("strip").querySelectorAll("button").forEach(b=>b.onclick=()=>{$("strip").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));src(b.dataset.src)});src(items[0][0])}
   function panel(){$("camSeg").innerHTML=`<div class="seg">${CAMS.map(([k,l])=>`<button type="button" data-cam="${k}" aria-pressed="${CAM===k}">${l}</button>`).join("")}</div>`;

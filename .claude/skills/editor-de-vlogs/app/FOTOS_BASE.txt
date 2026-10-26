@@ -1,0 +1,10 @@
+FOTOS DE PRUEBA PREDETERMINADAS
+===============================
+foto_base_dlog.jpg / foto_base_dlog2.jpg / foto_base_rec709.jpg
+
+Que son: una foto de un sendero costero (cielo, mar, vegetacion, tierra) convertida a como se veria
+grabada en D-Log y D-Log 2 por la DJI Osmo Pocket 4P (scripts/foto_a_log.py). La Rec709 es la foto original.
+Se usan para mostrar los looks cuando el perfil no tiene una captura propia cargada.
+
+Fuente: rawpixel.com/image/5975338 (licencia CC0 1.0, dominio publico). Version de 1024 px, sin marca de agua.
+Para cambiarlas por una foto mejor:  python3 scripts/foto_a_log.py foto.jpg app/foto_base_dlog.jpg --perfil dlog
