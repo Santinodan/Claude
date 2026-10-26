@@ -27,6 +27,7 @@
 | `Powergrade/` | LUTs "MA Vivo" para clips LOG de la **DJI Osmo Pocket 4P** (D-Log / D-Log 2, Día / Noche), ejemplos y fuentes. Ver `Powergrade/LEEME.txt`. |
 | `Powergrade/High Ticket/` | LUT **High Ticket** (D-Log / D-Log 2 / Rec709): look cine premium sacado de referencias. Sin probar. |
 | `.claude/skills/creador-de-luts/` | Skill **Creador de LUTs**: receta del look que funcionó, scripts para generar, retocar y comparar LUTs. |
+| `.claude/skills/editor-de-vlogs/` | Skill **Editor de Vlogs** + app local (doble clic en `Abrir Editor de Vlogs.command`): pestañas de edición y botón "Editar con Claude" que lanza Claude Code en la Mac. Ver `ESTRUCTURA.md`. |
 
 ## Áreas de trabajo
 
@@ -40,7 +41,7 @@
 
 ## Herramientas útiles disponibles
 
-- Skills del repo: `creador-de-luts`.
+- Skills del repo: `creador-de-luts`, `editor-de-vlogs`.
 - Otras skills que pueden servir: `vsl-mastering` (guiones de VSL/YouTube), `ebook-higgsfield`
   (infoproductos), `anthropic-skills:xlsx` / `docx` / `pdf` / `pptx` (presupuestos, propuestas, informes).
 - `ffmpeg` y Python (numpy, Pillow, colour-science) en el entorno.

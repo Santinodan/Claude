@@ -1,0 +1,28 @@
+EDICION DE VLOGS - scripts que usa la skill editor-de-vlogs
+===========================================================
+Se corren en este orden, parado en el repo, con la ruta a <carpeta del dia>/_edicion/vlog.json:
+
+  python3 .claude/skills/editor-de-vlogs/scripts/edicion/escanear.py   <carpeta del dia | vlog.json>
+  python3 .claude/skills/editor-de-vlogs/scripts/edicion/transcribir.py <vlog.json>   [--modelo small] [--forzar]
+  (Claude escribe _edicion/historia.json leyendo _edicion/transcripcion.txt)
+  python3 .claude/skills/editor-de-vlogs/scripts/edicion/plan.py        <vlog.json>
+  python3 .claude/skills/editor-de-vlogs/scripts/edicion/render.py      <vlog.json> [--preview] [--nota "..."]
+
+Extras:
+  plan.py <vlog.json> --tc 02:14 --version 3    que clip/tiempo hay en ese minuto de la v3
+  resumen.py <vlog.json>                         rehace _edicion/transcripcion.txt
+  musica.py analizar <tema>                      BPM, beats y LUFS de un tema
+  musica.py encajar <tema> --duraciones 2,1.5,3  duraciones de plano ajustadas al beat
+
+Que escribe cada uno (todo dentro de _edicion/):
+  escanear     vlog.json (material.clips), thumbs/
+  transcribir  transcripciones/<clip>.json (Whisper por palabra), transcripcion.txt
+  plan         plan.json, vlog.json (historia.bloques, estado.paso), musica/ (cache de beats)
+  render       Vlog_<titulo>_vN.mp4, planes/plan_vN.json, vlog.json (estado.versiones)
+  todos        progreso.log: "INICIO <script>", lineas "PASO <etapa> i/n detalle", "FIN OK ..." o "FIN ERROR ..."
+
+Notas:
+- Nunca pisan versiones: cada render es vN+1. Temporales en tmp_render_vN/ (se borran al terminar).
+- Las LUT de vlog.json (color.looks) son rutas relativas al repo (ej. Powergrade/D-Log/MA_Vivo_DLog_DIA.cube).
+- Dependencias: requirements.txt de la skill + ffmpeg con libass (subtitulos) y lut3d.
+- comun.py tiene lo compartido (defaults del vlog.json, ffmpeg, progreso).

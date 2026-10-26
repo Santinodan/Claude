@@ -60,6 +60,24 @@ def resumir_herramienta(nombre, entrada):
             return str(entrada[k])
     return ""
 
+def seguir_progreso(log, job, emitir):
+    """Los scripts escriben _edicion/progreso.log (PASO etapa i/n ...). Lo leemos en vivo
+    porque en claude -p la salida de Bash llega recien cuando termina cada comando."""
+    vistos = set()
+    while not JOBS[job]["fin"]:
+        try:
+            for l in log.read_text(encoding="utf-8", errors="ignore").splitlines():
+                l = l.strip()
+                if l.startswith(("PASO", "FIN")) and l not in vistos:
+                    vistos.add(l)
+                    emitir({"tipo": "paso" if l.startswith("PASO") else ("fin_paso" if "OK" in l else "error"), "texto": l})
+                elif l.startswith("INICIO"):
+                    vistos = {x for x in vistos if not x.startswith(("PASO", "FIN"))} | {l}
+        except FileNotFoundError:
+            pass
+        time.sleep(1.5)
+
+
 def lanzar_claude(carpeta, pedido):
     vp = ruta_vlog(carpeta)
     sesion_f = vp.parent / "claude_sesion.txt"
@@ -86,6 +104,7 @@ def lanzar_claude(carpeta, pedido):
             return
         JOBS[job]["proc"] = proc
         emitir({"tipo": "inicio", "texto": "Claude Code arrancó"})
+        threading.Thread(target=seguir_progreso, args=(vp.parent / "progreso.log", job, emitir), daemon=True).start()
         for linea in proc.stdout:
             linea = linea.strip()
             if not linea:

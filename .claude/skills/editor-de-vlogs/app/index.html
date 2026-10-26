@@ -175,7 +175,7 @@ video{width:100%;border-radius:10px;background:#000;max-width:100%}
 .feed{flex:1;overflow:auto;padding:14px 18px;display:grid;align-content:start;gap:10px;min-height:160px}
 .ev{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;font-size:13.5px;line-height:1.45}
 .ev i{width:8px;height:8px;border-radius:50%;margin-top:6px;background:var(--line)}
-.ev.texto i{background:var(--violet)}.ev.paso i{background:var(--accent)}.ev.fin i{background:var(--ok)}.ev.error i{background:var(--err)}
+.ev.texto i{background:var(--violet)}.ev.paso i,.ev.fin_paso i{background:var(--accent)}.ev.paso,.ev.fin_paso{font:12px/1.45 var(--f-mono)}.ev.fin i{background:var(--ok)}.ev.error i{background:var(--err)}
 .ev.herramienta{color:var(--ink-2);font:12px/1.45 var(--f-mono)}
 .ev.herramienta span{overflow-wrap:anywhere}
 .ev.texto span{white-space:pre-wrap}
@@ -303,7 +303,7 @@ historia:()=>{const b=V.historia.bloques||[];const tot=b.reduce((a,x)=>a+Math.ma
  <div class="card"><h2>Capítulos</h2>${sw("historia.capitulos_lugar_hora","Lugar y hora entre bloques","“Bali · 11:00 AM” sobre un plano general")}</div></div>
  <div class="card"><h2>Qué es lo importante <small>Claude lo usa para elegir</small></h2><textarea data-txt="historia.notas" placeholder="Ej: el gancho es cuando cierro el cliente en el auto. La parte del gimnasio puede ir corta.">${esc(V.historia.notas)}</textarea></div>
  <div class="card"><h2>Estructura <small>${b.length?mmss(tot):"la arma Claude"}</small></h2>
- ${b.length?`<div class="timeline">${b.map(x=>`<div style="flex:${Math.max(.5,(x.salida-x.entrada)/tot*100)};background:${col[x.tipo]||"#888"}" title="${esc(x.tipo)}">${x.tipo==="charla"?"":esc(x.tipo)}</div>`).join("")}</div>
+ ${b.length?`<div class="timeline">${b.map(x=>`<div style="flex:${Math.max(.5,(x.salida-x.entrada)/tot*100)};background:${col[x.tipo]||"#888"}" title="${esc(x.tipo)} · ${esc(x.resumen||x.clip)}">${x.tipo==="charla"||(x.salida-x.entrada)/tot<.08?"":esc(x.tipo)}</div>`).join("")}</div>
   <div class="blocks">${b.map(x=>`<div class="block"><span class="k ${esc(x.tipo)}">${esc(x.tipo)}</span><span>${esc(x.resumen||x.clip)}</span><span class="pill">${mmss(x.salida-x.entrada)}</span></div>`).join("")}</div>`
  :`<div class="empty"><b>Sin estructura todavía</b><span>Pedile a Claude “Armá la historia”: transcribe y propone los bloques acá.</span><button class="btn ghost" type="button" data-ask="Transcribí y armá la historia (sin exportar todavía).">Armá la historia</button></div>`}</div>`},
 
@@ -338,7 +338,7 @@ textos:()=>{return `${head(7,"Textos","Discretos como en tus referencias: subtí
 
 exportar:()=>{const vs=V.estado.versiones||[];return `${head(8,"Exportar y revisar","Primero una preview liviana para revisar; cuando esté, la final. Las versiones nunca se pisan.")}
  <div class="grid2"><div class="card"><h2>Formato</h2><div class="field"><span>Resolución</span>${seg("exportar.resolucion",[["1080p","1080p"],["4k","4K"]])}</div>${sw("exportar.preview","Empezar con preview","Más rápida, para revisar cortes y música")}<p class="note">16:9 · audio a ${V.exportar.lufs} LUFS (lo que usa YouTube)</p></div>
- <div class="card"><h2>Versiones</h2>${vs.length?`<div class="vers">${vs.map((v,i)=>`<div class="ver"><span><b>${esc(v.archivo.split("/").pop())}</b><br><small class="note">${esc((v.fecha||"").replace("T"," ").slice(0,16))}</small></span><button class="mini" type="button" data-play="${i}">Ver</button></div>`).join("")}</div><video id="player" controls hidden playsinline></video>`
+ <div class="card"><h2>Versiones</h2>${vs.length?`<div class="vers">${vs.map((v,i)=>`<div class="ver"><span><b>${esc(v.archivo.split("/").pop())}</b> <span class="pill ${v.preview?"v":"o"}">${v.preview?"preview":"final"}</span><br><small class="note">${esc((v.fecha||"").replace("T"," ").slice(0,16))}${v.duracion?" · "+mmss(v.duracion):""}${v.nota?" · "+esc(v.nota):""}</small></span><button class="mini" type="button" data-play="${i}">Ver</button></div>`).join("")}</div><video id="player" controls hidden playsinline></video>`
   :`<div class="empty"><b>Sin versiones todavía</b><span>Tocá Editar con Claude para sacar la primera.</span></div>`}</div></div>
  <div class="card"><h2>Notas de revisión <small>Claude las aplica en la próxima versión</small></h2>
   <div class="notes" id="notes">${(V.revision.notas||[]).map((n,i)=>`<div class="notei"><input type="text" value="${esc(n.tc)}" data-nota="${i}" data-k="tc" aria-label="Minuto"><input type="text" value="${esc(n.texto)}" data-nota="${i}" data-k="texto" aria-label="Nota"><span class="pill ${n.hecha?"o":"a"}">${n.hecha?"hecha":"pendiente"}</span><button class="mini" type="button" data-delnota="${i}">Quitar</button></div>`).join("")}</div>

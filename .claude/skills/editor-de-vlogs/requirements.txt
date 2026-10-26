@@ -1,0 +1,4 @@
+# Editor de Vlogs - scripts/edicion (ademas: ffmpeg y ffprobe instalados, ej. brew install ffmpeg)
+numpy
+librosa
+faster-whisper
