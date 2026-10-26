@@ -3,30 +3,33 @@
 Mapa de la app: qué secciones tiene, en qué orden se usan, qué decide Snati en cada una,
 qué hace Claude y qué sale de cada paso. Cada sección nueva se construye siguiendo este mapa.
 
-## Cómo se conecta todo
+## Cómo se conecta todo (decidido)
+
+Claude corre **en la Mac de Snati** (Claude Code local), nunca en la nube. La app también corre en la Mac.
 
 ```mermaid
 flowchart LR
-  A["App Editor de Vlogs<br/>(navegador / Claude app)"] -- "guarda decisiones" --> DB[("Base de datos<br/>de la app")]
-  CC["Claude Code<br/>sesión en la compu de Snati"] -- "lee decisiones" --> DB
-  CC -- "escribe avance y versiones" --> DB
-  CC -- "lee clips / exporta" --> HD[("Disco duro<br/>carpeta del día")]
-  A -. "botón Editar (fase 2)" .-> CC
+  APP["App Editor de Vlogs<br/>(navegador, localhost)"] -- "guarda" --> J[("vlog.json<br/>en la carpeta del día")]
+  APP -- "botón Editar con Claude" --> SRV["servidor.py<br/>(arranca con la skill)"]
+  SRV -- "claude -p /editar-vlog vlog.json" --> CC["Claude Code local<br/>(tu login, tus skills)"]
+  CC -- "lee clips, ffmpeg, exporta" --> HD[("Disco duro")]
+  CC -- "progreso en vivo" --> SRV
+  SRV -- "progreso en vivo" --> APP
 ```
 
-- **La app** es la interfaz: Snati elige y aprueba.
-- **La base de datos** es el lugar donde quedan las decisiones del vlog. Claude la lee y escribe.
-- **Claude Code en la compu de Snati** es el que edita: ve el disco, corre ffmpeg y Whisper, y exporta.
-- **El botón Editar** (fase 2) le avisa a la sesión de Claude Code que arranque, sin escribir en el chat.
+- **Botón "Editar con Claude":** el servidor local lanza Claude Code como comando
+  (`claude -p "/editar-vlog <ruta>/vlog.json"`) parado en la carpeta del repo. Carga CLAUDE.md y las skills,
+  usa el login de Snati, y el avance se ve en vivo en la app (`--output-format stream-json --verbose`).
+  Con `--resume <id>` cada botón sigue la misma conversación.
+- **Permisos:** se fijan en el comando (ej. `--permission-mode acceptEdits --allowedTools "Bash(ffmpeg *)"`),
+  porque en modo comando lo que necesita aprobación se rechaza solo. No usar `--bare` (desactiva skills y login).
+- **Chat dentro de la app:** posible con el Claude Agent SDK, pero la documentación pide API key
+  (no la suscripción). Queda para más adelante.
+- **iOS:** Claude Code no corre en el iPhone. El iPhone solo puede manejar la sesión de la Mac (Remote Control).
+- **Sala de Color publicada en claude.ai:** queda como prueba visual. La que se usa para editar es la versión local.
+- No hay forma documentada de meter mensajes en una sesión interactiva ya abierta: el camino es lanzar `claude -p`.
 
-### Qué está confirmado y qué no
-
-| Conexión | Estado |
-|---|---|
-| App → base de datos → Claude lee | **Probado.** Claude lee la base con la herramienta ArtifactData. |
-| Claude escribe en la base y la app lo muestra en vivo | Soportado por la plataforma, se prueba al armar la sección Revisión. |
-| Botón en la app que le manda un mensaje a la sesión de Claude Code | Posible (conector "Claude Code Remote" desde la app). **Sin probar.** |
-| Claude Code en la nube viendo el disco | **No se puede.** Para editar hace falta la sesión en la compu de Snati. |
+Fuentes: code.claude.com/docs/en/headless.md · cli-reference.md · agent-sdk/overview.md · remote-control.md
 
 ---
 
@@ -101,7 +104,7 @@ El orden es el del trabajo real. Cada sección tiene un estado: `pendiente` / `e
 ## Orden de construcción
 
 1. ~~Color~~ (hecho)
-2. **Prueba de conexión**: botón en la app que avisa a la sesión de Claude Code.
+2. **Lanzador local**: `servidor.py` + botón "Editar con Claude" que corre `claude -p` y muestra el progreso.
 3. Vlog + Material (lo mínimo para arrancar un video real)
 4. Historia + Cortes
 5. Música
