@@ -29,6 +29,8 @@ Documento vivo con lo que vamos definiendo con Snati antes de armar la skill.
 3. Definir barras: finas 2:1 / 2.22:1 / cine 2.39:1, y si van en todo el video o solo en montajes.
 4. Probar el pipeline completo con un vlog real (sesion local con el disco conectado).
 
+Estructura de la app y orden de construccion: ver `ESTRUCTURA.md`.
+
 ## Referencias
 
 Vlogs (analizar musica, cortes y textos; el material NO se commitea):
