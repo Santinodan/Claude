@@ -31,12 +31,19 @@ def cargar_look(path):
     return look, P
 
 
-def _exposicion_para(gris_display):
-    # busca la exposicion del tonemap para que el gris 18% caiga en gris_display
-    lo, hi = 0.01, 10.0
+def _tm_norm(lin, expo, lin_max):
+    # tonemap normalizado: el maximo que puede grabar el LOG llega a 1.0 (asi el techo de
+    # blancos lo pone el look con "white", igual que en Rec709, y no se aplastan las altas)
+    tope = L.tonemap(np.full((1, 3), lin_max), expo)[0, 0]
+    return np.clip(L.tonemap(lin, expo) / tope, 0, 1)
+
+
+def _exposicion_para(gris_display, lin_max):
+    # busca la exposicion para que el gris 18% caiga en gris_display (ya normalizado)
+    lo, hi = 0.01, 20.0
     for _ in range(60):
         m = (lo * hi) ** 0.5
-        v = L.tonemap(np.array([[0.18, 0.18, 0.18]]), m)[0, 0]
+        v = _tm_norm(np.full((1, 3), 0.18), m, lin_max)[0, 0]
         lo, hi = (m, hi) if v < gris_display else (lo, m)
     return (lo * hi) ** 0.5
 
@@ -44,14 +51,15 @@ def _exposicion_para(gris_display):
 def hacer_fn(perfil, P, gris_display=0.117):
     if perfil == 'rec709':
         return lambda v: L.encode_709(L.grade(np.clip(v, 0, 1) ** 2.4, P))
-    expo = _exposicion_para(gris_display)
     if perfil == 'dlog':
         dec = lambda c: L.dlog_to_lin(c) @ L.DG_TO_709.T
     elif perfil == 'dlog2':
         dec = lambda c: L.dlog2_to_lin(c) @ L.DG2_TO_709.T
     else:
         raise ValueError(perfil)
-    return lambda c: L.encode_709(L.grade(L.tonemap(dec(c), expo), P))
+    lin_max = float(dec(np.ones((1, 3)))[0].max())
+    expo = _exposicion_para(gris_display, lin_max)
+    return lambda c: L.encode_709(L.grade(_tm_norm(dec(c), expo, lin_max), P))
 
 
 def main():

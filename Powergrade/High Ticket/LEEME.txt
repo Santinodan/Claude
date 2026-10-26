@@ -1,0 +1,23 @@
+HIGH TICKET - Look cine "premium" (lujo, viajes, oficina con vista, primera clase)
+==================================================================================
+Creado a partir del analisis de 27 capturas de reels de referencia (perfil de creador
+de contenido high ticket). Estado: SIN PROBAR con material real todavia.
+
+Archivos (elegir segun COMO se grabo el clip):
+  High_Ticket_DLog.cube    -> clips en D-Log (DJI Osmo Pocket 4P u otra DJI)
+  High_Ticket_DLog2.cube   -> clips en D-Log 2 (DJI Osmo Pocket 4P)
+  High_Ticket_Rec709.cube  -> clips normales, sin LOG (celular, camara de clientes, perfil normal)
+
+Que hace el look:
+  - Saturacion baja (~60%) pero la PIEL conserva su color -> la persona resalta sobre fondos apagados
+  - Negros levantados (mate) y blancos que no llegan a 100% -> aspecto cine, sin quemados duros
+  - Sombras frias (teal/azul suave) y altas calidas (doradas)
+  - Verdes hacia oliva, cielos cian lavados
+  - Medios algo oscuros: clima "moody", elegante
+
+Uso: UNA LUT por clip, al 100%, directo sobre el clip original (sin otro filtro antes).
+     Exponer bien el clip: si queda oscuro, subir exposicion ANTES de la LUT.
+
+_Fuente/: analisis de color de las referencias y parametros del look (para regenerar o ajustar).
+Regenerar: python3 .claude/skills/creador-de-luts/scripts/generar_look.py \
+           .claude/skills/creador-de-luts/looks/high_ticket.json --out "Powergrade/High Ticket"

@@ -12,3 +12,7 @@ D-Log 2 (sin probar)/
 Uso: UNA sola LUT por clip, al 100%, directo sobre el clip LOG (sin otro filtro).
 Ejemplos/: comparaciones contra el reel.
 _Fuente/: scripts y parametros para regenerar o ajustar las LUTs.
+
+High Ticket/  (SIN PROBAR)
+  High_Ticket_DLog / _DLog2 / _Rec709.cube -> look cine premium (saturacion baja, piel protegida,
+  negros mate, altas doradas). Rec709 = para clips sin LOG (celular, camaras de clientes). Ver su LEEME.

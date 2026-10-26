@@ -1,0 +1,88 @@
+{
+ "nombre": "High_Ticket",
+ "titulo": "High Ticket",
+ "descripcion": "Look cine 'high ticket' (lujo, viajes, oficina premium). Saturacion baja (~0.6x) con piel protegida (warm_sat 1.65), negros levantados (mate), blancos comprimidos (~85%), sombras teal suaves, altas calidas/doradas, verdes oliva, cielos cian lavados.",
+ "fuente": "Ajustado sobre 27 capturas de reels de referencia (analisis en Powergrade/High Ticket/_Fuente/analisis.md)",
+ "gris_display": 0.117,
+ "grade": {
+  "contrast": 0.5325,
+  "pivot": 0.5193,
+  "black": 0.0801,
+  "white": 0.8552,
+  "sat": 0.625,
+  "shadow_hue": 228.3281,
+  "shadow_amt": 0.0195,
+  "high_hue": 111.25,
+  "high_amt": 0.0222,
+  "blue_center": 245,
+  "blue_width": 40,
+  "blue_shift": -63.6055,
+  "blue_sat": 0.8551,
+  "green_center": 138,
+  "green_width": 30,
+  "green_shift": -29.9917,
+  "green_sat": 0.8943,
+  "green_dark": 0.03,
+  "warm_center": 55,
+  "warm_width": 25,
+  "warm_sat": 1.65
+ },
+ "metricas_referencia": {
+  "L_negros": 0.0943,
+  "L_p10": 0.1096,
+  "L_medios": 0.3414,
+  "L_p90": 0.7087,
+  "L_altas": 0.8127,
+  "contraste": 0.5171,
+  "croma_media": 0.032,
+  "sombras": {
+   "tinte": 0.0051,
+   "hue": 222.7,
+   "croma": 0.0235
+  },
+  "medios": {
+   "tinte": 0.0254,
+   "hue": 75.1,
+   "croma": 0.0571
+  },
+  "altas": {
+   "tinte": 0.0275,
+   "hue": 95.8,
+   "croma": 0.0448
+  },
+  "piel": {
+   "hue": 50.45,
+   "croma": 0.0811,
+   "L": 0.5451
+  }
+ },
+ "metricas_resultado": {
+  "L_negros": 0.0942,
+  "L_p10": 0.1044,
+  "L_medios": 0.3416,
+  "L_p90": 0.7748,
+  "L_altas": 0.8074,
+  "contraste": 0.5686,
+  "croma_media": 0.0321,
+  "sombras": {
+   "tinte": 0.0053,
+   "hue": 220.8,
+   "croma": 0.0267
+  },
+  "medios": {
+   "tinte": 0.0228,
+   "hue": 73.3,
+   "croma": 0.0484
+  },
+  "altas": {
+   "tinte": 0.0274,
+   "hue": 91.0,
+   "croma": 0.0262
+  },
+  "piel": {
+   "hue": 58.3,
+   "croma": 0.0811,
+   "L": 0.6095
+  }
+ }
+}

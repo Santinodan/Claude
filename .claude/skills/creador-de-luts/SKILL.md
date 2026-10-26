@@ -16,6 +16,7 @@ Usala para crear LUTs nuevas, retocar las aprobadas o regenerarlas.
 | `D-Log/MA_Vivo_DLog_DIA.cube` | APROBADA | Clips D-Log con luz de dia, cielo turquesa |
 | `D-Log 2 (sin probar)/MA_Vivo_DLog2_NOCHE.cube` | Sin probar | Clips D-Log 2 de noche |
 | `D-Log 2 (sin probar)/MA_Vivo_DLog2_DIA.cube` | Sin probar | Clips D-Log 2 de dia |
+| `High Ticket/High_Ticket_DLog.cube` / `_DLog2` / `_Rec709` | Sin probar | Look cine premium (desaturado, piel protegida, negros mate, altas doradas). Rec709 = clips sin LOG |
 | `Ejemplos/*.jpg/png` | Referencia | Comparativas clip vs reel (lo que se buscaba) |
 | `_Fuente/` | Original | Scripts originales (tienen rutas rotas de otra sesion; usar los de esta skill) |
 
@@ -41,6 +42,12 @@ Instalar una vez: `pip install -r .claude/skills/creador-de-luts/scripts/require
 - `analizar_referencias.py` – analiza reels/capturas de referencia: saca fotogramas de cada video,
   mide negros/medios/altas, contraste, saturacion, split toning por zona, tono de piel y colores dominantes.
   Genera `informe.md`, `metricas.json` y `contactos.jpg`.
+- `generar_look.py` – genera las LUTs de un look definido en un JSON (`looks/*.json`) para 3 perfiles:
+  `dlog`, `dlog2` (cada uno con SU curva correcta + tonemap normalizado) y `rec709` (material sin LOG).
+  Ej: `generar_look.py ../looks/high_ticket.json --out "Powergrade/High Ticket"`.
+- `ajustar_look_a_referencias.py` – crea el JSON de un look nuevo a partir de una carpeta de capturas:
+  mide las referencias, las "neutraliza" y busca los parametros que reproducen sus metricas (~15 min, correr
+  en segundo plano). Asi se hizo High Ticket.
 - `lutlib.py` – libreria: curvas D-Log / D-Log2, matrices de gamut, tonemap, grade OKLab, leer/escribir/aplicar `.cube`.
 
 ## Como se construyo el look (pipeline)
@@ -93,10 +100,18 @@ Este fue el "v2" que se aprobo frente al "v1" (ver `Powergrade/Ejemplos/NOCHE_tu
 4. Traducir el informe a parametros (ver `references/parametros.md`, seccion "Que tocar segun el pedido"):
    negros → `black`; contraste → `contrast`/`pivot`; tintes por zona → `shadow_hue/amt`, `high_hue/amt`;
    piel → `warm_center/warm_sat`; saturacion → `sat`; azules/verdes dominantes → `blue_*`/`green_*`.
-5. Generar con `generar_familia.py --set '{...}' --set-boost '{...}' --prefijo <Nombre> --titulo "<Nombre>"`,
-   comparar con `preview.py --ref` sobre un clip LOG de Snati, iterar hasta que las metricas se parezcan.
+5. Camino automatico (preferido): `ajustar_look_a_referencias.py CARPETA --nombre X --titulo "X" --out ../looks/x.json`,
+   despues `generar_look.py ../looks/x.json --out "Powergrade/X"`. Revisar que la rampa de grises sea monotona
+   y comparar con `preview.py --ref`. Camino manual: `generar_familia.py --set/--set-boost`.
+   Las capturas de Instagram suelen traer franjas negras: el analizador las recorta solo.
 6. Guardar en `Powergrade/<Nombre>/` con su `LEEME.txt` y los parametros en `_Fuente/` (solo el
    analisis y los parametros, nunca los videos de referencia).
+
+## Looks guardados (`looks/`)
+
+- `high_ticket.json` – High Ticket: sat 0.625, warm_sat 1.65 (piel), black 0.08, white 0.855, contraste suave,
+  sombras teal (228°) y altas doradas (111°), verdes a oliva (-30°), azules a cian (-64°).
+  Ajustado sobre 27 capturas; metricas de referencia y resultado dentro del JSON.
 
 ## Instrucciones de uso para el usuario (repetirlas al entregar)
 

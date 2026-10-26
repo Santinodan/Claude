@@ -25,6 +25,7 @@
 | Ruta | Qué es |
 |---|---|
 | `Powergrade/` | LUTs "MA Vivo" para clips LOG de la **DJI Osmo Pocket 4P** (D-Log / D-Log 2, Día / Noche), ejemplos y fuentes. Ver `Powergrade/LEEME.txt`. |
+| `Powergrade/High Ticket/` | LUT **High Ticket** (D-Log / D-Log 2 / Rec709): look cine premium sacado de referencias. Sin probar. |
 | `.claude/skills/creador-de-luts/` | Skill **Creador de LUTs**: receta del look que funcionó, scripts para generar, retocar y comparar LUTs. |
 
 ## Áreas de trabajo
