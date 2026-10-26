@@ -81,6 +81,14 @@ El orden es el del trabajo real. Cada sección tiene un estado: `pendiente` / `e
 - **Claude:** genera subtítulos chicos y blancos, títulos en rojo neon condensado, lugar + hora.
 - **Sale:** lista de textos con tiempo y estilo.
 
+### 6b. Línea de tiempo
+- **Snati:** retoca lo que armó Claude, como en Premiere: monitor de programa, inspector y pistas
+  Textos, Color (capas con LUT), Video, Voz, Música y Efectos de sonido. Selección, cuchilla,
+  mover, recortar, reordenar, imán, zoom, deshacer.
+- **Claude:** respeta esa edición (no la regenera); aplica notas encima.
+- **Sale:** `_edicion/plan.json` con `editado_a_mano` (la versión de Claude queda en `planes/plan_claude_*.json`).
+  Formato: `references/plan_json.md`. Se puede exportar directo desde ahí.
+
 ### 7. Exportar
 - **Claude:** arma el video completo: 16:9, barras, color, cortes, música, textos, audio a –14 LUFS.
   Primero una versión liviana para revisar y después la final.

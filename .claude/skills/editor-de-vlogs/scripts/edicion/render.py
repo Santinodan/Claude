@@ -19,6 +19,11 @@ Que hace (en orden):
   4. Master: ganancia a exportar.lufs (-14) + limitador a -1 dBTP aprox, AAC.
   5. Agrega la version a estado.versiones y copia el plan a _edicion/planes/plan_vN.json.
 
+Linea de tiempo (references/plan_json.md, todo opcional): por segmento vol_db / mute / color
+{lut, intensidad}; capas_color[] (C1); musica[].mute; sfx[] (A3); textos tipo "texto" (estilo
+titulo|lugar|simple, pos centro|arriba|abajo) y oculto. Al cargar, t/dur/frames de los segmentos se
+recalculan desde entrada/salida. Color: segmento.color > capa que cubre el inicio > look del perfil.
+
 Progreso: lineas 'PASO <etapa> <i>/<n> <detalle>' (etapas: audio, render, mezcla, master, listo).
 """
 import argparse
@@ -55,8 +60,10 @@ def siguiente_version(ed, slug, versiones):
 
 
 def resolver_lut(ruta):
+    """LUT relativa al repo (Powergrade/...) o ruta absoluta."""
     if not ruta:
         return None
+    ruta = os.path.expanduser(str(ruta))
     for cand in (ruta, os.path.join(comun.repo_root(), ruta)):
         if os.path.isfile(cand):
             return cand
@@ -77,12 +84,110 @@ def ass_txt(s):
     return str(s).replace("\\", "/").replace("{", "(").replace("}", ")").replace("\n", " ")
 
 
+# ---------- plan editado (linea de tiempo) ----------
+def normalizar_plan(plan, clips):
+    """Recalcula dur/frames/t de los segmentos desde entrada/salida (la app los puede dejar desfasados)
+    y saca los que no sirven. En un plan de plan.py no cambia nada."""
+    fo = Fraction(plan["fps"])
+    segs, F = [], 0
+    for s in plan.get("segmentos", []):
+        if s.get("clip") not in clips:
+            print(f"AVISO segmento {s.get('n')}: no encuentro el clip {s.get('clip')} en material.clips: lo salteo", flush=True)
+            continue
+        try:
+            e, o = float(s["entrada"]), float(s["salida"])
+        except (KeyError, TypeError, ValueError):
+            print(f"AVISO segmento {s.get('n')}: sin entrada/salida: lo salteo", flush=True)
+            continue
+        dur = round(o - e, 4)
+        if dur <= 0:
+            print(f"AVISO segmento {s.get('n')}: dura {dur:.3f}s: lo salteo", flush=True)
+            continue
+        try:   # si ya venia bien (plan.py redondea a frames), no tocarlo
+            if abs(float(s.get("dur")) - dur) < 5e-4:
+                dur = float(s["dur"])
+        except (TypeError, ValueError):
+            pass
+        s["entrada"], s["salida"], s["dur"] = e, o, dur
+        s["frames"] = max(1, int(round(dur * fo)))
+        s["t"] = round(F / float(fo), 4)
+        s.setdefault("audio", "voz")
+        s.setdefault("tipo", "charla")
+        s.setdefault("bloque", 0)
+        F += s["frames"]
+        segs.append(s)
+    plan["segmentos"] = segs
+    plan["duracion"] = round(F / float(fo), 3)
+    return plan
+
+
+class Colores:
+    """LUT efectiva de cada segmento: segmento.color > capa de color que cubre su inicio > look del perfil.
+    Cada LUT distinta se copia a tmp con nombre simple (los espacios rompen el filtergraph)."""
+
+    def __init__(self, cfg, plan, tmp):
+        self.tmp = tmp
+        self.copias = {}      # ruta real -> nombre en tmp
+        self.avisados = set()
+        self.perfil = {}
+        for perfil, look in (cfg["color"].get("looks") or {}).items():
+            self.perfil[perfil] = self.resolver(look, f"perfil {perfil}")
+        self.capas = [c for c in (plan.get("capas_color") or [])
+                      if isinstance(c, dict) and not c.get("mute") and not c.get("oculto")]
+
+    def resolver(self, look, donde):
+        """{lut, intensidad} -> (archivo_en_tmp, opacidad) | None (sin LUT) | False (LUT no encontrada)."""
+        look = look or {}
+        lut = look.get("lut")
+        if not lut:
+            return None
+        ruta = resolver_lut(lut)
+        if not ruta:
+            if (lut, donde) not in self.avisados:
+                print(f"AVISO no encuentro la LUT {lut} ({donde})", flush=True)
+                self.avisados.add((lut, donde))
+            return False
+        try:
+            inten = float(look.get("intensidad", 100)) / 100.0
+        except (TypeError, ValueError):
+            inten = 1.0
+        if inten <= 0.001:
+            return None
+        real = os.path.realpath(ruta)
+        if real not in self.copias:
+            nombre = f"lut_{len(self.copias) + 1:02d}.cube"
+            shutil.copy(ruta, os.path.join(self.tmp, nombre))
+            self.copias[real] = nombre
+        return (self.copias[real], round(min(1.0, inten), 3))
+
+    def de(self, s, clip):
+        c = s.get("color")
+        if isinstance(c, dict):
+            r = self.resolver(c, f"segmento {s.get('n')}")
+            if r is not False:
+                return r
+        capa = None
+        for k in self.capas:   # la ultima de la lista que cubre el inicio gana (capa de arriba)
+            try:
+                t0, d = float(k.get("t", 0)), float(k.get("dur", 0))
+            except (TypeError, ValueError):
+                continue
+            if t0 - 1e-3 <= s["t"] < t0 + d - 1e-3:
+                capa = k
+        if capa is not None:
+            r = self.resolver(capa, f"capa {capa.get('nombre') or capa.get('id') or ''}".strip())
+            if r is not False:
+                return r
+        r = self.perfil.get(s.get("perfil") or clip.get("perfil"))
+        return r or None
+
+
 # ---------- textos ----------
 def eventos_subtitulos(segs):
     """Lineas de 4-7 palabras en tiempo de salida, a partir de las palabras de cada segmento de voz."""
     pal = []
     for s in segs:
-        if s.get("audio") != "voz":
+        if s.get("audio") != "voz" or s.get("mute"):
             continue
         for i, f, w in s.get("palabras", []):
             a = s["t"] + max(0.0, i - s["entrada"])
@@ -130,10 +235,35 @@ Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour,
 Style: Sub,{f_sub},{s_sub},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,0,0,0,0,100,100,0,0,1,{max(1, H // 900)},{max(1, H // 1100)},2,40,40,{int(H * 0.07)},1
 Style: Titulo,{f_tit},{int(H * 0.13)},&H004848FF,&H004848FF,&H000000FF,&H00000000,1,0,0,0,92,100,4,0,1,2,0,5,40,40,40,1
 Style: Lugar,{f_sub},{int(H * 0.036)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,2,0,1,{max(1, H // 1000)},0,4,{int(W * 0.08)},{int(W * 0.08)},0,1
+Style: Simple,{f_sub},{int(H * 0.045)},&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,1,0,1,0,{max(1, H // 360)},2,{int(W * 0.06)},{int(W * 0.06)},{int(H * 0.15)},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
+
+
+POS_AN = {"arriba": 8, "centro": 5, "abajo": 2}
+
+
+def neon(a, b, fi, fo, linea, H, extra="", margen_v=0):
+    """Titulo rojo neon: capa 0 = glow (borde rojo difuminado), capa 1 = letra."""
+    return [f"Dialogue: 0,{a},{b},Titulo,,0,0,{margen_v},,{{\\fad({fi},{fo}){extra}\\bord{max(4, H // 120)}\\blur{max(8, H // 70)}\\3c&H0000FF&\\1c&H0000FF&\\alpha&H30&}}{linea}",
+            f"Dialogue: 1,{a},{b},Titulo,,0,0,{margen_v},,{{\\fad({fi},{fo}){extra}\\bord{max(1, H // 540)}\\blur2\\3c&H0010E0&}}{linea}"]
+
+
+def linea_texto_libre(t, a, b, fi, fo, W, H):
+    """{tipo: texto, texto, estilo: titulo|lugar|simple, pos: centro|arriba|abajo} (linea de tiempo)."""
+    estilo = t.get("estilo") or "simple"
+    pos = t.get("pos") or ("centro" if estilo == "titulo" else "abajo")
+    an = POS_AN.get(pos, 2)
+    mv = {8: int(H * 0.1), 5: 0, 2: int(H * 0.15)}[an]
+    txt = ass_txt(t.get("texto", ""))
+    if not txt.strip():
+        return []
+    if estilo == "titulo":
+        return neon(a, b, fi, fo, txt.upper(), H, f"\\an{an}", mv)
+    st = "Lugar" if estilo == "lugar" else "Simple"
+    return [f"Dialogue: 0,{a},{b},{st},,{int(W * 0.06)},{int(W * 0.06)},{mv},,{{\\fad({fi},{fo})\\an{an}}}{txt}"]
 
 
 def lineas_textos(textos, subs, T0, T1, W, H):
@@ -149,6 +279,8 @@ def lineas_textos(textos, subs, T0, T1, W, H):
         if r:
             out.append(f"Dialogue: 0,{ass_tiempo(r[0])},{ass_tiempo(r[1])},Sub,,0,0,0,,{ass_txt(s['texto'])}")
     for t in textos:
+        if t.get("oculto"):
+            continue
         r = recorte(t["t"], t["t"] + t["dur"])
         if not r:
             continue
@@ -158,23 +290,26 @@ def lineas_textos(textos, subs, T0, T1, W, H):
             num = ass_txt(t.get("numero", ""))
             txt = ass_txt(t.get("texto", "")).upper()
             linea = (r"{\fs" + str(int(H * 0.07)) + "}#" + num + r"\N{\fs" + str(int(H * 0.13)) + "}" + txt) if num else txt
-            # capa 0 = glow (borde rojo difuminado), capa 1 = letra
-            out.append(f"Dialogue: 0,{a},{b},Titulo,,0,0,0,,{{\\fad({fi},{fo})\\bord{max(4, H // 120)}\\blur{max(8, H // 70)}\\3c&H0000FF&\\1c&H0000FF&\\alpha&H30&}}{linea}")
-            out.append(f"Dialogue: 1,{a},{b},Titulo,,0,0,0,,{{\\fad({fi},{fo})\\bord{max(1, H // 540)}\\blur2\\3c&H0010E0&}}{linea}")
+            out += neon(a, b, fi, fo, linea, H)
         elif t["tipo"] == "lugar_hora":
             if t.get("lugar"):
                 out.append(f"Dialogue: 0,{a},{b},Lugar,,0,0,0,,{{\\fad({fi},{fo})\\an4}}{ass_txt(t['lugar'])}")
             if t.get("hora"):
                 out.append(f"Dialogue: 0,{a},{b},Lugar,,0,0,0,,{{\\fad({fi},{fo})\\an6}}{ass_txt(t['hora'])}")
+        elif t["tipo"] == "texto":
+            out += linea_texto_libre(t, a, b, fi, fo, W, H)
     return out
 
 
 # ---------- tramos ----------
-def agrupar_tramos(segs):
+def agrupar_tramos(segs, clave=None):
+    """Segmentos seguidos del mismo clip/bloque/tipo (y mismo color efectivo) van en un solo ffmpeg."""
+    clave = clave or (lambda s: None)
     tramos = []
     for s in segs:
         p = tramos[-1][-1] if tramos else None
         if (p and p["clip"] == s["clip"] and p["bloque"] == s["bloque"] and p["tipo"] == s["tipo"]
+                and clave(p) == clave(s)
                 and s["entrada"] >= p["salida"] - 1e-4 and s["entrada"] - p["salida"] < 20):
             tramos[-1].append(s)
         else:
@@ -300,7 +435,9 @@ def mezclar(plan, cfg, audios, tmp, fo):
     NS = int(round(total_frames / float(fo) * SR))
     mix = np.memmap(os.path.join(tmp, "mezcla.f32"), dtype=np.float32, mode="w+", shape=(max(NS, 1), 2))
     amb = float(cfg["audio"].get("ambiente_montajes_db", -18))
-    cues = plan.get("musica", [])
+    cues = [c for c in plan.get("musica", []) if not c.get("mute")]
+    sfx = [x for x in plan.get("sfx") or [] if isinstance(x, dict) and not x.get("mute")]
+    total = len(cues) + len(sfx)
     rampa = int(SR * 0.005)
     F = 0
     for s in plan["segmentos"]:
@@ -309,7 +446,7 @@ def mezclar(plan, cfg, audios, tmp, fo):
         a1 = int(round(F / float(fo) * SR))
         n = a1 - a0
         ruta, lufs = audios.get(s["clip"], (None, -70.0))
-        if not ruta or n <= 0 or lufs <= -60:
+        if not ruta or n <= 0 or lufs <= -60 or s.get("mute"):
             continue
         src = np.memmap(ruta, dtype=np.float32, mode="r").reshape(-1, 2)
         i0 = int(round(s["entrada"] * SR))
@@ -320,6 +457,10 @@ def mezclar(plan, cfg, audios, tmp, fo):
         if s["audio"] != "voz":
             con_musica = any(c["t"] < s["t"] + s["dur"] and c["t"] + c["dur"] > s["t"] for c in cues)
             g += amb if con_musica else -6.0
+        try:
+            g += float(s.get("vol_db") or 0)   # (timeline) ganancia extra del segmento
+        except (TypeError, ValueError):
+            pass
         trozo *= 10 ** (g / 20)
         if n > 2 * rampa:   # micro-fade para que el corte no haga "click"
             r = np.linspace(0, 1, rampa, dtype=np.float32)[:, None]
@@ -328,7 +469,7 @@ def mezclar(plan, cfg, audios, tmp, fo):
         mix[a0:a1] += trozo
     cache = {}
     for k, c in enumerate(cues, 1):
-        comun.progreso("mezcla", k, len(cues), os.path.basename(c["tema"]))
+        comun.progreso("mezcla", k, total, os.path.basename(c["tema"]))
         if not os.path.exists(c["tema"]):
             continue
         tema = leer_tema(c["tema"], cache)
@@ -351,8 +492,61 @@ def mezclar(plan, cfg, audios, tmp, fo):
             curva[-1] = 0
             env[-fo_:] *= curva
         mix[a0:a0 + n] += trozo * env[:, None]
+    mezclar_sfx(sfx, mix, NS, cache, len(cues), total)
     mix.flush()
     return os.path.join(tmp, "mezcla.f32"), NS
+
+
+def lufs_efecto(path, audio, cache):
+    """LUFS del efecto (cache por archivo). Los muy cortos (< 0.4 s) no los mide ebur128: RMS aprox."""
+    if path not in cache:
+        lufs, _ = comun.medir_lufs(["-i", path])
+        if lufs <= -60 and len(audio):
+            x = np.abs(audio).max(axis=1)
+            activo = audio[x > 10 ** (-50 / 20)]
+            rms = float(np.sqrt(np.mean(activo ** 2))) if len(activo) else 0.0
+            lufs = 20 * np.log10(rms) + 3.0 - 0.691 if rms > 0 else -70.0
+        cache[path] = float(lufs)
+    return cache[path]
+
+
+def mezclar_sfx(sfx, mix, NS, cache, k0, total):
+    """Efectos (A3): mismo criterio que la musica (nivel_db = loudness objetivo), fades lineales."""
+    lufs_cache = {}
+    for k, x in enumerate(sfx, k0 + 1):
+        ruta = str(x.get("archivo") or "")
+        comun.progreso("mezcla", k, total, "sfx " + os.path.basename(ruta))
+        if not ruta or not os.path.exists(ruta):
+            print(f"AVISO no encuentro el efecto {ruta or '(sin archivo)'}: lo salteo", flush=True)
+            continue
+        audio = leer_tema(ruta, cache)
+        if len(audio) == 0:
+            continue
+        try:
+            t = float(x.get("t", 0))
+            desde = max(0.0, float(x.get("desde") or 0))
+            nivel = float(x.get("nivel_db", -14) if x.get("nivel_db") is not None else -14)
+            fi_s, fo_s = float(x.get("fade_in") or 0), float(x.get("fade_out") or 0)
+            dur = float(x["dur"]) if x.get("dur") is not None else len(audio) / SR - desde
+        except (TypeError, ValueError):
+            print(f"AVISO efecto {x.get('id', ruta)} con datos raros: lo salteo", flush=True)
+            continue
+        i0 = int(round(desde * SR))
+        a0 = int(round(t * SR))
+        n = min(int(round(dur * SR)), len(audio) - i0)
+        if a0 < 0:
+            i0, n, a0 = i0 - a0, n + a0, 0
+        n = min(n, NS - a0)
+        if n <= 0:
+            continue
+        trozo = audio[i0:i0 + n].astype(np.float32)
+        env = np.full(n, 10 ** ((nivel - lufs_efecto(ruta, audio, lufs_cache)) / 20), np.float32)
+        fi, fo_ = min(n, int(fi_s * SR)), min(n, int(fo_s * SR))
+        if fi > 0:
+            env[:fi] *= np.linspace(0, 1, fi, dtype=np.float32)
+        if fo_ > 0:
+            env[-fo_:] *= np.linspace(1, 0, fo_, dtype=np.float32)
+        mix[a0:a0 + n] += trozo * env[:, None]
 
 
 # ---------- principal ----------
@@ -373,6 +567,9 @@ def main():
         import plan as plan_mod
         plan_mod.armar(vlog)
     plan = comun.leer_json(plan_path)
+    clips = {c["archivo"]: c for c in cfg["material"]["clips"]}
+    if plan and plan.get("segmentos"):
+        plan = normalizar_plan(plan, clips)
     if not plan or not plan.get("segmentos"):
         sys.exit("El plan no tiene segmentos (revisar historia / clips descartados)")
     comun.marcar_paso(vlog, "exportar")
@@ -390,18 +587,10 @@ def main():
     salida = os.path.join(ed, nombre)
     tmp = os.path.join(ed, f"tmp_render_v{N}")
     os.makedirs(tmp, exist_ok=True)
-    clips = {c["archivo"]: c for c in cfg["material"]["clips"]}
 
-    # LUTs por perfil (copiadas a tmp con nombre simple: evita lios de espacios en el filtro)
-    luts = {}
-    for perfil, look in (cfg["color"].get("looks") or {}).items():
-        ruta = resolver_lut((look or {}).get("lut"))
-        if (look or {}).get("lut") and not ruta:
-            print(f"AVISO no encuentro la LUT {look.get('lut')} ({perfil}): va sin LUT", flush=True)
-        inten = float((look or {}).get("intensidad", 100)) / 100.0
-        if ruta and inten > 0.001:
-            shutil.copy(ruta, os.path.join(tmp, f"lut_{perfil}.cube"))
-            luts[perfil] = (f"lut_{perfil}.cube", min(1.0, inten))
+    # LUT efectiva por segmento (segmento.color > capas_color > look del perfil), copiadas a tmp
+    colores = Colores(cfg, plan, tmp)
+    look_de = {id(s): colores.de(s, clips[s["clip"]]) for s in plan["segmentos"]}
     barras_cfg = cfg["color"].get("barras") or {}
     bh = alto_barras(barras_cfg.get("formato"), W, H)
     donde = barras_cfg.get("donde", "montajes")
@@ -416,8 +605,8 @@ def main():
 
     # 2. video por tramos
     subs = eventos_subtitulos(plan["segmentos"]) if cfg["textos"].get("subtitulos", True) else []
-    textos = plan.get("textos", [])
-    tramos = agrupar_tramos(plan["segmentos"])
+    textos = [t for t in plan.get("textos", []) if isinstance(t, dict) and not t.get("oculto")]
+    tramos = agrupar_tramos(plan["segmentos"], clave=lambda s: look_de[id(s)])
     hw = ["-hwaccel", "videotoolbox"] if sys.platform == "darwin" and os.environ.get("EDITOR_VLOGS_HWACCEL", "1") != "0" else []
     lista = []
     for i, tr in enumerate(tramos, 1):
@@ -432,7 +621,7 @@ def main():
             ass = f"tramo_{i:04d}.ass"
             with open(os.path.join(tmp, ass), "w", encoding="utf-8") as f:
                 f.write(cabecera_ass(W, H, cfg) + "\n".join(eventos) + "\n")
-        lut = luts.get(tr[0].get("perfil") or clip.get("perfil"))
+        lut = look_de[id(tr[0])]
         barras = bh if (bh and (donde == "todo" or tr[0]["tipo"] in ("teaser", "montaje"))) else 0
         ss = max(0.0, tr[0]["entrada"] - 0.5)
         tt = tr[-1]["salida"] - ss + 0.5
@@ -453,7 +642,9 @@ def main():
                   "-c", "copy", "video.mp4"], cwd=tmp)
 
     # 3. mezcla
-    comun.progreso("mezcla", 0, max(1, len(plan.get("musica", []))), "voz y ambiente")
+    n_mezcla = len([c for c in plan.get("musica", []) if not c.get("mute")]) + \
+        len([x for x in plan.get("sfx") or [] if isinstance(x, dict) and not x.get("mute")])
+    comun.progreso("mezcla", 0, max(1, n_mezcla), "voz y ambiente")
     mix, NS = mezclar(plan, cfg, audios, tmp, fo)
     raw_in = ["-f", "f32le", "-ar", str(SR), "-ac", "2", "-i", mix]
 
@@ -486,7 +677,7 @@ def main():
 
     # 5. versiones (nunca se pisa nada)
     os.makedirs(os.path.join(ed, "planes"), exist_ok=True)
-    shutil.copy(plan_path, os.path.join(ed, "planes", f"plan_v{N}.json"))
+    comun.escribir_json(os.path.join(ed, "planes", f"plan_v{N}.json"), plan)   # el plan tal cual se renderizo
     entrada = {"archivo": f"_edicion/{nombre}", "fecha": comun.ahora(), "nota": args.nota,
                "preview": bool(args.preview), "resolucion": f"{W}x{H}", "duracion": round(dur, 2),
                "lufs": round(lufs_f, 1), "plan": f"_edicion/planes/plan_v{N}.json"}

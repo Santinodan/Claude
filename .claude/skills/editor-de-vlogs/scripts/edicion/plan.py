@@ -3,6 +3,9 @@
 
 Uso:
   python3 plan.py <vlog.json>                      arma el plan
+  python3 plan.py <vlog.json> --forzar             lo arma aunque Snati lo haya editado a mano en la
+                                                   linea de tiempo (antes guarda copia en
+                                                   _edicion/planes/plan_manual_<fecha>.json)
   python3 plan.py <vlog.json> --tc 02:14 [--version 3]   dice que clip/tiempo hay en ese minuto
                                                    de una version (para aplicar notas de revision)
 
@@ -23,7 +26,9 @@ Lo mecanico (lo hace este script):
 import argparse
 import os
 import re
+import shutil
 import sys
+from datetime import datetime
 import unicodedata
 from fractions import Fraction
 
@@ -446,7 +451,36 @@ def bloques_fuente(p):
     return bloques, (hj or {}).get("quitar", []), "orden de carpeta (sin historia.json)"
 
 
-def armar(vlog):
+def proteger_manual(vlog, forzar):
+    """Si plan.json fue editado a mano (linea de tiempo de la app) no se pisa salvo --forzar.
+    Devuelve el plan existente si hay que respetarlo, o None si se puede armar uno nuevo."""
+    ed = comun.dir_edicion(os.path.abspath(vlog))
+    ruta = os.path.join(ed, "plan.json")
+    try:
+        actual = comun.leer_json(ruta)
+    except ValueError:
+        actual = None
+    if not (isinstance(actual, dict) and actual.get("editado_a_mano")):
+        return None
+    if not forzar:
+        comun.abrir_log(ed, "plan")
+        print("El plan.json lo edito Snati a mano en la linea de tiempo"
+              + (f" ({actual['editado']})" if actual.get("editado") else "")
+              + ": NO lo piso. Para renderizarlo: render.py. Para rehacerlo desde la historia: "
+              "plan.py --forzar (guarda una copia antes).", flush=True)
+        comun.fin_log("FIN OK plan sin cambios (plan.json editado a mano)")
+        return actual
+    os.makedirs(os.path.join(ed, "planes"), exist_ok=True)
+    copia = os.path.join(ed, "planes", f"plan_manual_{datetime.now():%Y%m%d_%H%M%S}.json")
+    shutil.copy(ruta, copia)
+    print(f"plan.json editado a mano: copia en {os.path.relpath(copia, ed)} y lo rehago (--forzar)", flush=True)
+    return None
+
+
+def armar(vlog, forzar=False):
+    manual = proteger_manual(vlog, forzar)
+    if manual is not None:
+        return manual
     p = Plan(vlog)
     comun.marcar_paso(p.vlog, "plan")
     comun.abrir_log(p.ed, "plan")
@@ -530,11 +564,13 @@ def main():
     ap.add_argument("vlog")
     ap.add_argument("--tc", help="buscar que hay en ese minuto (ej 02:14) en vez de armar el plan")
     ap.add_argument("--version", type=int, help="con --tc: version N (usa planes/plan_vN.json)")
+    ap.add_argument("--forzar", action="store_true",
+                    help="rehacer plan.json aunque este editado a mano (guarda copia antes)")
     args = ap.parse_args()
     if args.tc:
         buscar_tc(args.vlog, args.tc, args.version)
     else:
-        armar(args.vlog)
+        armar(args.vlog, forzar=args.forzar)
 
 
 if __name__ == "__main__":

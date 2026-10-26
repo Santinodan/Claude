@@ -42,6 +42,7 @@ Si falta algo: `pip3 install -r .claude/skills/editor-de-vlogs/requirements.txt`
 5. **Plan**: `plan.py <vlog.json>` → `_edicion/plan.json` (lo mecanico: silencios >
    `cortes.silencio_max_s`, muletillas sueltas, punch-in 1.0/1.12 alternado, cortes en beat 1/2/4/8,
    mapa de musica con fades, todo a frames). Leer el resumen y los `AVISO`.
+   Si `plan.json` dice `editado_a_mano: true`, no se pisa: ver "Plan editado a mano".
 6. **Render**: `render.py <vlog.json> --preview` (960x540 rapido) si `exportar.preview` o si es la
    primera version; la final sin `--preview`. Hace LUT por perfil con % de intensidad, barras
    (`color.barras`: `todo` o solo `montajes`), voz emparejada, ambiente bajo en montajes, musica fuerte
@@ -60,8 +61,21 @@ Si falta algo: `pip3 install -r .claude/skills/editor-de-vlogs/requirements.txt`
   `plan.py <vlog.json> --tc 02:14 --version N` → dice clip, tiempo del clip y texto.
   Aplicar cada nota editando `historia.json` (mover entrada/salida, sumar a `quitar`, cambiar orden,
   tema, `beats_por_plano`...), volver a correr plan + render y marcar `hecha: true` en `vlog.json`
-  (editar solo esa clave, la app puede estar escribiendo el resto).
+  (editar solo esa clave, la app puede estar escribiendo el resto). Si `plan.json` esta
+  `editado_a_mano`, editar `plan.json` directo y solo render (ver abajo).
 - Si el pedido es solo de color/musica/textos, no rehacer la historia: cambiar lo que pidio y re-render.
+
+## Plan editado a mano (linea de tiempo de la app)
+
+Snati puede retocar `_edicion/plan.json` en la **Linea de tiempo** de la app (contrato:
+`references/plan_json.md`). Si tiene `"editado_a_mano": true`:
+- **NO regenerarlo con `plan.py`** (igual se niega sin `--forzar`; `--forzar` solo si Snati pide
+  rehacer desde la historia, y guarda copia en `planes/plan_manual_<fecha>.json`).
+- Para aplicar notas de revision, editar `plan.json` directo manteniendo los invariantes
+  (`dur = salida - entrada`, `frames = round(dur * fps)`, `t` corrido; musica/sfx/textos en tiempo
+  del video) o, si la nota pide rehacer la historia, preguntarle a Snati antes.
+- `render.py` solo lo renderiza: respeta `vol_db`/`mute`/`color` por segmento, `capas_color`,
+  `musica[].mute`, `sfx[]`, textos `tipo: "texto"` y `oculto`, y recalcula t/dur/frames.
 
 ## Que decide Claude y que hacen los scripts
 
