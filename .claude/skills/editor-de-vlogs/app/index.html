@@ -7,79 +7,87 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Big+Shoulders+Display:wght@800&display=swap">
 <style>
-/* Tres columnas: pestanas del proceso | trabajo | panel de Claude. Calido y sobrio, inspirado en la estetica de Claude. */
+/* App de IA: riel de navegacion (Inicio, Proyectos, Looks, Perfil) + contenido con tarjetas de imagen.
+   El editor de cada vlog vive adentro, con pasos arriba y Claude a la derecha. Calido y sobrio, inspirado en Claude. */
 :root{
   --bg:#F5F4EE; --surface:#FFFFFF; --surface-2:#EFEDE4; --ink:#1F1E1D; --ink-2:#6B6A64; --line:#E2DFD3;
   --accent:#C96442; --accent-ink:#FFFFFF; --accent-soft:rgba(201,100,66,.12);
   --violet:#7A68D8; --violet-soft:rgba(122,104,216,.12);
-  --ok:#4E8A5E; --warn:#B7791F; --err:#B4432F;
+  --ok:#4E8A5E; --warn:#B7791F; --err:#B4432F; --scrim:rgba(20,20,19,.45);
   --f-serif:"Source Serif 4",Georgia,"Times New Roman",serif;
   --f-sans:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
   --f-title:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
-  --r:12px;
+  --r:14px;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#202020; --surface:#2A2A2A; --surface-2:#171717; --ink:#F4F4F2; --ink-2:#A3A3A3; --line:#3A3A3A;
-  --accent:#D97757; --accent-soft:rgba(217,119,87,.16); --violet:#9F90F0; --violet-soft:rgba(159,144,240,.16);
-  --ok:#6FB57F; --warn:#D9A440; --err:#E07A63; color-scheme:dark}}
+  --bg:#1C1C1C; --surface:#262626; --surface-2:#141414; --ink:#F4F4F2; --ink-2:#A3A3A3; --line:#363636;
+  --accent:#D97757; --accent-soft:rgba(217,119,87,.16); --violet:#A193F2; --violet-soft:rgba(161,147,242,.16);
+  --ok:#6FB57F; --warn:#D9A440; --err:#E07A63; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#202020; --surface:#2A2A2A; --surface-2:#171717; --ink:#F4F4F2; --ink-2:#A3A3A3; --line:#3A3A3A;
-  --accent:#D97757; --accent-soft:rgba(217,119,87,.16); --violet:#9F90F0; --violet-soft:rgba(159,144,240,.16);
-  --ok:#6FB57F; --warn:#D9A440; --err:#E07A63; color-scheme:dark}
+  --bg:#1C1C1C; --surface:#262626; --surface-2:#141414; --ink:#F4F4F2; --ink-2:#A3A3A3; --line:#363636;
+  --accent:#D97757; --accent-soft:rgba(217,119,87,.16); --violet:#A193F2; --violet-soft:rgba(161,147,242,.16);
+  --ok:#6FB57F; --warn:#D9A440; --err:#E07A63; --scrim:rgba(0,0,0,.6); color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-sans);-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+svg.i{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
-.shell{display:grid;grid-template-columns:232px minmax(0,1fr) 360px;height:100%}
-@media (max-width:1180px){.shell{grid-template-columns:220px minmax(0,1fr)}.claude{grid-column:1/-1;border-left:0;border-top:1px solid var(--line);height:auto}}
+/* ---------- estructura ---------- */
+.app{display:grid;grid-template-columns:76px minmax(0,1fr);height:100%}
+.rail{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 0;border-right:1px solid var(--line);background:var(--surface-2)}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font:600 17px var(--f-serif);margin-bottom:14px}
+.rb{width:62px;display:grid;justify-items:center;gap:3px;padding:9px 0;border:0;border-radius:12px;background:transparent;color:var(--ink-2);font-size:11.5px;font-weight:500}
+.rb:hover{color:var(--ink);background:var(--surface)}
+.rb[aria-current=page]{color:var(--ink);background:var(--surface);box-shadow:0 0 0 1px var(--line)}
+.rail .sp{flex:1}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font:600 14px var(--f-sans);overflow:hidden;flex:none;background:var(--accent)}
+.av img{width:100%;height:100%;object-fit:cover}
+.av.lg{width:84px;height:84px;font-size:30px}
+.rail .av{cursor:pointer;border:2px solid var(--surface)}
+.view{min-width:0;overflow:auto;position:relative}
+.wrap{max-width:1180px;margin:0 auto;padding-block:26px 80px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px));display:grid;gap:30px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hello{font-size:14px;color:var(--ink-2)}
+.conn{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);padding:6px 10px;border-radius:999px;background:var(--surface);box-shadow:0 0 0 1px var(--line)}
+.conn i{width:7px;height:7px;border-radius:50%;background:var(--warn)}
+.conn.on i{background:var(--ok)}
 
-
-/* nav */
-.nav{display:flex;flex-direction:column;gap:18px;padding:20px 14px;border-right:1px solid var(--line);background:var(--surface-2);overflow:auto}
-.brand{display:grid;gap:2px;padding:0 8px}
-.brand b{font:600 22px/1.1 var(--f-serif);letter-spacing:-.01em}
-.brand span{font-size:12.5px;color:var(--ink-2)}
-.brand span i{font-style:normal;color:var(--violet)}
-.nav ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
-.tab{width:100%;display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:9px 10px;border:0;background:transparent;border-radius:10px;cursor:pointer;text-align:left;font-weight:500;font-size:14.5px}
-.tab .n{font:500 11px var(--f-mono);color:var(--ink-2);text-align:center}
-.tab:hover{background:var(--surface)}
-.tab[aria-current=page]{background:var(--surface);box-shadow:0 0 0 1px var(--line)}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
-.dot.ok{background:var(--ok)}.dot.pend{background:var(--accent)}
-.navfoot{margin-top:auto;padding:0 8px;font-size:12px;color:var(--ink-2);display:grid;gap:6px}
-.navfoot code{font:11.5px var(--f-mono);word-break:break-all}
-
-/* main */
-main{overflow:auto;min-width:0}
-.page{max-width:980px;margin:0 auto;padding-block:28px 60px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+/* ---------- tipografia y piezas ---------- */
 .eyebrow{font:500 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
-h1{font:500 34px/1.15 var(--f-serif);letter-spacing:-.015em;margin:2px 0 0;text-wrap:balance}
-.lede{color:var(--ink-2);max-width:62ch;margin:6px 0 0}
+h1{font:500 40px/1.1 var(--f-serif);letter-spacing:-.02em;margin:0;text-wrap:balance}
+h2.sec{font:500 22px/1.2 var(--f-serif);margin:0;letter-spacing:-.01em}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.link{border:0;background:none;color:var(--ink-2);font-size:14px;font-weight:500;padding:0}
+.link:hover{color:var(--ink)}
+.lede{color:var(--ink-2);max-width:62ch;margin:8px 0 0}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;display:grid;gap:14px;min-width:0}
-.card h2{font:600 15px var(--f-sans);margin:0;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.card h2 small{font:400 12.5px var(--f-sans);color:var(--ink-2)}
+.card h3{font:600 15px var(--f-sans);margin:0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card h3 small{font:400 12.5px var(--f-sans);color:var(--ink-2)}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 @media (max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .field{display:grid;gap:6px}
 .field>span{font-size:13px;color:var(--ink-2);font-weight:500}
-input[type=text],input[type=number],textarea,select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none}
+input[type=text],textarea,select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none}
 input[type=text]:focus,textarea:focus,select:focus{border-color:var(--accent)}
 textarea{min-height:84px;resize:vertical}
-.title-input{font:500 26px/1.2 var(--f-serif);padding:12px 14px}
-.btn{border:0;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer;background:var(--ink);color:var(--bg);display:inline-flex;gap:8px;align-items:center}
+.btn{border:0;border-radius:10px;padding:10px 16px;font-weight:600;background:var(--ink);color:var(--bg);display:inline-flex;gap:8px;align-items:center;justify-content:center}
 .btn.accent{background:var(--accent);color:var(--accent-ink)}
 .btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
 .btn.ghost:hover{background:var(--surface-2)}
+.btn.danger{background:transparent;color:var(--err);box-shadow:inset 0 0 0 1px var(--err)}
 .btn:disabled{opacity:.45;cursor:default}
 .seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
-.seg button{border:0;background:transparent;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--ink-2)}
 .seg button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08),0 0 0 1px var(--line)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .sw{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:4px 0}
 .sw>div{display:grid}
 .sw b{font-weight:500}
@@ -95,37 +103,112 @@ textarea{min-height:84px;resize:vertical}
 input[type=range]{width:100%;accent-color:var(--accent)}
 .note{font-size:13px;color:var(--ink-2);margin:0}
 .empty{border:1px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;color:var(--ink-2);display:grid;gap:10px;justify-items:center}
-.pill{font:500 11.5px var(--f-mono);padding:3px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-2)}
+.pill{font:500 11px var(--f-mono);padding:3px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
 .pill.v{background:var(--violet-soft);color:var(--violet)}
 .pill.a{background:var(--accent-soft);color:var(--accent)}
 .pill.o{background:rgba(78,138,94,.14);color:var(--ok)}
 
-/* material */
+/* ---------- inicio ---------- */
+.hero{display:grid;gap:18px;justify-items:center;text-align:center;padding:30px 0 6px}
+.hero h1{font-size:52px;max-width:16ch}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.composer{width:100%;max-width:760px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px;display:grid;gap:10px;text-align:left;box-shadow:0 10px 40px -20px rgba(0,0,0,.25)}
+.composer input.big{border:0;background:transparent;font:500 22px var(--f-serif);padding:8px 10px}
+.composer input.big:focus{outline:none}
+.composer .cbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.composer .folder{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:0 10px;color:var(--ink-2)}
+.composer .folder input{border:0;background:transparent;padding:9px 0}
+.composer .lookpick{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:5px 10px 5px 5px;background:var(--bg);font-size:13.5px;font-weight:500}
+.composer .lookpick img,.composer .lookpick span.ph{width:30px;height:30px;border-radius:7px;object-fit:cover;background:var(--surface-2)}
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;width:100%;max-width:760px}
+.steps3 div{display:grid;gap:2px;text-align:left;padding:12px 14px;border-radius:12px;background:var(--surface-2);font-size:13px;color:var(--ink-2)}
+.steps3 b{color:var(--ink);font-size:14px}
+@media (max-width:760px){.steps3{grid-template-columns:minmax(0,1fr)}}
+
+/* tarjetas de imagen */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.carousel{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,250px);gap:14px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity}
+.carousel>*{scroll-snap-align:start}
+.icard{position:relative;border-radius:var(--r);overflow:hidden;background:var(--surface-2);border:1px solid var(--line);display:grid;text-align:left;padding:0;color:inherit}
+.icard .img{aspect-ratio:4/5;background:linear-gradient(160deg,#3b3a37,#161616);position:relative;overflow:hidden}
+.icard.wide .img{aspect-ratio:16/10}
+.icard .img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease,opacity .25s}
+.icard:hover .img img.after{transform:scale(1.03)}
+.icard .img img.before{position:absolute;inset:0;opacity:0}
+.icard:hover .img img.before{opacity:1}
+.icard .shade{position:absolute;inset:auto 0 0 0;height:55%;background:linear-gradient(transparent,rgba(0,0,0,.72));pointer-events:none}
+.icard .meta{position:absolute;left:12px;right:12px;bottom:11px;color:#fff;display:grid;gap:4px}
+.icard .meta b{font:500 18px/1.15 var(--f-serif)}
+.icard .meta span{font-size:12.5px;opacity:.85}
+.icard .badges{position:absolute;top:10px;left:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap}
+.icard .badges .pill{background:rgba(0,0,0,.55);color:#fff;backdrop-filter:blur(6px)}
+.icard .badges .pill.a{background:var(--accent);color:#fff}
+.icard.add{place-items:center;border-style:dashed;background:transparent;min-height:100%}
+.icard.add .plus{display:grid;gap:8px;justify-items:center;color:var(--ink-2);font-weight:500;padding:30px}
+.icard.add .plus i{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font:400 28px/1 var(--f-sans);font-style:normal}
+.icard.sel{outline:3px solid var(--accent);outline-offset:-3px}
+.icard .noimg{position:absolute;inset:0;display:grid;place-items:center;color:#9a9a9a;font:12px var(--f-mono)}
+
+/* proyectos */
+.pcard .img{aspect-ratio:16/10}
+.pcard .info{padding:12px 14px;display:grid;gap:6px;background:var(--surface)}
+.pcard .info b{font:500 17px/1.2 var(--f-serif)}
+.pcard .info .row{gap:6px}
+
+/* perfil */
+.phead{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.phead .name{font:500 34px/1.1 var(--f-serif);border:0;background:transparent;padding:0;width:auto;min-width:0}
+.phead .name:focus{outline:none;border-bottom:1px solid var(--accent)}
+.plist{display:grid;gap:8px}
+.prow{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);text-align:left;width:100%}
+.prow[aria-current=true]{border-color:var(--ink)}
+.prow span{flex:1;font-weight:500}
+.defaults{display:grid;gap:10px}
+.drow{display:grid;grid-template-columns:90px minmax(0,1fr);gap:12px;align-items:center}
+.drow b{font:500 13px var(--f-mono)}
+.minilooks{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.ml{flex:none;width:84px;border:2px solid transparent;border-radius:10px;padding:0;background:var(--surface-2);overflow:hidden;display:grid;text-align:left}
+.ml[aria-pressed=true]{border-color:var(--accent)}
+.ml .im{aspect-ratio:1;background:#2a2a2a}
+.ml .im img{width:100%;height:100%;object-fit:cover;display:block}
+.ml span{font-size:11.5px;padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- editor ---------- */
+.editor{display:grid;grid-template-columns:minmax(0,1fr) 360px;height:100%}
+.ecol{overflow:auto;min-width:0}
+.ehead{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:14px max(28px,env(safe-area-inset-right,0px)) 0 max(28px,env(safe-area-inset-left,0px));display:grid;gap:12px}
+.etitle{display:flex;align-items:center;gap:12px;min-width:0}
+.back{border:0;background:var(--surface);box-shadow:0 0 0 1px var(--line);border-radius:10px;width:36px;height:36px;display:grid;place-items:center;flex:none}
+.etitle b{font:500 20px/1.2 var(--f-serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stepper{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:0 4px}
+.stepper::-webkit-scrollbar{display:none}
+.st{flex:none;display:flex;align-items:center;gap:7px;border:0;background:transparent;padding:9px 12px 11px;font-size:14px;font-weight:500;color:var(--ink-2);border-bottom:2px solid transparent;white-space:nowrap}
+.st .n{font:500 11px var(--f-mono)}
+.st[aria-current=page]{color:var(--ink);border-bottom-color:var(--accent)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.dot.ok{background:var(--ok)}.dot.pend{background:var(--accent)}
+.epage{max-width:960px;margin:0 auto;padding-block:24px 80px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px));display:grid;gap:20px}
+.epage h1{font-size:32px}
 .clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
 .clip{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:grid}
 .clip.off{opacity:.45}
-.thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#3a3a37,#1f1e1d);position:relative;display:grid;place-items:center;color:#bbb;font:12px var(--f-mono)}
+.thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#3a3a3a,#1a1a1a);position:relative;display:grid;place-items:center;color:#bbb;font:12px var(--f-mono)}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.thumb .ord{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;font:500 11px var(--f-mono);padding:2px 7px;border-radius:6px}
-.thumb .dur{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font:500 11px var(--f-mono);padding:2px 7px;border-radius:6px}
+.thumb .ord,.thumb .dur{position:absolute;background:rgba(0,0,0,.6);color:#fff;font:500 11px var(--f-mono);padding:2px 7px;border-radius:6px}
+.thumb .ord{top:8px;left:8px}.thumb .dur{bottom:8px;right:8px}
 .clip .body{padding:10px 12px;display:grid;gap:8px}
 .clip .name{font:500 13px var(--f-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .clip select{padding:6px 8px;font-size:13px}
-.clip .acts{display:flex;gap:6px}
-.mini{border:1px solid var(--line);background:transparent;border-radius:8px;padding:5px 9px;font-size:12.5px;cursor:pointer}
+.clip .acts{display:flex;gap:6px;flex-wrap:wrap}
+.mini{border:1px solid var(--line);background:transparent;border-radius:8px;padding:5px 9px;font-size:12.5px}
 .mini[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-
-/* historia */
 .timeline{display:flex;gap:4px;height:40px;border-radius:10px;overflow:hidden}
 .timeline div{display:grid;place-items:center;font:500 11px var(--f-mono);color:#fff;min-width:0;overflow:hidden;white-space:nowrap}
 .blocks{display:grid;gap:8px}
 .block{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 .block .k{font:500 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.05em}
 .k.teaser{color:var(--accent)}.k.montaje{color:var(--violet)}.k.charla{color:var(--ink-2)}.k.cierre{color:var(--ok)}
-
-/* color */
-.viewer{display:grid;gap:10px}
-.stage{position:relative;background:#000;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:10px;touch-action:none;cursor:ew-resize;user-select:none}
+.stage{position:relative;background:#000;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:12px;touch-action:pan-y;cursor:ew-resize;user-select:none}
 .stage canvas{width:100%;height:100%;display:block}
 .bar{position:absolute;left:0;right:0;background:#000;pointer-events:none}.bar.t{top:0}.bar.b{bottom:0}
 .split{position:absolute;top:0;bottom:0;width:2px;background:#fff;pointer-events:none}
@@ -133,29 +216,19 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .stag{position:absolute;top:10px;font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;background:rgba(0,0,0,.55);color:#fff;padding:3px 8px;border-radius:6px;pointer-events:none}
 .stag.l{left:10px}.stag.r{right:10px}
 .strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
-.strip button{flex:none;width:120px;aspect-ratio:16/9;border-radius:8px;border:2px solid transparent;padding:0;overflow:hidden;cursor:pointer;background:#222;color:#bbb;font:11px var(--f-mono)}
+.strip button{flex:none;width:112px;aspect-ratio:16/9;border-radius:8px;border:2px solid transparent;padding:0;overflow:hidden;background:#222;color:#bbb;font:11px var(--f-mono)}
 .strip button[aria-pressed=true]{border-color:var(--accent)}
 .strip img{width:100%;height:100%;object-fit:cover;display:block}
-.luts{display:grid;gap:6px}
-.lut{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);cursor:pointer;text-align:left}
-.lut[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
-.lut i{width:9px;height:9px;border-radius:50%;background:var(--line)}
-.lut[aria-pressed=true] i{background:var(--accent)}
-.lut small{font:11px var(--f-mono);color:var(--ink-2)}
 .bigpct{font:500 40px/1 var(--f-serif)}
-
-/* textos */
-.frame{aspect-ratio:16/9;border-radius:10px;overflow:hidden;position:relative;background:radial-gradient(120% 90% at 30% 20%,#2c3a3a,#0d0f10 70%);display:grid;place-items:center}
 .frames{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (max-width:860px){.frames{grid-template-columns:minmax(0,1fr)}}
+.frame{aspect-ratio:16/9;border-radius:10px;overflow:hidden;position:relative;background:radial-gradient(120% 90% at 30% 20%,#2c3a3a,#0d0f10 70%);display:grid;place-items:center}
 .frame.talk{background:radial-gradient(120% 90% at 70% 30%,#5a4a3a,#151210 70%)}
 .frame small.cap{position:absolute;top:10px;left:12px;font:500 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.6)}
 .neon{text-align:center;padding:0 8%;font:800 clamp(22px,3.6vw,46px)/1 var(--f-title);color:#ff4a3d;letter-spacing:.02em;text-shadow:0 0 6px rgba(255,74,61,.9),0 0 24px rgba(255,74,61,.6),0 0 60px rgba(255,74,61,.35);text-transform:uppercase}
-.neon small{display:block;text-align:center;font-size:.55em;margin-bottom:.15em}
+.neon small{display:block;font-size:.55em;margin-bottom:.15em}
 .sub{position:absolute;bottom:8%;left:0;right:0;text-align:center;color:#fff;font:400 clamp(11px,1.6vw,15px) var(--f-sans);text-shadow:0 1px 3px rgba(0,0,0,.6)}
 .place{position:absolute;top:46%;left:6%;right:6%;display:flex;justify-content:space-between;color:#fff;font:400 clamp(11px,1.5vw,14px) var(--f-sans)}
-
-/* exportar */
 .vers{display:grid;gap:10px}
 .ver{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 video{width:100%;border-radius:10px;background:#000;max-width:100%}
@@ -163,356 +236,533 @@ video{width:100%;border-radius:10px;background:#000;max-width:100%}
 .notei{display:grid;grid-template-columns:72px minmax(0,1fr) auto auto;gap:8px;align-items:center}
 .notei input{padding:8px 10px}
 
-/* panel claude */
+/* claude */
 .claude{border-left:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;height:100%;min-width:0}
-.ch{padding:18px 18px 12px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+.ch{padding:16px 18px 12px;border-bottom:1px solid var(--line);display:grid;gap:8px}
 .ch h3{margin:0;font:500 20px var(--f-serif);display:flex;align-items:center;gap:10px}
-.spark{width:22px;height:22px;border-radius:7px;background:var(--violet);display:grid;place-items:center;color:#fff;font:700 13px var(--f-sans)}
-.conn{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2)}
-.conn i{width:8px;height:8px;border-radius:50%;background:var(--line)}
-.conn.on i{background:var(--ok);box-shadow:0 0 0 3px rgba(78,138,94,.18)}
-.conn.off i{background:var(--warn)}
+.spark{width:24px;height:24px;border-radius:8px;background:var(--violet);display:grid;place-items:center;color:#fff;font:700 13px var(--f-sans)}
 .feed{flex:1;overflow:auto;padding:14px 18px;display:grid;align-content:start;gap:10px;min-height:160px}
 .ev{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;font-size:13.5px;line-height:1.45}
 .ev i{width:8px;height:8px;border-radius:50%;margin-top:6px;background:var(--line)}
-.ev.texto i{background:var(--violet)}.ev.paso i,.ev.fin_paso i{background:var(--accent)}.ev.paso,.ev.fin_paso{font:12px/1.45 var(--f-mono)}.ev.fin i{background:var(--ok)}.ev.error i{background:var(--err)}
-.ev.herramienta{color:var(--ink-2);font:12px/1.45 var(--f-mono)}
-.ev.herramienta span{overflow-wrap:anywhere}
-.ev.texto span{white-space:pre-wrap}
+.ev.texto i{background:var(--violet)}.ev.paso i,.ev.fin_paso i{background:var(--accent)}.ev.fin i{background:var(--ok)}.ev.error i{background:var(--err)}
+.ev.herramienta,.ev.paso,.ev.fin_paso{color:var(--ink-2);font:12px/1.45 var(--f-mono)}
+.ev span{overflow-wrap:anywhere;white-space:pre-wrap}
 .ev.error span{color:var(--err)}
 .cf{padding:14px 18px 18px;border-top:1px solid var(--line);display:grid;gap:10px}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
-.quick button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer}
+.quick button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:5px 11px;font-size:12.5px}
 .quick button:hover{border-color:var(--violet);color:var(--violet)}
 .cf textarea{min-height:64px;background:var(--bg)}
-.go{width:100%;justify-content:center;padding:12px;font-size:15px}
+.go{width:100%;padding:12px;font-size:15px}
 .running .go{background:var(--violet)}
-.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:13.5px;z-index:20;box-shadow:0 6px 24px rgba(0,0,0,.2)}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
-.mtop,.mbar,.mclose{display:none}
+.mclose,.mc-top{display:none}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:40;background:var(--scrim);display:grid;place-items:center;padding:20px}
+.sheet{background:var(--surface);border-radius:20px;width:min(980px,100%);max-height:calc(100% - 20px);overflow:auto;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);box-shadow:0 30px 80px -20px rgba(0,0,0,.5)}
+.sheet.small{width:min(460px,100%);grid-template-columns:minmax(0,1fr)}
+.sheet .pv{background:#0f0f0f;padding:16px;display:grid;gap:10px;align-content:start}
+.sheet .pv .stage{border-radius:10px}
+.sheet .form{padding:22px;display:grid;gap:14px;align-content:start}
+.sheet .form h2{font:500 24px var(--f-serif);margin:0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.x{border:0;background:var(--surface-2);border-radius:50%;width:32px;height:32px;display:grid;place-items:center;flex:none}
+.drop{border:1.5px dashed var(--line);border-radius:12px;padding:14px;display:flex;gap:12px;align-items:center;color:var(--ink-2);font-size:13.5px;background:var(--bg)}
+.drop.on{border-color:var(--accent);background:var(--accent-soft)}
+.drop .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);flex:none;overflow:hidden}
+.drop .ic img{width:100%;height:100%;object-fit:cover}
+.drop b{color:var(--ink);display:block;font-weight:600}
+.pop{position:fixed;z-index:35;left:84px;bottom:16px;width:280px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px;display:grid;gap:6px;box-shadow:0 20px 50px -20px rgba(0,0,0,.4)}
+.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:13.5px;z-index:50;box-shadow:0 6px 24px rgba(0,0,0,.2)}
+input[type=file]{display:none}
+.mbar{display:none}
+
+@media (max-width:1180px){.editor{grid-template-columns:minmax(0,1fr)}.editor .claude{display:none}.editor .claude.open{display:flex;position:fixed;inset:0;z-index:30}.mclose{display:inline-flex;margin-left:auto}.mc-top{display:inline-flex}}
+@media (max-width:860px){.sheet{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:760px){
   html,body{height:auto}
-  .shell{display:block;height:auto}
-  .mtop{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px max(16px,env(safe-area-inset-right,0px)) 4px max(16px,env(safe-area-inset-left,0px))}
-  .mtop b{font:600 20px/1.1 var(--f-serif)}
-  .mtop .conn{font-size:12px}
-  .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;flex-direction:row;padding:8px 0;gap:0;border-right:0;border-bottom:1px solid var(--line);background:var(--bg);overflow:visible}
-  .nav .brand,.nav .navfoot{display:none}
-  .nav ol{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x proximity;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));scrollbar-width:none;width:100%}
-  .nav ol::-webkit-scrollbar{display:none}
-  .nav li{scroll-snap-align:center;flex:none}
-  .tab{white-space:nowrap;grid-template-columns:auto auto auto;gap:6px;padding:7px 12px;border-radius:999px;font-size:14px;background:var(--surface);box-shadow:0 0 0 1px var(--line)}
-  .tab[aria-current=page]{background:var(--ink);color:var(--bg);box-shadow:none}
-  .tab[aria-current=page] .n{color:var(--bg);opacity:.7}
-  main{overflow:visible}
-  .page{padding-block:18px 120px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));gap:16px}
-  h1{font-size:28px}
-  .lede{font-size:14.5px}
-  .card{padding:14px;border-radius:14px}
-  .title-input{font-size:21px}
+  .app{display:block;height:auto}
+  .rail{position:fixed;z-index:20;left:0;right:0;bottom:0;top:auto;flex-direction:row;justify-content:space-around;padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));border-right:0;border-top:1px solid var(--line);background:var(--surface)}
+  .rail .logo,.rail .sp,.rail .av{display:none}
+  .rb{width:auto;flex:1;padding:6px 0}
+  .rb[aria-current=page]{box-shadow:none;background:transparent;color:var(--accent)}
+  .view{overflow:visible}
+  .wrap{padding-block:16px 110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));gap:24px}
+  .hero{padding-top:8px}
+  .hero h1{font-size:34px}
+  .topbar>.btn{padding:9px 13px;font-size:14px}
+  h1{font-size:30px}
+  .composer{border-radius:16px;padding:10px}
+  .composer input.big{font-size:19px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .icard .meta b{font-size:15px}
+  .carousel{grid-auto-columns:minmax(160px,180px)}
+  .pop{left:16px;right:16px;width:auto;bottom:calc(70px + env(safe-area-inset-bottom,0px))}
+  .editor{display:block}
+  .ehead{padding:10px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));top:env(safe-area-inset-top,0px)}
+  .epage{padding-block:16px 120px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));gap:16px}
+  .epage h1{font-size:26px}
+  .card{padding:14px}
   .clips{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .clip .body{padding:8px}
-  .clip .acts{flex-wrap:wrap}
   .block{grid-template-columns:minmax(0,1fr) auto;gap:4px 10px}
   .block .k{grid-column:1/-1}
   .notei{grid-template-columns:72px minmax(0,1fr);row-gap:6px}
-  .notei .pill{justify-self:start}
   .seg{display:flex;width:100%}
   .seg button{flex:1;padding:8px 6px}
-  .stage{touch-action:pan-y}
-  .strip button{width:96px}
+  .in-editor .rail{display:none}
+  .mc-top,.etitle .conn{display:none!important}
   .mbar{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--surface);border-top:1px solid var(--line)}
-  .mbar .btn{flex:1;justify-content:center;padding:12px 10px;min-width:0}
+  .mbar .btn{flex:1;padding:12px 10px;min-width:0}
   .mbar #mprev{flex:none;width:48px}
   .mbar .btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .mbar .mc{flex:none;background:var(--violet);color:#fff}
-  .claude{position:fixed;inset:0;z-index:30;height:auto;border:0;transform:translateY(102%);transition:transform .25s ease;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-  .claude.open{transform:none}
-  .mclose{display:inline-flex;margin-left:auto}
+  .editor .claude.open{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .modal{padding:0;place-items:end stretch}
+  .sheet{border-radius:20px 20px 0 0;max-height:94%;width:100%}
   .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="shell">
-  <header class="mtop"><b>Editor de Vlogs</b><div class="conn" id="mconn"><i></i><span></span></div></header>
-  <nav class="nav" aria-label="Pasos de la edición">
-    <div class="brand"><b>Editor de Vlogs</b><span>con <i>Claude Code</i></span></div>
-    <ol id="tabs"></ol>
-    <div class="navfoot"><span>Carpeta</span><code id="footFolder">sin elegir</code></div>
+<div class="app" id="app">
+  <nav class="rail" aria-label="Secciones">
+    <div class="logo" aria-hidden="true">V</div>
+    <button class="rb" type="button" data-go="inicio"><svg class="i" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Inicio</button>
+    <button class="rb" type="button" data-go="proyectos"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4-2.5z"/></svg>Proyectos</button>
+    <button class="rb" type="button" data-go="looks"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18"/><path d="M12 3c2.5 2.4 3.8 5.4 3.8 9S14.5 18.6 12 21"/></svg>Looks</button>
+    <button class="rb" type="button" data-go="perfil"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Perfil</button>
+    <div class="sp"></div>
+    <button class="av" id="railAv" type="button" aria-label="Cambiar de perfil"></button>
   </nav>
-  <main id="main"><div class="page" id="page"></div></main>
-  <aside class="claude" id="claude">
-    <div class="ch">
-      <h3><span class="spark" aria-hidden="true">C</span>Claude<button class="btn ghost mclose" type="button" id="mclose">Cerrar</button></h3>
-      <div class="conn" id="conn"><i></i><span>Buscando Claude Code…</span></div>
-    </div>
-    <div class="feed" id="feed" aria-live="polite"></div>
-    <div class="cf">
-      <div class="quick" id="quick"></div>
-      <textarea id="pedido" placeholder="Pedile algo a Claude. Ej: editá el vlog completo y exportá una preview."></textarea>
-      <button class="btn accent go" id="go" type="button">Editar con Claude</button>
-      <button class="btn ghost" id="stop" type="button" hidden>Parar</button>
-    </div>
-  </aside>
+  <div class="view" id="view"></div>
 </div>
-<div class="mbar" id="mbar"><button class="btn ghost" type="button" id="mprev">‹</button><button class="btn" type="button" id="mnext"><span>Siguiente</span></button><button class="btn mc" type="button" id="mclaude">Claude</button></div>
 <div class="toast" id="toast" hidden></div>
+<input type="file" id="fileCube" accept=".cube">
+<input type="file" id="fileImg" accept="image/*">
 
 <script>
-const CARTA="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCALQBQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDpaKKK9U4bBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgooooCwUUUUBYKKKKAsFFFFAWCiiigLBRRRQFgoooqRhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUZFGRQOwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFgooyKMigLBRRkUZFAWCijIoyKAsFFGRRkUBYKKMijIoCwUUZFGRQFhtFFFK4woooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUYoxUgFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAFFGKMUAOopuTRk1BY6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQA6im5NGTQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRU3HYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKLhYKKKKVygoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouAUUUUXAKKKKLgFFFFFwCiiii4BRRRRcAoooouBx//C3PCf8A0Fv/ACWm/wDiKP8AhbnhP/oLf+S03/xFfN9FYc7L5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt/wCS03/xFfN9FHOw5UfSH/C3PCf/AEFv/Jab/wCIo/4W54T/AOgt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AKKKKACiiigArj/ih/yALf8A6+l/9Aeuwrj/AIof8gC3/wCvpf8A0B6qPxIifws8vruvAn/IIm/67n/0Fa4Wu68Cf8gib/ruf/QVr0aXxHnVPhOjooortOYKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACvLdY/5C99/13f8A9CNepV5brH/IXvv+u7/+hGuatsjWnuR2H/H9bf8AXRf5iuzrjLD/AI/rb/rov8xXZ15NfdG7CiiiuYkKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAMnxL/wAeMf8A10H8jXN10niX/jxj/wCug/ka5uu6j8BSPRvhz/yBJ/8Ar4b/ANBWuqrlfhz/AMgSf/r4b/0Fa6qvUh8KEwoooqxBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB47rv/Ib1H/r4k/9CNSeGf8AkY9K/wCvuL/0MVHrv/Ib1H/r4k/9CNSeGf8AkY9K/wCvuL/0MVwPcb2PfqKKKo8wKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACuJ+LX/ACLlt/19r/6A9dtXE/Fr/kXLb/r7X/0B6TNKfxo8loooqT0QooooAKKKKACiiigDZ0b/AI9W/wB8/wAhV+qGjf8AHq3++f5Cr9ck/iZ3w+FBRRRUmgUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAc5df8fU3++f51b8Pf8h/TP+vqL/0MVUuv+Pqb/fP86t+Hv+Q/pn/X1F/6GK6+h532j3CiiiuQ7gooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK4/4of8gC3/6+l/8AQHrsK4/4of8AIAt/+vpf/QHqo/EiJ/Czy+u68Cf8gib/AK7n/wBBWuFruvAn/IIm/wCu5/8AQVr0aXxHnVPhOjooortOYKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACvLdY/5C99/wBd3/8AQjXqVeW6x/yF77/ru/8A6Ea5q2yNae5HYf8AH9bf9dF/mK7OuMsP+P62/wCui/zFdnXk190bsKKKK5iQooooAKKKKACiiigAooooAKKK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AKKKKACiiigAooooAKKKKACiiigAooooAKKKKACuP+KH/IAt/wDr6X/0B67CuP8Aih/yALf/AK+l/wDQHqo/EiJ/Czy+u68Cf8gib/ruf/QVrha7rwJ/yCJv+u5/9BWvRpfEedU+E6Oiiiu05gooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK8t1j/kL33/Xd/wD0I16lXlusf8he+/67v/6Ea5q2yNae5HYf8f1t/wBdF/mK7OuMsP8Aj+tv+ui/zFdnXk190bsKKKK5iQooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAyfEv/AB4x/wDXQfyNc3XSeJf+PGP/AK6D+Rrm67qPwFI9G+HP/IEn/wCvhv8A0Fa6quV+HP8AyBJ/+vhv/QVrqq9SHwoTCiiirEFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAHjuu/8hvUf+viT/0I1J4Z/wCRj0r/AK+4v/QxUeu/8hvUf+viT/0I1J4Z/wCRj0r/AK+4v/QxXA9xvY9+oooqjzAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK4n4tf8AIuW3/X2v/oD121cT8Wv+Rctv+vtf/QHpM0p/GjyWiiipPRCiiigAooooAKKKKANnRv8Aj1b/AHz/ACFX6oaN/wAerf75/kKv1yT+JnfD4UFFFFSaBRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQBzl1/x9Tf75/nVvw9/yH9M/6+ov/QxVS6/4+pv98/zq34e/5D+mf9fUX/oYrr6HnfaPcKKKK5DuCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigArj/ih/yALf/r6X/wBAeuwrj/ih/wAgC3/6+l/9Aeqj8SIn8LPL67rwJ/yCJv8Aruf/AEFa4Wu68Cf8gib/AK7n/wBBWvRpfEedU+E6Oiiiu05gooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK8t1j/kL33/AF3f/wBCNepV5brH/IXvv+u7/wDoRrmrbI1p7kdh/wAf1t/10X+Yrs64yw/4/rb/AK6L/MV2deTX3RuwooormJCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDJ8S/8eMf/XQfyNc3XSeJf+PGP/roP5Gubruo/AUj0b4c/wDIEn/6+G/9BWuqrlfhz/yBJ/8Ar4b/ANBWuqr1IfChMKKKKsQUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAeO67/wAhvUf+viT/ANCNSeGf+Rj0r/r7i/8AQxUeu/8AIb1H/r4k/wDQjUnhn/kY9K/6+4v/AEMVwPcb2PfqKKKo8wKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACuJ+LX/IuW3/X2v8A6A9dtXE/Fr/kXLb/AK+1/wDQHpM0p/GjyWiiipPRCiiigAooooAKKKKANnRv+PVv98/yFX65eisnTu73OiNXlVrHUUVy9FT7LzH7byOoorl6KPZeYe28jqKK5eij2XmHtvI6iiuXoo9l5h7byOoorl6KPZeYe28jqKK5eij2XmHtvI6iiuXoo9l5h7byOoorl6KPZeYe28jqKK5eij2XmHtvI6iiuXoo9l5h7byOoorl6KPZeYe28iW6/wCPqb/fP86t+Hv+Q/pn/X1F/wChis+itraWOe+tz6Aor5/orH2Xmb+18j6Aor5/oo9l5h7XyPoCivn+ij2XmHtfI+gKK+f6KPZeYe18j6Aor5/oo9l5h7XyPoCivn+ij2XmHtfI+gKK+f6KPZeYe18j6Aor5/oo9l5h7XyPoCivn+ij2XmHtfI+gKK+f6KPZeYe18j6Aor5/oo9l5h7XyPoCuP+KH/IAt/+vpf/AEB68vopqnZ3uJ1Lq1gruvAn/IIm/wCu5/8AQVrhaK6YS5Xc5pLmVj12ivIqK29t5GXsvM9doryKij23kHsvM9doryKij23kHsvM9doryKij23kHsvM9doryKij23kHsvM9doryKij23kHsvM9doryKij23kHsvM9doryKij23kHsvM9doryKij23kHsvM9doryKij23kHsvM9doryKij23kHsvM9dry3WP+Qvff9d3/APQjVSis51OfoXGHKT2H/H9bf9dF/mK7OuForkqU+d7lndUVwtFZew8wsd1RXC0Uew8wsd1RXC0Uew8wsd1RXC0Uew8wsd1RXC0Uew8wsd1RXC0Uew8wsd1R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p8vYQDHtGcNnHPAz2rj6KAOg0TxUun2Nvp9xptndWqXQuS8xmDhuBk7JFBwBxkHGT61H431W11rxVqd5ZRxpbSzuyPGHHmgsSHIckgnPTgewrDooA9HvG022vPB+o3eqG1aysLeV7fynZ3CuzARkDbk9PmIx15rJ0vV9MmtLyZpbHTtSmvXmaS+svtS+SQCFQFGAIO7qBnI54rkp7qa58vzpXl8tBGm9i21R0UZ6D2qOgDv9V8SWN/4l1mS11K0XTrryD5d/Zu0M2yMDOEUsjA7hwB1POKpvqWhTLr+l2k/9m2N49vLbzyI7RhowdykDc4Ul2I4JGBmuMooA7d/ENrHcWFlaanEsFrp/2OS5u7VpIbnMhkKlcFgoJGDtzle1YPiqTS5b+E6WsYUQKJzCrrE0uTuKB/mC429e+eAKxqKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//2Q==";
 const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const mmss=s=>{s=Math.round(s||0);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
-
-/* ---------- estado ---------- */
-const DEFAULT={version:1,titulo:"",carpeta:"",fecha:new Date().toISOString().slice(0,10),
-  material:{clips:[]},
-  historia:{teaser:{activo:true,duracion_s:20},capitulos_lugar_hora:true,notas:"",bloques:[]},
-  cortes:{silencio_max_s:.25,muletillas:true,correcciones:true,punch_in:true,agresividad:"normal"},
-  color:{looks:{dlog:{lut:"Powergrade/D-Log/MA_Vivo_DLog_DIA.cube",intensidad:100},dlog2:{lut:"",intensidad:100},rec709:{lut:"",intensidad:100}},barras:{formato:"2.22:1",donde:"montajes"}},
-  audio:{fuente_voz:"auto",reducir_ruido:true,ambiente_montajes_db:-18},
-  musica:{temas:[],en_charla:"nada",fade_s:4,corte_en_beat:true,volumen_montaje_db:-10},
-  textos:{subtitulos:true,titulo_episodio:{activo:true,numero:"1",texto:""},lugar_hora:true},
-  exportar:{resolucion:"1080p",lufs:-14,preview:true},
-  revision:{notas:[]},estado:{paso:"",versiones:[]}};
-const merge=(a,b)=>{if(Array.isArray(a)||typeof a!=="object"||a===null)return b===undefined?a:b;const o={...a};for(const k in b||{})o[k]=k in a?merge(a[k],b[k]):b[k];return o};
-let V=structuredClone(DEFAULT), SERVER=false, CLAUDE=null, TAB="vlog", JOB=null, es=null;
+const CARTA="app/carta_dlog.jpg";
+const CAMS=[["dlog","D-Log"],["dlog2","D-Log 2"],["rec709","Rec709"]];
+const camName=k=>(CAMS.find(c=>c[0]===k)||[k,k])[1];
 const ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-
-function get(path){return path.split(".").reduce((o,k)=>o?.[k],V)}
-function set(path,val){const ks=path.split(".");let o=V;ks.slice(0,-1).forEach(k=>{o[k]??={};o=o[k]});o[ks.at(-1)]=val;save();renderNav()}
-let saveT;
-function save(){ls.set("vlog_borrador",V);clearTimeout(saveT);saveT=setTimeout(async()=>{
-  if(!SERVER||!V.carpeta)return;
-  try{const r=await fetch("/api/vlog",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({carpeta:V.carpeta,vlog:V})});
-    if(!r.ok)toast((await r.json()).error||"No se pudo guardar")}catch(e){toast("No se pudo guardar")}},500)}
 function toast(t){const el=$("toast");el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
-const media=p=>SERVER?"/media?p="+encodeURIComponent(p):"";
-const abs=rel=>rel&&rel.startsWith("/")?rel:(V.carpeta?V.carpeta.replace(/\/$/,"")+"/"+rel:rel);
+const encPath=p=>p.split("/").map(encodeURIComponent).join("/");
+const icon={plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',folder:'<svg class="i" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+ back:'<svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>',x:'<svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+ arrow:'<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',img:'<svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>',
+ cube:'<svg class="i" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>'};
 
-/* ---------- componentes ---------- */
-function seg(path,opts){return `<div class="seg" role="group">${opts.map(([v,l])=>`<button type="button" data-seg="${path}" data-v='${JSON.stringify(v)}' aria-pressed="${JSON.stringify(get(path))===JSON.stringify(v)}">${l}</button>`).join("")}</div>`}
-function sw(path,title,sub){return `<label class="sw"><div><b>${title}</b>${sub?`<small>${sub}</small>`:""}</div><input type="checkbox" class="toggle" data-sw="${path}" ${get(path)?"checked":""}></label>`}
-const FMT={};
-function sl(path,title,min,max,step,fmt){FMT[path]=fmt;const v=get(path);return `<div class="slider"><div class="top"><span>${title}</span><b data-out="${path}">${fmt(v)}</b></div><input type="range" min="${min}" max="${max}" step="${step}" value="${v}" data-sl="${path}" aria-label="${title}"></div>`}
-function fld(path,label,ph,cls=""){return `<label class="field"><span>${label}</span><input type="text" class="${cls}" data-txt="${path}" value="${esc(get(path))}" placeholder="${esc(ph)}"></label>`}
-function wire(root){
-  root.querySelectorAll("[data-seg]").forEach(b=>b.onclick=()=>{set(b.dataset.seg,JSON.parse(b.dataset.v));b.parentNode.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));onChange(b.dataset.seg)});
-  root.querySelectorAll("[data-sw]").forEach(i=>i.onchange=()=>{set(i.dataset.sw,i.checked);onChange(i.dataset.sw)});
-  root.querySelectorAll("[data-sl]").forEach(i=>{const f=FMT[i.dataset.sl];i.oninput=()=>{const v=+i.value;root.querySelector(`[data-out="${i.dataset.sl}"]`).textContent=f(v);set(i.dataset.sl,v);onChange(i.dataset.sl)}});
-  root.querySelectorAll("[data-txt]").forEach(i=>i.oninput=()=>{set(i.dataset.txt,i.value);onChange(i.dataset.txt)});
-}
-let onChange=()=>{};
-
-/* ---------- pestañas ---------- */
-const TABS=[
- ["vlog","Vlog",()=>V.titulo&&V.carpeta],
- ["material","Material",()=>V.material.clips.length>0],
- ["historia","Historia",()=>V.historia.bloques?.length>0],
- ["cortes","Cortes",()=>true],
- ["color","Color",()=>Object.values(V.color.looks).some(l=>l.lut)],
- ["audio","Audio",()=>true],
- ["musica","Música",()=>V.musica.temas.length>0],
- ["textos","Textos",()=>true],
- ["exportar","Exportar",()=>V.estado.versiones?.length>0],
-];
-function renderNav(){$("tabs").innerHTML=TABS.map(([k,l,ok],i)=>`<li><button class="tab" type="button" data-tab="${k}" ${TAB===k?'aria-current="page"':""}><span class="n">${i}</span><span>${l}</span><i class="dot ${ok()?"ok":"pend"}"></i></button></li>`).join("");
-  $("tabs").querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>go(b.dataset.tab));
-  $("footFolder").textContent=V.carpeta||"sin elegir";
-  const i=TABS.findIndex(t=>t[0]===TAB);$("mprev").disabled=i<=0;
-  $("mnext").firstElementChild.textContent=i<TABS.length-1?"Siguiente: "+TABS[i+1][1]:"Listo · abrir Claude";
-  $("tabs").querySelector('[aria-current="page"]')?.scrollIntoView({block:"nearest",inline:"center"})}
-function go(t){TAB=t;ls.set("tab",t);renderNav();render();$("main").scrollTop=0;window.scrollTo(0,0)}
-const sheet=o=>$("claude").classList.toggle("open",o);
-$("mprev").onclick=()=>{const i=TABS.findIndex(t=>t[0]===TAB);if(i>0)go(TABS[i-1][0])};
-$("mnext").onclick=()=>{const i=TABS.findIndex(t=>t[0]===TAB);if(i<TABS.length-1)go(TABS[i+1][0]);else sheet(true)};
-$("mclaude").onclick=()=>sheet(true);$("mclose").onclick=()=>sheet(false);
-function head(i,title,lede){return `<div><div class="eyebrow">Paso ${i} de 8</div><h1>${title}</h1>${lede?`<p class="lede">${lede}</p>`:""}</div>`}
-function render(){onChange=()=>{};stopViewer();const P=$("page");P.innerHTML=VIEWS[TAB]();wire(P);AFTER[TAB]?.(P)}
-
-const VIEWS={
-vlog:()=>`${head(0,"El vlog","El título le da la dirección al video: con eso Claude decide qué contar primero y qué tomas pesan más.")}
- <div class="card">${fld("titulo","Título","Ej: Un día cerrando clientes en Madrid","title-input")}
-  <div class="grid2">${fld("carpeta","Carpeta del día","/Volumes/Disco/Vlogs/2026-10-26")}${fld("fecha","Fecha","2026-10-26")}</div>
-  <div class="row"><button class="btn accent" type="button" id="abrir">Abrir carpeta</button><span class="note" id="abrirNote">${SERVER?"Lee el vlog si ya existe, o lo crea en _edicion/vlog.json.":"Modo vista previa: para trabajar con tus archivos abrí la app desde el servidor local."}</span></div></div>
- <div class="card"><h2>Cómo sigue</h2><p class="note">Recorré las pestañas en orden. Todo se guarda solo. Cuando quieras, tocá <b>Editar con Claude</b> a la derecha: Claude Code toma esta configuración y edita en tu Mac.</p></div>`,
-
-material:()=>`${head(1,"Material","Los clips en el orden de la carpeta. Corregí el perfil si Claude lo detectó mal y marcá lo que no va.")}
- <div class="row"><button class="btn accent" type="button" id="scan">${V.material.clips.length?"Volver a escanear":"Escanear carpeta"}</button><span class="note">${V.material.clips.length?`${V.material.clips.length} clips · ${mmss(V.material.clips.reduce((a,c)=>a+(c.descartado?0:c.duracion||0),0))} útiles`:""}</span></div>
- ${V.material.clips.length?`<div class="clips">${V.material.clips.map((c,i)=>`<div class="clip ${c.descartado?"off":""}">
-   <div class="thumb">${c.thumb&&SERVER?`<img src="${media(abs(c.thumb))}" alt="" loading="lazy">`:esc(c.archivo)}<span class="ord">${String(c.orden??i+1).padStart(2,"0")}</span><span class="dur">${mmss(c.duracion)}</span></div>
-   <div class="body"><div class="name" title="${esc(c.archivo)}">${esc(c.archivo)}</div>
-    <select data-clip="${i}" data-k="perfil" aria-label="Perfil">${[["dlog","D-Log"],["dlog2","D-Log 2"],["rec709","Rec709"],["desconocido","¿Perfil?"]].map(([v,l])=>`<option value="${v}" ${c.perfil===v?"selected":""}>${l}</option>`).join("")}</select>
-    <div class="acts"><button class="mini" type="button" data-clip="${i}" data-k="broll" aria-pressed="${!!c.broll}">B-roll</button><button class="mini" type="button" data-clip="${i}" data-k="descartado" aria-pressed="${!!c.descartado}">Descartar</button></div></div></div>`).join("")}</div>`
- :`<div class="empty"><b>Todavía no hay clips</b><span>Elegí la carpeta en la pestaña Vlog y tocá Escanear. Los clips de la subcarpeta <code>broll/</code> se marcan solos.</span></div>`}`,
-
-historia:()=>{const b=V.historia.bloques||[];const tot=b.reduce((a,x)=>a+Math.max(0,(x.salida||0)-(x.entrada||0)),0)||1;
- const col={teaser:"var(--accent)",montaje:"var(--violet)",charla:"#8a8880",cierre:"var(--ok)"};
- return `${head(2,"Historia","Claude transcribe todo y arma la estructura según el título: avance de apertura, bloques de charla, montajes entre bloques y cierre.")}
- <div class="grid2"><div class="card"><h2>Apertura</h2>${sw("historia.teaser.activo","Avance al principio","Lo mejor del vlog en 15–30 s, con música y cortes en el beat")}${sl("historia.teaser.duracion_s","Duración del avance",10,40,1,v=>v+" s")}</div>
- <div class="card"><h2>Capítulos</h2>${sw("historia.capitulos_lugar_hora","Lugar y hora entre bloques","“Bali · 11:00 AM” sobre un plano general")}</div></div>
- <div class="card"><h2>Qué es lo importante <small>Claude lo usa para elegir</small></h2><textarea data-txt="historia.notas" placeholder="Ej: el gancho es cuando cierro el cliente en el auto. La parte del gimnasio puede ir corta.">${esc(V.historia.notas)}</textarea></div>
- <div class="card"><h2>Estructura <small>${b.length?mmss(tot):"la arma Claude"}</small></h2>
- ${b.length?`<div class="timeline">${b.map(x=>`<div style="flex:${Math.max(.5,(x.salida-x.entrada)/tot*100)};background:${col[x.tipo]||"#888"}" title="${esc(x.tipo)} · ${esc(x.resumen||x.clip)}">${x.tipo==="charla"||(x.salida-x.entrada)/tot<.08?"":esc(x.tipo)}</div>`).join("")}</div>
-  <div class="blocks">${b.map(x=>`<div class="block"><span class="k ${esc(x.tipo)}">${esc(x.tipo)}</span><span>${esc(x.resumen||x.clip)}</span><span class="pill">${mmss(x.salida-x.entrada)}</span></div>`).join("")}</div>`
- :`<div class="empty"><b>Sin estructura todavía</b><span>Pedile a Claude “Armá la historia”: transcribe y propone los bloques acá.</span><button class="btn ghost" type="button" data-ask="Transcribí y armá la historia (sin exportar todavía).">Armá la historia</button></div>`}</div>`},
-
-cortes:()=>`${head(3,"Cortes","Como en tus referencias: casi sin pausas entre frases, sin muletillas y sin arranques en falso.")}
- <div class="grid2"><div class="card"><h2>Silencios</h2>${sl("cortes.silencio_max_s","Pausa máxima entre frases",.1,.6,.05,v=>v.toFixed(2)+" s")}<p class="note">Guillermo y Brez dejan menos de 0,25 s.</p>
-  <div class="field"><span>Intensidad general</span>${seg("cortes.agresividad",[["suave","Suave"],["normal","Normal"],["fuerte","Fuerte"]])}</div></div>
- <div class="card"><h2>Limpieza</h2>${sw("cortes.muletillas","Sacar muletillas","“eh”, “este”, “o sea” sueltos")}${sw("cortes.correcciones","Sacar correcciones","Cuando arrancás una frase y la repetís mejor")}${sw("cortes.punch_in","Alternar encuadre","Zoom suave entre jump cuts para que no salte")}</div></div>`,
-
-color:()=>`${head(4,"Color","Elegí la LUT y la intensidad de cada perfil mirando el antes y después sobre tus propios clips.")}
- <div class="card viewer"><div class="stage" id="stage"><canvas id="cv" width="1280" height="720"></canvas><div class="bar t" id="barT"></div><div class="bar b" id="barB"></div><div class="split" id="split"></div><span class="stag l">Antes</span><span class="stag r">Después</span></div>
-  <div class="strip" id="strip"></div></div>
- <div class="grid2"><div class="card"><h2>Perfil</h2><div id="perfSeg"></div><div class="luts" id="luts"></div></div>
-  <div class="card"><h2>Intensidad</h2><div class="bigpct" id="pct"></div><input type="range" id="amt" min="0" max="100" aria-label="Intensidad de la LUT">
-   <h2 style="margin-top:6px">Barras</h2>${seg("color.barras.formato",[[null,"Sin"],["2:1","2:1"],["2.22:1","2.22:1"],["2.39:1","2.39:1"]])}${seg("color.barras.donde",[["todo","Todo el video"],["montajes","Solo montajes"]])}</div></div>`,
-
-audio:()=>`${head(5,"Audio","La voz manda. Claude la limpia y la empareja entre clips para que no salte de volumen.")}
- <div class="grid2"><div class="card"><h2>Voz</h2><div class="field"><span>Fuente de la voz</span>${seg("audio.fuente_voz",[["auto","Automático"],["mic","Micrófono"],["camara","Cámara"]])}</div>${sw("audio.reducir_ruido","Reducir ruido y viento","Suave, sin que la voz suene a lata")}</div>
- <div class="card"><h2>Ambiente</h2>${sl("audio.ambiente_montajes_db","Sonido ambiente en montajes",-40,0,1,v=>v+" dB")}<p class="note">Debajo de la música, para que se sienta el lugar.</p></div></div>`,
-
-musica:()=>`${head(6,"Música","Montaje con música fuerte y cortes en el beat; charla limpia. Es lo que más define el ritmo de tus referencias.")}
- <div class="card"><h2>Temas <small>instrumentales que bajaste</small></h2>
-  <div class="blocks" id="temas">${V.musica.temas.map((t,i)=>`<div class="block"><select data-tema="${i}" aria-label="Uso">${[["teaser","Avance"],["montajes","Montajes"],["cierre","Cierre"]].map(([v,l])=>`<option value="${v}" ${t.uso===v?"selected":""}>${l}</option>`).join("")}</select><span class="name" style="font:12.5px var(--f-mono);overflow-wrap:anywhere">${esc(t.archivo)}</span><button class="mini" type="button" data-deltema="${i}">Quitar</button></div>`).join("")||`<p class="note">Todavía no agregaste temas.</p>`}</div>
-  <div class="row"><input type="text" id="temaPath" placeholder="/Volumes/Disco/Musica/passionfruit_instrumental.mp3" style="flex:1;min-width:220px"><button class="btn ghost" type="button" id="addTema">Agregar</button></div></div>
- <div class="grid2"><div class="card"><h2>En la charla</h2>${seg("musica.en_charla",[["nada","Sin música"],["baja","Música muy baja"]])}${sl("musica.fade_s","Fade al volver a hablar",1,8,.5,v=>v+" s")}</div>
- <div class="card"><h2>En los montajes</h2>${sw("musica.corte_en_beat","Cortar en el beat","Planos de 1, 2, 4 u 8 beats")}${sl("musica.volumen_montaje_db","Volumen de la música",-24,-4,1,v=>v+" dB")}</div></div>`,
-
-textos:()=>{return `${head(7,"Textos","Discretos como en tus referencias: subtítulos chicos, un título de episodio fuerte y el lugar como separador.")}
- <div class="card"><div class="frames" id="frame">${frameHTML()}</div></div>
- <div class="grid2"><div class="card"><h2>Título de episodio</h2>${sw("textos.titulo_episodio.activo","Mostrar título al principio","Rojo neón condensado")}
-  <div class="grid2" style="grid-template-columns:90px minmax(0,1fr)">${fld("textos.titulo_episodio.numero","Número","2")}${fld("textos.titulo_episodio.texto","Texto","CONSTRUYENDO")}</div></div>
- <div class="card"><h2>En pantalla</h2>${sw("textos.subtitulos","Subtítulos","Chicos, blancos, sin caja")}${sw("textos.lugar_hora","Lugar y hora","En los separadores de capítulo")}</div></div>`},
-
-exportar:()=>{const vs=V.estado.versiones||[];return `${head(8,"Exportar y revisar","Primero una preview liviana para revisar; cuando esté, la final. Las versiones nunca se pisan.")}
- <div class="grid2"><div class="card"><h2>Formato</h2><div class="field"><span>Resolución</span>${seg("exportar.resolucion",[["1080p","1080p"],["4k","4K"]])}</div>${sw("exportar.preview","Empezar con preview","Más rápida, para revisar cortes y música")}<p class="note">16:9 · audio a ${V.exportar.lufs} LUFS (lo que usa YouTube)</p></div>
- <div class="card"><h2>Versiones</h2>${vs.length?`<div class="vers">${vs.map((v,i)=>`<div class="ver"><span><b>${esc(v.archivo.split("/").pop())}</b> <span class="pill ${v.preview?"v":"o"}">${v.preview?"preview":"final"}</span><br><small class="note">${esc((v.fecha||"").replace("T"," ").slice(0,16))}${v.duracion?" · "+mmss(v.duracion):""}${v.nota?" · "+esc(v.nota):""}</small></span><button class="mini" type="button" data-play="${i}">Ver</button></div>`).join("")}</div><video id="player" controls hidden playsinline></video>`
-  :`<div class="empty"><b>Sin versiones todavía</b><span>Tocá Editar con Claude para sacar la primera.</span></div>`}</div></div>
- <div class="card"><h2>Notas de revisión <small>Claude las aplica en la próxima versión</small></h2>
-  <div class="notes" id="notes">${(V.revision.notas||[]).map((n,i)=>`<div class="notei"><input type="text" value="${esc(n.tc)}" data-nota="${i}" data-k="tc" aria-label="Minuto"><input type="text" value="${esc(n.texto)}" data-nota="${i}" data-k="texto" aria-label="Nota"><span class="pill ${n.hecha?"o":"a"}">${n.hecha?"hecha":"pendiente"}</span><button class="mini" type="button" data-delnota="${i}">Quitar</button></div>`).join("")}</div>
-  <div class="row"><button class="btn ghost" type="button" id="addNota">Agregar nota</button><button class="btn ghost" type="button" data-ask="Aplicá las notas de revisión pendientes y exportá una versión nueva.">Aplicar notas con Claude</button></div></div>`}
+/* =========================================================
+   Almacenamiento: servidor local (Mac) o IndexedDB (vista previa)
+   ========================================================= */
+let SERVER=false, CLAUDE=null;
+const IDB={db:null,
+  open(){return this.db||(this.db=new Promise((res,rej)=>{const r=indexedDB.open("editor_vlogs",1);r.onupgradeneeded=()=>{r.result.createObjectStore("perfiles",{keyPath:"id"});r.result.createObjectStore("blobs")};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))},
+  async tx(store,mode,fn){const db=await this.open();return new Promise((res,rej)=>{const t=db.transaction(store,mode);const s=t.objectStore(store);const r=fn(s);t.oncomplete=()=>res(r&&r.result);t.onerror=()=>rej(t.error)})}};
+const SEED={id:"Snati",nombre:"Snati",color:"#C96442",foto:null,camara:"DJI Osmo Pocket 4P",
+  looks:[["ma_vivo_dia","MA Vivo Día","dlog","Powergrade/D-Log/MA_Vivo_DLog_DIA.cube"],["ma_vivo_noche","MA Vivo Noche","dlog","Powergrade/D-Log/MA_Vivo_DLog_NOCHE.cube"],["high_ticket","High Ticket","dlog","Powergrade/High Ticket/High_Ticket_DLog.cube"],
+   ["ma_vivo_dia_dl2","MA Vivo Día","dlog2","Powergrade/D-Log 2 (sin probar)/MA_Vivo_DLog2_DIA.cube"],["ma_vivo_noche_dl2","MA Vivo Noche","dlog2","Powergrade/D-Log 2 (sin probar)/MA_Vivo_DLog2_NOCHE.cube"],["high_ticket_dl2","High Ticket","dlog2","Powergrade/High Ticket/High_Ticket_DLog2.cube"],["high_ticket_709","High Ticket","rec709","Powergrade/High Ticket/High_Ticket_Rec709.cube"]]
+   .map(([id,nombre,perfil_camara,archivo])=>({id,nombre,perfil_camara,archivo,intensidad:100,foto:null,foto_antes:null})),
+  predeterminados:{dlog:"ma_vivo_dia",dlog2:"ma_vivo_dia_dl2",rec709:"high_ticket_709"},ajustes:{barras:{formato:"2.22:1",donde:"montajes"}},proyectos:[]};
+const uid=()=>Math.random().toString(36).slice(2,8);
+const post=async(u,b)=>{const r=await fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});const d=await r.json();if(!r.ok)throw Error(d.error||"Error");return d};
+const Store={
+  async perfiles(){if(SERVER)return (await (await fetch("/api/perfiles")).json()).perfiles;
+    let ps=await IDB.tx("perfiles","readonly",s=>s.getAll());if(!ps.length){await IDB.tx("perfiles","readwrite",s=>s.put(SEED));ps=[structuredClone(SEED)]}return ps},
+  async savePerfil(p,foto){if(SERVER)return (await post("/api/perfil",{perfil:p,foto})).perfil;
+    if(!p.id)p.id="p_"+uid();if(foto)p.foto=foto;await IDB.tx("perfiles","readwrite",s=>s.put(p));return p},
+  async saveLook(pid,look,files){if(SERVER)return post("/api/look",{perfil_id:pid,look,...files});
+    const p=(await this.perfiles()).find(x=>x.id===pid);if(!look.id)look.id="l_"+uid();
+    if(files.cube){await IDB.tx("blobs","readwrite",s=>s.put(files.cube,"cube:"+look.id));look.archivo="idb:"+look.id}
+    if(files.foto)look.foto=files.foto;if(files.foto_antes)look.foto_antes=files.foto_antes;delete look.archivo_original;
+    const i=p.looks.findIndex(x=>x.id===look.id);if(i>=0)p.looks[i]=look;else p.looks.push(look);
+    await IDB.tx("perfiles","readwrite",s=>s.put(p));return{perfil:p,look}},
+  async quitarLook(pid,lid){if(SERVER)return (await post("/api/look/quitar",{perfil_id:pid,look_id:lid})).perfil;
+    const p=(await this.perfiles()).find(x=>x.id===pid);p.looks=p.looks.filter(x=>x.id!==lid);for(const k in p.predeterminados)if(p.predeterminados[k]===lid)p.predeterminados[k]=null;
+    await IDB.tx("perfiles","readwrite",s=>s.put(p));return p},
+  async cube(look){if(look.archivo?.startsWith("idb:"))return IDB.tx("blobs","readonly",s=>s.get("cube:"+look.archivo.slice(4)));
+    const r=await fetch(look.archivo.startsWith("/")?"/media?p="+encodeURIComponent(look.archivo):"repo/"+encPath(look.archivo));if(!r.ok)throw Error("No pude leer la LUT");return r.text()},
+  async proyectos(p){if(SERVER)return (await (await fetch("/api/proyectos?perfil="+encodeURIComponent(p.id))).json()).proyectos;
+    const all=ls.get("borradores")||{};return Object.values(all).filter(v=>v.perfil===p.id).map(v=>({carpeta:v.carpeta,disponible:true,titulo:v.titulo,fecha:v.fecha,paso:v.estado?.paso,clips:v.material.clips.length,versiones:v.estado.versiones.length,thumb:null,_local:true}))},
+  img(p){if(!p)return null;if(p.startsWith("data:")||p.startsWith("blob:"))return p;if(p.startsWith("/"))return "/media?p="+encodeURIComponent(p);return "repo/"+encPath(p)},
+  media(p){return SERVER&&p?"/media?p="+encodeURIComponent(p):null}
 };
 
-function frameHTML(){const t=V.textos.titulo_episodio;return `<div class="frame"><small class="cap">Apertura</small>${t.activo?`<div class="neon"><small>#${esc(t.numero)}</small>${esc(t.texto||V.titulo||"Título")}</div>`:`<span class="note" style="color:#999">Sin título de episodio</span>`}</div><div class="frame talk"><small class="cap">Charla y separadores</small>${V.textos.lugar_hora?`<div class="place"><span>Madrid</span><span>11:00 AM</span></div>`:""}${V.textos.subtitulos?`<div class="sub">y ahí fue cuando cerramos el primer cliente</div>`:""}</div>`}
-const AFTER={
-vlog(P){$("abrir").onclick=async()=>{if(!SERVER)return toast("Abrí la app desde el servidor local para usar tus carpetas");
-  if(!V.carpeta)return toast("Escribí la ruta de la carpeta del día");
-  const r=await fetch("/api/vlog?carpeta="+encodeURIComponent(V.carpeta));const d=await r.json();
-  if(d.vlog){V=merge(DEFAULT,d.vlog);toast("Vlog abierto")}else{save();toast("Vlog nuevo creado")}renderNav();render()}},
-material(P){$("scan").onclick=async()=>{if(!SERVER)return toast("Necesita el servidor local");if(!V.carpeta)return go("vlog");
-  $("scan").disabled=true;$("scan").textContent="Escaneando…";await fetch("/api/vlog",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({carpeta:V.carpeta,vlog:V})});
-  const r=await fetch("/api/escanear",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({carpeta:V.carpeta})});const d=await r.json();
-  if(d.vlog){V=merge(DEFAULT,d.vlog);toast(V.material.clips.length+" clips")}else toast(d.error||"No se pudo escanear");renderNav();render()};
-  P.querySelectorAll("[data-clip]").forEach(el=>{const c=V.material.clips[el.dataset.clip],k=el.dataset.k;
-    if(el.tagName==="SELECT")el.onchange=()=>{c[k]=el.value;save();renderNav()};else el.onclick=()=>{c[k]=!c[k];save();render()}})},
-historia(P){wireAsk(P)},
-musica(P){$("addTema").onclick=()=>{const v=$("temaPath").value.trim();if(!v)return;V.musica.temas.push({archivo:v,uso:"montajes"});save();renderNav();render()};
-  P.querySelectorAll("[data-tema]").forEach(s=>s.onchange=()=>{V.musica.temas[s.dataset.tema].uso=s.value;save()});
-  P.querySelectorAll("[data-deltema]").forEach(b=>b.onclick=()=>{V.musica.temas.splice(b.dataset.deltema,1);save();renderNav();render()})},
-textos(P){onChange=()=>{$("frame").innerHTML=frameHTML()}},
-exportar(P){wireAsk(P);$("addNota").onclick=()=>{V.revision.notas.push({tc:"00:00",texto:"",hecha:false});save();render()};
-  P.querySelectorAll("[data-nota]").forEach(i=>i.oninput=()=>{V.revision.notas[i.dataset.nota][i.dataset.k]=i.value;save()});
-  P.querySelectorAll("[data-delnota]").forEach(b=>b.onclick=()=>{V.revision.notas.splice(b.dataset.delnota,1);save();render()});
-  P.querySelectorAll("[data-play]").forEach(b=>b.onclick=()=>{const v=$("player");v.hidden=false;v.src=media(abs(V.estado.versiones[b.dataset.play].archivo));v.play().catch(()=>{})})},
-color(P){startViewer(P)}
-};
-function wireAsk(P){P.querySelectorAll("[data-ask]").forEach(b=>b.onclick=()=>{$("pedido").value=b.dataset.ask;runClaude()})}
-
-/* ---------- color (WebGL) ---------- */
-const LUTS=[
- {perfil:"dlog",name:"MA Vivo · Día",path:"Powergrade/D-Log/MA_Vivo_DLog_DIA.cube"},
- {perfil:"dlog",name:"MA Vivo · Noche",path:"Powergrade/D-Log/MA_Vivo_DLog_NOCHE.cube"},
- {perfil:"dlog",name:"High Ticket",path:"Powergrade/High Ticket/High_Ticket_DLog.cube"},
- {perfil:"dlog2",name:"MA Vivo · Día",path:"Powergrade/D-Log 2 (sin probar)/MA_Vivo_DLog2_DIA.cube"},
- {perfil:"dlog2",name:"MA Vivo · Noche",path:"Powergrade/D-Log 2 (sin probar)/MA_Vivo_DLog2_NOCHE.cube"},
- {perfil:"dlog2",name:"High Ticket",path:"Powergrade/High Ticket/High_Ticket_DLog2.cube"},
- {perfil:"rec709",name:"High Ticket",path:"Powergrade/High Ticket/High_Ticket_Rec709.cube"}];
-let GL=null, PERF=ls.get("perf")||"dlog", split=.5, lutCache={};
-function stopViewer(){GL=null}
-function parseCube(t){let n=0;const v=[];for(const line of t.split(/\r?\n/)){const s=line.trim();if(!s||s[0]=="#")continue;if(/^LUT_3D_SIZE/i.test(s)){n=parseInt(s.split(/\s+/)[1]);continue}if(/^[A-Z_]/i.test(s))continue;const p=s.split(/\s+/);if(p.length>=3)v.push(+p[0],+p[1],+p[2],1)}if(!n||v.length!==n*n*n*4)throw Error("LUT inválida");return{n,data:new Float32Array(v)}}
-async function loadLut(path){if(lutCache[path])return lutCache[path];const r=await fetch("repo/"+path.split("/").map(encodeURIComponent).join("/"));if(!r.ok)throw Error("no");return lutCache[path]=parseCube(await r.text())}
-function startViewer(P){
-  const cv=$("cv"),gl=cv.getContext("webgl2");if(!gl){$("stage").innerHTML='<div class="empty" style="color:#bbb">Este navegador no soporta WebGL2</div>';return}
+/* =========================================================
+   Color: LUT .cube -> WebGL (visor interactivo y miniaturas)
+   ========================================================= */
+function parseCube(t){let n=0;const v=[];for(const line of t.split(/\r?\n/)){const s=line.trim();if(!s||s[0]=="#")continue;if(/^LUT_3D_SIZE/i.test(s)){n=parseInt(s.split(/\s+/)[1]);continue}if(/^[A-Z_]/i.test(s))continue;const p=s.split(/\s+/);if(p.length>=3)v.push(+p[0],+p[1],+p[2],1)}if(!n||v.length!==n*n*n*4)throw Error("El archivo no es una LUT 3D válida");return{n,data:new Float32Array(v)}}
+const lutCache={};
+async function lutOf(look){const k=look.archivo;if(!k)return null;return lutCache[k]||(lutCache[k]=Store.cube(look).then(parseCube).catch(e=>{delete lutCache[k];throw e}))}
+const FS=`#version 300 es
+precision highp float;precision highp sampler3D;in vec2 uv;out vec4 o;uniform sampler2D img;uniform sampler3D lut;uniform float n,amt,split,has;
+void main(){vec3 c=texture(img,uv).rgb;vec3 g=c;if(has>.5){vec3 q=clamp(c,0.,1.)*(n-1.)/n+.5/n;g=mix(c,texture(lut,q).rgb,amt);}o=vec4(uv.x<split?c:g,1);}`;
+function makeGL(cv){const gl=cv.getContext("webgl2",{preserveDrawingBuffer:true});if(!gl)return null;
   const sh=(t,s)=>{const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);return x};
   const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,`#version 300 es
-in vec2 p;out vec2 uv;void main(){uv=p*.5+.5;uv.y=1.-uv.y;gl_Position=vec4(p,0,1);}`));
-  gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,`#version 300 es
-precision highp float;precision highp sampler3D;in vec2 uv;out vec4 o;uniform sampler2D img;uniform sampler3D lut;uniform float n,amt,split,has;
-void main(){vec3 c=texture(img,uv).rgb;vec3 g=c;if(has>.5){vec3 q=clamp(c,0.,1.)*(n-1.)/n+.5/n;g=mix(c,texture(lut,q).rgb,amt);}o=vec4(uv.x<split?c:g,1);}`));
-  gl.linkProgram(pr);gl.useProgram(pr);
+in vec2 p;out vec2 uv;void main(){uv=p*.5+.5;uv.y=1.-uv.y;gl_Position=vec4(p,0,1);}`));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);gl.useProgram(pr);
   const vb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,vb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
   const loc=gl.getAttribLocation(pr,"p");gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
   const U=k=>gl.getUniformLocation(pr,k);
   const ti=gl.createTexture();gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,ti);[gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.LINEAR));[gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE));
   const tl=gl.createTexture();gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_3D,tl);[gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER].forEach(k=>gl.texParameteri(gl.TEXTURE_3D,k,gl.LINEAR));[gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T,gl.TEXTURE_WRAP_R].forEach(k=>gl.texParameteri(gl.TEXTURE_3D,k,gl.CLAMP_TO_EDGE));
   gl.uniform1i(U("img"),0);gl.uniform1i(U("lut"),1);
-  let n=0;const me={};GL=me;
-  const look=()=>V.color.looks[PERF];
-  function draw(){if(GL!==me)return;gl.viewport(0,0,cv.width,cv.height);gl.uniform1f(U("n"),n||1);gl.uniform1f(U("amt"),(look().intensidad??100)/100);gl.uniform1f(U("split"),split);gl.uniform1f(U("has"),n&&look().lut?1:0);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);$("split").style.left=`calc(${split*100}% - 1px)`}
-  function bars(){const f=V.color.barras.formato;const r=f?parseFloat(f):0;const ar=cv.width/cv.height;const h=r>ar?(1-ar/r)/2*100:0;$("barT").style.height=$("barB").style.height=h+"%"}
-  function setImg(im){cv.width=im.naturalWidth;cv.height=im.naturalHeight;gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,ti);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im);bars();draw()}
-  async function useLut(){n=0;draw();const p=look().lut;if(!p)return;try{const l=await loadLut(p);if(GL!==me)return;gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_3D,tl);gl.texImage3D(gl.TEXTURE_3D,0,gl.RGBA16F,l.n,l.n,l.n,0,gl.RGBA,gl.FLOAT,l.data);n=l.n;draw()}catch(e){toast(SERVER?"No pude leer la LUT":"Las LUTs se cargan con el servidor local")}}
-  function loadSrc(url){const im=new Image();im.crossOrigin="anonymous";im.onload=()=>setImg(im);im.src=url}
-  // fuentes: miniaturas de los clips del perfil, o la carta de ejemplo
-  function strip(){const cs=V.material.clips.filter(c=>c.perfil===PERF&&c.thumb&&!c.descartado);
-    $("strip").innerHTML=(cs.length&&SERVER?cs.map((c,i)=>`<button type="button" data-src="${media(abs(c.thumb))}" aria-pressed="${i===0}" title="${esc(c.archivo)}"><img src="${media(abs(c.thumb))}" alt=""></button>`).join(""):`<button type="button" data-src="${CARTA}" aria-pressed="true">Carta D-Log</button>`);
-    $("strip").querySelectorAll("button").forEach(b=>b.onclick=()=>{$("strip").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));loadSrc(b.dataset.src)});
-    loadSrc($("strip").querySelector("button").dataset.src)}
-  function panel(){$("perfSeg").innerHTML=`<div class="seg">${[["dlog","D-Log"],["dlog2","D-Log 2"],["rec709","Rec709"]].map(([k,l])=>`<button type="button" data-p="${k}" aria-pressed="${PERF===k}">${l}</button>`).join("")}</div>`;
-    $("perfSeg").querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{PERF=b.dataset.p;ls.set("perf",PERF);panel();strip();useLut()});
-    const opts=[{name:"Sin LUT",path:""},...LUTS.filter(l=>l.perfil===PERF)];
-    $("luts").innerHTML=opts.map(l=>`<button type="button" class="lut" data-lut="${esc(l.path)}" aria-pressed="${(look().lut||"")===l.path}"><i></i><span>${l.name}</span><small>${esc(l.path.split("/").pop())}</small></button>`).join("");
-    $("luts").querySelectorAll("[data-lut]").forEach(b=>b.onclick=()=>{look().lut=b.dataset.lut;save();renderNav();panel();useLut()});
-    $("amt").value=look().intensidad??100;$("pct").textContent=$("amt").value+"%"}
-  $("amt").oninput=e=>{look().intensidad=+e.target.value;$("pct").textContent=e.target.value+"%";save();draw()};
+  let n=0;
+  return{
+    setImage(im){cv.width=im.naturalWidth||im.width;cv.height=im.naturalHeight||im.height;gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,ti);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im)},
+    setLut(l){if(!l){n=0;return}gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_3D,tl);gl.texImage3D(gl.TEXTURE_3D,0,gl.RGBA16F,l.n,l.n,l.n,0,gl.RGBA,gl.FLOAT,l.data);n=l.n},
+    draw(amt,split){gl.viewport(0,0,cv.width,cv.height);gl.uniform1f(U("n"),n||1);gl.uniform1f(U("amt"),amt);gl.uniform1f(U("split"),split);gl.uniform1f(U("has"),n?1:0);gl.drawArrays(gl.TRIANGLE_STRIP,0,4)}}}
+function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.crossOrigin="anonymous";im.onload=()=>res(im);im.onerror=()=>rej(Error("No pude abrir la imagen"));im.src=src})}
+// miniatura graduada (para fotos LOG o para looks sin foto)
+let thumbGL=null;const thumbCache={};
+async function gradedThumb(src,look,amt,maxW=720){const key=src+"|"+look.archivo+"|"+amt;if(thumbCache[key])return thumbCache[key];
+  return thumbCache[key]=(async()=>{const [im,l]=await Promise.all([loadImg(src),lutOf(look)]);
+    const c=document.createElement("canvas");const s=Math.min(1,maxW/(im.naturalWidth||1));const w=Math.round(im.naturalWidth*s),h=Math.round(im.naturalHeight*s);
+    const tmp=document.createElement("canvas");tmp.width=w;tmp.height=h;tmp.getContext("2d").drawImage(im,0,0,w,h);
+    thumbGL??=(()=>{const cv=document.createElement("canvas");return{cv,g:makeGL(cv)}})();if(!thumbGL.g)return src;
+    thumbGL.g.setImage(tmp);thumbGL.g.setLut(l);thumbGL.g.draw(amt/100,0);c.width=w;c.height=h;c.getContext("2d").drawImage(thumbGL.cv,0,0);return c.toDataURL("image/jpeg",.86)})().catch(()=>null)}
+// imagen que se muestra en la tarjeta del look
+async function lookCover(look){if(look.foto&&!look.foto_antes)return Store.img(look.foto);if(look.foto)return Store.img(look.foto);return gradedThumb(CARTA,look,look.intensidad??100)}
+async function fillCovers(root){const els=[...root.querySelectorAll("[data-cover]")];els.forEach(el=>{const l=PERFIL.looks.find(x=>x.id===el.dataset.cover);if(l&&!l.foto)lutOf(l).catch(()=>{})});for(const el of els){const look=PERFIL.looks.find(l=>l.id===el.dataset.cover);if(!look)continue;
+  const src=await lookCover(look);if(src&&el.isConnected){el.innerHTML=`<img class="after" src="${src}" alt="">${look.foto_antes&&el.closest(".icard")?`<img class="before" src="${Store.img(look.foto_antes)}" alt="">`:""}`}}}
+
+/* =========================================================
+   Estado de la app
+   ========================================================= */
+let PERFILES=[], PERFIL=null, VIEW="inicio", V=null, TAB="material", PROYECTOS=[], LOOKFILTER="todos";
+const DEFAULT_VLOG=()=>({version:1,perfil:PERFIL?.id||"",titulo:"",carpeta:"",fecha:new Date().toISOString().slice(0,10),material:{clips:[]},
+  historia:{teaser:{activo:true,duracion_s:20},capitulos_lugar_hora:true,notas:"",bloques:[]},
+  cortes:{silencio_max_s:.25,muletillas:true,correcciones:true,punch_in:true,agresividad:"normal"},
+  color:{looks:Object.fromEntries(CAMS.map(([k])=>{const l=PERFIL?.looks.find(x=>x.id===PERFIL.predeterminados?.[k]);return[k,{look_id:l?.id||"",lut:l?.archivo||"",intensidad:l?.intensidad??100}]})),barras:structuredClone(PERFIL?.ajustes?.barras||{formato:"2.22:1",donde:"montajes"})},
+  audio:{fuente_voz:"auto",reducir_ruido:true,ambiente_montajes_db:-18},
+  musica:{temas:[],en_charla:"nada",fade_s:4,corte_en_beat:true,volumen_montaje_db:-10},
+  textos:{subtitulos:true,titulo_episodio:{activo:true,numero:"1",texto:""},lugar_hora:true},
+  exportar:{resolucion:"1080p",lufs:-14,preview:true},revision:{notas:[]},estado:{paso:"",versiones:[]}});
+const merge=(a,b)=>{if(Array.isArray(a)||typeof a!=="object"||a===null)return b===undefined?a:b;const o={...a};for(const k in b||{})o[k]=k in a?merge(a[k],b[k]):b[k];return o};
+
+function setPerfil(p){PERFIL=p;ls.set("perfil",p.id);
+  const a=$("railAv");a.style.background=p.color||"var(--accent)";a.innerHTML=p.foto?`<img src="${Store.img(p.foto)}" alt="">`:esc((p.nombre||"?")[0].toUpperCase())}
+function avatar(p,cls=""){return `<span class="av ${cls}" style="background:${esc(p.color||"var(--accent)")}">${p.foto?`<img src="${Store.img(p.foto)}" alt="">`:esc((p.nombre||"?")[0].toUpperCase())}</span>`}
+function go(view,opts={}){VIEW=view;if(opts.tab)TAB=opts.tab;ls.set("view",view==="editor"?"editor":view);
+  document.querySelectorAll(".rb").forEach(b=>b.setAttribute("aria-current",b.dataset.go===view||(view==="editor"&&b.dataset.go==="proyectos")?"page":"false"));
+  $("app").classList.toggle("in-editor",view==="editor");render();$("view").scrollTop=0;window.scrollTo(0,0)}
+document.querySelectorAll(".rb").forEach(b=>b.onclick=()=>go(b.dataset.go));
+$("railAv").onclick=()=>perfilPop();
+function connHTML(){return `<span class="conn ${SERVER&&CLAUDE?"on":""}"><i></i>${!SERVER?"Vista previa":!CLAUDE?"Sin Claude Code":"Claude Code conectado"}</span>`}
+async function render(){stopViewer();const v=$("view");if(VIEW==="editor"&&!V)VIEW="inicio";
+  if(VIEW==="editor"&&V){v.innerHTML=editorHTML();wireEditor(v);return}
+  v.innerHTML=`<div class="wrap">${await PAGES[VIEW]()}</div>`;PAGE_AFTER[VIEW]?.(v);fillCovers(v)}
+
+/* =========================================================
+   Páginas
+   ========================================================= */
+function lookCard(l,opts={}){const def=Object.entries(PERFIL.predeterminados||{}).filter(([k,v])=>v===l.id).map(([k])=>camName(k));
+  return `<button type="button" class="icard ${opts.sel?"sel":""}" data-look="${esc(l.id)}"><div class="img" data-cover="${esc(l.id)}"><span class="noimg">cargando…</span></div><div class="shade"></div>
+   <div class="badges"><span class="pill">${camName(l.perfil_camara)}</span>${def.length?`<span class="pill a">Predeterminado</span>`:""}</div>
+   <div class="meta"><b>${esc(l.nombre)}</b><span>${l.intensidad??100}%${l.foto?"":" · sin foto de ejemplo"}</span></div></button>`}
+function addLookCard(){return `<button type="button" class="icard add" data-newlook><div class="plus"><i>+</i>Nuevo look<span class="note">Subí un .cube y una foto</span></div></button>`}
+function projCard(p){return `<button type="button" class="icard pcard" data-proj="${esc(p.carpeta)}" ${p.disponible?"":"aria-disabled=true"}>
+  <div class="img">${p.thumb&&SERVER?`<img class="after" src="${Store.media(p.thumb)}" alt="">`:`<span class="noimg">${p.disponible?"sin miniatura":"carpeta no conectada"}</span>`}</div>
+  <div class="info"><b>${esc(p.titulo||p.carpeta.split("/").pop())}</b><div class="row"><span class="pill">${esc(p.fecha||"")}</span>${p.versiones?`<span class="pill o">${p.versiones} versión${p.versiones>1?"es":""}</span>`:`<span class="pill a">${p.clips?p.clips+" clips":"nuevo"}</span>`}</div></div></button>`}
+
+const PAGES={
+async inicio(){PROYECTOS=await Store.proyectos(PERFIL).catch(()=>[]);const def=PERFIL.looks.find(l=>l.id===PERFIL.predeterminados?.dlog)||PERFIL.looks[0];
+ return `<div class="topbar"><span class="hello">Hola, ${esc(PERFIL.nombre)}</span>${connHTML()}</div>
+ <section class="hero"><div class="eyebrow">Editor de vlogs con Claude Code</div><h1>¿Qué vlog <em>editamos</em> hoy?</h1>
+  <form class="composer" id="composer"><input class="big" type="text" id="cTitulo" placeholder="Título del vlog. Ej: Un día cerrando clientes en Madrid" aria-label="Título del vlog" autocomplete="off">
+   <div class="cbar"><label class="folder">${icon.folder}<input type="text" id="cCarpeta" placeholder="Carpeta del día: /Volumes/Disco/Vlogs/2026-10-26" aria-label="Carpeta del día"></label>
+    ${def?`<button type="button" class="lookpick" data-golooks><span data-cover="${esc(def.id)}" class="ph" style="display:block;width:30px;height:30px;border-radius:7px;overflow:hidden"></span>${esc(def.nombre)}</button>`:""}
+    <button class="btn accent" type="submit">Crear ${icon.arrow}</button></div></form>
+  <div class="steps3"><div><b>1 · Cargá</b>El título y la carpeta con los clips en orden.</div><div><b>2 · Elegí</b>Look, música y textos en cada paso.</div><div><b>3 · Claude edita</b>En tu Mac, y te muestra el avance.</div></div></section>
+ <section style="display:grid;gap:14px"><div class="sechead"><h2 class="sec">Seguí editando</h2><button class="link" type="button" data-goto="proyectos">Ver todos</button></div>
+  ${PROYECTOS.length?`<div class="carousel">${PROYECTOS.slice(0,8).map(projCard).join("")}</div>`:`<div class="empty"><b>Todavía no hay proyectos</b><span>Escribí el título arriba y tocá Crear.</span></div>`}</section>
+ <section style="display:grid;gap:14px"><div class="sechead"><h2 class="sec">Tus looks</h2><button class="link" type="button" data-goto="looks">Biblioteca</button></div>
+  <div class="carousel">${addLookCard()}${PERFIL.looks.map(l=>lookCard(l)).join("")}</div></section>`},
+async proyectos(){PROYECTOS=await Store.proyectos(PERFIL).catch(()=>[]);
+ return `<div class="topbar"><div><div class="eyebrow">${esc(PERFIL.nombre)}</div><h1>Proyectos</h1></div><button class="btn accent" type="button" data-goto="inicio">${icon.plus} Nuevo vlog</button></div>
+ ${PROYECTOS.length?`<div class="cards">${PROYECTOS.map(projCard).join("")}</div>`:`<div class="empty"><b>Sin proyectos</b><span>Cada vlog que crees aparece acá con su miniatura y versiones.</span></div>`}`},
+async looks(){const ls_=PERFIL.looks.filter(l=>LOOKFILTER==="todos"||l.perfil_camara===LOOKFILTER);
+ return `<div class="topbar"><div><div class="eyebrow">Biblioteca de ${esc(PERFIL.nombre)}</div><h1>Looks</h1><p class="lede">Tus LUTs con una foto de ejemplo. Elegí cuál usar por defecto para cada perfil de cámara desde tu Perfil.</p></div><button class="btn accent" type="button" data-newlook>${icon.plus} Nuevo look</button></div>
+ <div class="chips">${[["todos","Todos"],...CAMS].map(([k,l])=>`<button type="button" class="chip" data-filter="${k}" aria-pressed="${LOOKFILTER===k}">${l} <span class="note" style="display:inline">${k==="todos"?PERFIL.looks.length:PERFIL.looks.filter(x=>x.perfil_camara===k).length}</span></button>`).join("")}</div>
+ <div class="cards">${addLookCard()}${ls_.map(l=>lookCard(l)).join("")}</div>`},
+async perfil(){const p=PERFIL;
+ return `<div class="phead"><button type="button" class="av-btn" id="avBtn" style="border:0;background:none;padding:0" aria-label="Cambiar foto">${avatar(p,"lg")}</button>
+  <div style="display:grid;gap:4px;min-width:0;flex:1"><div class="eyebrow">Perfil</div><input class="name" type="text" id="pNombre" value="${esc(p.nombre)}" aria-label="Nombre del perfil"><span class="note">${esc(p.camara||"")} · ${p.looks.length} looks · ${(p.proyectos||[]).length} proyectos</span></div>
+  <button class="btn ghost" type="button" id="switchP">Cambiar de perfil</button></div>
+ <div class="card"><h3>Looks por defecto <small>Se cargan solos en cada vlog nuevo</small></h3><div class="defaults">${CAMS.map(([k,l])=>`<div class="drow"><b>${l}</b><div class="minilooks">${[{id:"",nombre:"Sin LUT"},...p.looks.filter(x=>x.perfil_camara===k)].map(x=>`<button type="button" class="ml" data-def="${k}" data-id="${esc(x.id)}" aria-pressed="${(p.predeterminados?.[k]||"")===x.id}"><div class="im" ${x.id?`data-cover="${esc(x.id)}"`:""}></div><span>${esc(x.nombre)}</span></button>`).join("")}</div></div>`).join("")}</div></div>
+ <div class="grid2"><div class="card"><h3>Cámara</h3><label class="field"><span>Cámara principal</span><input type="text" id="pCam" value="${esc(p.camara||"")}" placeholder="DJI Osmo Pocket 4P"></label><label class="field"><span>Color del perfil</span><input type="color" id="pColor" value="${esc(p.color||"#C96442")}" style="width:56px;height:36px;border:0;background:none;padding:0"></label></div>
+ <div class="card"><h3>Barras por defecto</h3>${segRaw("pb",[[null,"Sin"],["2:1","2:1"],["2.22:1","2.22:1"],["2.39:1","2.39:1"]],p.ajustes?.barras?.formato)}${segRaw("pd",[["todo","Todo el video"],["montajes","Solo montajes"]],p.ajustes?.barras?.donde)}</div></div>`}
+};
+function segRaw(id,opts,val){return `<div class="seg" data-segraw="${id}">${opts.map(([v,l])=>`<button type="button" data-v='${JSON.stringify(v)}' aria-pressed="${JSON.stringify(val)===JSON.stringify(v)}">${l}</button>`).join("")}</div>`}
+const PAGE_AFTER={
+ inicio(v){common(v);$("composer").onsubmit=e=>{e.preventDefault();crearVlog($("cTitulo").value.trim(),$("cCarpeta").value.trim())};
+  v.querySelector("[data-golooks]")?.addEventListener("click",()=>go("perfil"))},
+ proyectos(v){common(v)},
+ looks(v){common(v);v.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{LOOKFILTER=b.dataset.filter;render()})},
+ perfil(v){const p=PERFIL;let t;const savep=()=>{clearTimeout(t);t=setTimeout(async()=>{PERFIL=await Store.savePerfil(p);setPerfil(PERFIL)},500)};
+  $("pNombre").oninput=e=>{p.nombre=e.target.value;savep()};$("pCam").oninput=e=>{p.camara=e.target.value;savep()};$("pColor").oninput=e=>{p.color=e.target.value;setPerfil(p);savep()};
+  v.querySelectorAll("[data-def]").forEach(b=>b.onclick=async()=>{p.predeterminados??={};p.predeterminados[b.dataset.def]=b.dataset.id||null;PERFIL=await Store.savePerfil(p);render()});
+  v.querySelectorAll("[data-segraw]").forEach(sg=>sg.querySelectorAll("button").forEach(b=>b.onclick=async()=>{p.ajustes??={};p.ajustes.barras??={};p.ajustes.barras[sg.dataset.segraw==="pb"?"formato":"donde"]=JSON.parse(b.dataset.v);PERFIL=await Store.savePerfil(p);render()}));
+  $("avBtn").onclick=()=>pickImage(async url=>{PERFIL=await Store.savePerfil(p,await shrink(url,400));setPerfil(PERFIL);render()});
+  $("switchP").onclick=perfilPop}
+};
+function common(v){v.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>go(b.dataset.goto));
+  v.querySelectorAll("[data-newlook]").forEach(b=>b.onclick=()=>lookModal(null));
+  v.querySelectorAll("[data-look]").forEach(b=>b.onclick=()=>lookModal(PERFIL.looks.find(l=>l.id===b.dataset.look)));
+  v.querySelectorAll("[data-proj]").forEach(b=>b.onclick=()=>abrirProyecto(b.dataset.proj))}
+
+/* ---------- archivos ---------- */
+function pickImage(cb){const f=$("fileImg");f.value="";f.onchange=()=>{const x=f.files[0];if(!x)return;const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(x)};f.click()}
+function pickCube(cb){const f=$("fileCube");f.value="";f.onchange=async()=>{const x=f.files[0];if(x)cb(await x.text(),x.name)};f.click()}
+async function shrink(dataUrl,maxW=1600){const im=await loadImg(dataUrl);const s=Math.min(1,maxW/im.naturalWidth);if(s===1&&dataUrl.startsWith("data:image/jpeg"))return dataUrl;
+  const c=document.createElement("canvas");c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.88)}
+
+/* ---------- perfiles ---------- */
+function perfilPop(){closePop();const el=document.createElement("div");el.className="pop";el.id="pop";
+  el.innerHTML=`<div class="eyebrow" style="padding:4px 6px">Perfiles</div><div class="plist">${PERFILES.map(p=>`<button type="button" class="prow" data-pid="${esc(p.id)}" aria-current="${p.id===PERFIL.id}">${avatar(p)}<span>${esc(p.nombre)}</span><small class="note">${p.looks.length} looks</small></button>`).join("")}</div>
+   <div class="row" style="padding-top:4px"><input type="text" id="newP" placeholder="Nombre del perfil nuevo" style="flex:1"><button class="btn" type="button" id="addP">Crear</button></div>`;
+  document.body.appendChild(el);
+  el.querySelectorAll("[data-pid]").forEach(b=>b.onclick=()=>{setPerfil(PERFILES.find(p=>p.id===b.dataset.pid));closePop();go(VIEW==="editor"?"inicio":VIEW)});
+  $("addP").onclick=async()=>{const n=$("newP").value.trim();if(!n)return $("newP").focus();
+    const p=await Store.savePerfil({nombre:n,color:["#7A68D8","#4E8A5E","#C96442","#2F6FB0","#B7791F"][PERFILES.length%5],foto:null,camara:"",looks:[],predeterminados:{},ajustes:{barras:{formato:"2.22:1",donde:"montajes"}},proyectos:[]});
+    PERFILES=await Store.perfiles();setPerfil(PERFILES.find(x=>x.id===p.id)||p);closePop();toast("Perfil creado. Sumá tus looks.");go("looks")};
+  setTimeout(()=>document.addEventListener("pointerdown",outPop),0)}
+function outPop(e){const p=$("pop");if(p&&!p.contains(e.target)&&e.target!==$("railAv"))closePop()}
+function closePop(){$("pop")?.remove();document.removeEventListener("pointerdown",outPop)}
+
+/* ---------- modal de look ---------- */
+function lookModal(look){const nuevo=!look;const L=nuevo?{id:"",nombre:"",perfil_camara:"dlog",intensidad:100,foto:null,foto_antes:null,archivo:""}:structuredClone(look);
+  let cube=null, foto=null, tipo=L.foto_antes?"log":(L.foto?"ref":"log"), fotoSrc=L.foto_antes?Store.img(L.foto_antes):(L.foto?Store.img(L.foto):null), lut=null, split=.5, confirmDel=false;
+  const m=document.createElement("div");m.className="modal";m.id="modal";
+  m.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="${nuevo?"Nuevo look":"Editar look"}">
+   <div class="pv"><div class="stage" id="mStage"><canvas id="mCv"></canvas><div class="split" id="mSplit"></div><span class="stag l">Antes</span><span class="stag r">Después</span></div>
+    <p class="note" style="color:#9a9a9a" id="mHint"></p></div>
+   <div class="form"><h2>${nuevo?"Nuevo look":"Editar look"}<button class="x" type="button" id="mX" aria-label="Cerrar">${icon.x}</button></h2>
+    <div class="drop" id="dCube"><span class="ic">${icon.cube}</span><div><b id="cubeName">${nuevo?"Elegí el archivo .cube":esc(L.archivo.split("/").pop())}</b><span>${nuevo?"Arrastralo acá o tocá para buscarlo":"Tocá para reemplazar la LUT"}</span></div></div>
+    <label class="field"><span>Nombre</span><input type="text" id="mNombre" value="${esc(L.nombre)}" placeholder="Ej: Atardecer cálido"></label>
+    <div class="field"><span>Para clips grabados en</span>${segRaw("mCam",CAMS.map(([k,l])=>[k,l]),L.perfil_camara)}</div>
+    <div class="slider"><div class="top"><span>Intensidad por defecto</span><b id="mPct">${L.intensidad}%</b></div><input type="range" id="mAmt" min="0" max="100" value="${L.intensidad}" aria-label="Intensidad"></div>
+    <div class="drop" id="dFoto"><span class="ic" id="fotoIc">${fotoSrc?`<img src="${fotoSrc}" alt="">`:icon.img}</span><div><b>${fotoSrc?"Cambiar foto de ejemplo":"Foto de ejemplo"}</b><span>Una captura tuya. Es la tapa del look.</span></div></div>
+    <div class="field"><span>La foto es…</span>${segRaw("mTipo",[["log","Sin color (LOG)"],["ref","Ya con el look"]],tipo)}</div>
+    <div class="row" style="justify-content:space-between;margin-top:6px">${nuevo?"<span></span>":`<button class="btn danger" type="button" id="mDel">Quitar del perfil</button>`}<button class="btn accent" type="button" id="mSave">${nuevo?"Guardar look":"Guardar cambios"}</button></div>
+   </div></div>`;
+  document.body.appendChild(m);
+  const g=makeGL($("mCv"));
+  const draw=()=>{if(!g)return;g.draw(tipo==="ref"?0:L.intensidad/100,tipo==="ref"?1:split);$("mSplit").style.left=`calc(${split*100}% - 1px)`;$("mSplit").hidden=tipo==="ref"};
+  const hint=()=>{$("mHint").textContent=tipo==="ref"?"La foto ya tiene el look: se muestra tal cual.":fotoSrc?"Antes y después sobre tu foto. Arrastrá la línea.":"Sin foto: se muestra la carta de color en D-Log."};
+  async function loadImgSrc(){try{const im=await loadImg(fotoSrc||CARTA);g?.setImage(im);draw()}catch(e){}}
+  async function loadLut(){try{lut=cube?parseCube(cube):(L.archivo?await lutOf(L):null);g?.setLut(lut);draw()}catch(e){toast(e.message)}}
+  loadImgSrc();loadLut();hint();
+  const close=()=>m.remove();$("mX").onclick=close;m.onclick=e=>{if(e.target===m)close()};
+  document.addEventListener("keydown",function k(e){if(e.key==="Escape"){close();document.removeEventListener("keydown",k)}});
+  const st=$("mStage");const mv=e=>{const r=st.getBoundingClientRect();split=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));draw()};st.onpointerdown=e=>{st.setPointerCapture(e.pointerId);mv(e)};st.onpointermove=e=>{if(e.buttons)mv(e)};
+  const takeCube=(txt,name)=>{try{parseCube(txt);cube=txt;L.archivo_original=name.replace(/\.cube$/i,"");$("cubeName").textContent=name;if(!$("mNombre").value)$("mNombre").value=name.replace(/\.cube$/i,"").replace(/[_-]+/g," ");loadLut()}catch(e){toast(e.message)}};
+  $("dCube").onclick=()=>pickCube(takeCube);
+  $("dFoto").onclick=()=>pickImage(async url=>{foto=await shrink(url);fotoSrc=foto;$("fotoIc").innerHTML=`<img src="${foto}" alt="">`;hint();loadImgSrc()});
+  for(const d of [$("dCube"),$("dFoto")]){d.ondragover=e=>{e.preventDefault();d.classList.add("on")};d.ondragleave=()=>d.classList.remove("on");
+    d.ondrop=async e=>{e.preventDefault();d.classList.remove("on");const f=e.dataTransfer.files[0];if(!f)return;
+      if(/\.cube$/i.test(f.name))takeCube(await f.text(),f.name);else if(f.type.startsWith("image/")){const r=new FileReader();r.onload=async()=>{foto=await shrink(r.result);fotoSrc=foto;$("fotoIc").innerHTML=`<img src="${foto}" alt="">`;hint();loadImgSrc()};r.readAsDataURL(f)}}}
+  m.querySelectorAll("[data-segraw]").forEach(sg=>sg.querySelectorAll("button").forEach(b=>b.onclick=()=>{sg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));const v=JSON.parse(b.dataset.v);
+    if(sg.dataset.segraw==="mCam")L.perfil_camara=v;else{tipo=v;hint();draw()}}));
+  $("mAmt").oninput=e=>{L.intensidad=+e.target.value;$("mPct").textContent=L.intensidad+"%";draw()};
+  if($("mDel"))$("mDel").onclick=async()=>{if(!confirmDel){confirmDel=true;$("mDel").textContent="¿Seguro? Tocá de nuevo";return}
+    PERFIL=await Store.quitarLook(PERFIL.id,L.id);setPerfil(PERFIL);PERFILES=await Store.perfiles();close();toast("Look quitado del perfil");render()};
+  $("mSave").onclick=async()=>{L.nombre=$("mNombre").value.trim();if(!L.nombre)return $("mNombre").focus();if(nuevo&&!cube)return toast("Elegí el archivo .cube");
+    $("mSave").disabled=true;$("mSave").textContent="Guardando…";
+    try{const files={};if(cube)files.cube=cube;
+      const tmpLook={...L,archivo:"__tmp"+uid()};lutCache[tmpLook.archivo]=Promise.resolve(lut);
+      if(foto){ // foto nueva
+        if(tipo==="log"){files.foto_antes=foto;files.foto=await gradedThumb(foto,tmpLook,L.intensidad,1600)}
+        else{files.foto=foto;L.foto_antes=null}}
+      else if(L.foto){ // foto existente: regenerar la tapa si cambio algo
+        if(tipo==="log"){const raw=L.foto_antes||L.foto;L.foto_antes=raw;files.foto=await gradedThumb(Store.img(raw),tmpLook,L.intensidad,1600)}
+        else if(L.foto_antes){L.foto=L.foto_antes;L.foto_antes=null}}
+      delete lutCache[tmpLook.archivo];
+      Object.keys(files).forEach(k=>files[k]===undefined&&delete files[k]);
+      const r=await Store.saveLook(PERFIL.id,L,files);PERFIL=r.perfil;setPerfil(PERFIL);PERFILES=await Store.perfiles();
+      Object.keys(thumbCache).forEach(k=>delete thumbCache[k]);if(cube)delete lutCache[r.look.archivo];
+      close();toast(nuevo?"Look guardado en "+PERFIL.nombre:"Look actualizado");render()}
+    catch(e){toast(e.message);$("mSave").disabled=false;$("mSave").textContent="Guardar"}}}
+
+/* =========================================================
+   Proyectos y editor
+   ========================================================= */
+async function crearVlog(titulo,carpeta){if(!titulo)return $("cTitulo").focus(),toast("Escribí el título del vlog");
+  if(!carpeta&&SERVER)return $("cCarpeta").focus(),toast("Escribí la ruta de la carpeta del día");
+  V=DEFAULT_VLOG();V.titulo=titulo;V.carpeta=carpeta||("vista-previa/"+uid());
+  if(SERVER){try{const d=await (await fetch("/api/vlog?carpeta="+encodeURIComponent(V.carpeta))).json();if(d.vlog){V=merge(DEFAULT_VLOG(),d.vlog);V.titulo=V.titulo||titulo;toast("Ese vlog ya existía: lo abrí")}}catch(e){}}
+  V.perfil=PERFIL.id;await saveNow();if(!(PERFIL.proyectos||[]).includes(V.carpeta)){PERFIL.proyectos=[V.carpeta,...(PERFIL.proyectos||[])]}
+  ls.set("ultimo",V.carpeta);TAB="material";go("editor")}
+async function abrirProyecto(carpeta){if(SERVER){const d=await (await fetch("/api/vlog?carpeta="+encodeURIComponent(carpeta))).json();if(!d.vlog)return toast("No encuentro esa carpeta. ¿Está conectado el disco?");V=merge(DEFAULT_VLOG(),d.vlog)}
+  else{const b=(ls.get("borradores")||{})[carpeta];if(!b)return;V=merge(DEFAULT_VLOG(),b)}
+  ls.set("ultimo",carpeta);TAB=ls.get("tab")||"material";go("editor")}
+let saveT;
+function save(){clearTimeout(saveT);saveT=setTimeout(saveNow,500)}
+async function saveNow(){clearTimeout(saveT);if(!V)return;
+  if(!SERVER){const all=ls.get("borradores")||{};all[V.carpeta]=V;ls.set("borradores",all);return}
+  try{await post("/api/vlog",{carpeta:V.carpeta,vlog:V})}catch(e){toast(e.message)}}
+function get(path){return path.split(".").reduce((o,k)=>o?.[k],V)}
+function set(path,val){const ks=path.split(".");let o=V;ks.slice(0,-1).forEach(k=>{o[k]??={};o=o[k]});o[ks.at(-1)]=val;save();renderSteps()}
+const FMT={};
+function seg(path,opts){return `<div class="seg" role="group">${opts.map(([v,l])=>`<button type="button" data-seg="${path}" data-v='${JSON.stringify(v)}' aria-pressed="${JSON.stringify(get(path))===JSON.stringify(v)}">${l}</button>`).join("")}</div>`}
+function sw(path,title,sub){return `<label class="sw"><div><b>${title}</b>${sub?`<small>${sub}</small>`:""}</div><input type="checkbox" class="toggle" data-sw="${path}" ${get(path)?"checked":""}></label>`}
+function sl(path,title,min,max,step,fmt){FMT[path]=fmt;const v=get(path);return `<div class="slider"><div class="top"><span>${title}</span><b data-out="${path}">${fmt(v)}</b></div><input type="range" min="${min}" max="${max}" step="${step}" value="${v}" data-sl="${path}" aria-label="${title}"></div>`}
+function fld(path,label,ph){return `<label class="field"><span>${label}</span><input type="text" data-txt="${path}" value="${esc(get(path))}" placeholder="${esc(ph)}"></label>`}
+let onChange=()=>{};
+function wire(root){
+  root.querySelectorAll("[data-seg]").forEach(b=>b.onclick=()=>{set(b.dataset.seg,JSON.parse(b.dataset.v));b.parentNode.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));onChange(b.dataset.seg)});
+  root.querySelectorAll("[data-sw]").forEach(i=>i.onchange=()=>{set(i.dataset.sw,i.checked);onChange(i.dataset.sw)});
+  root.querySelectorAll("[data-sl]").forEach(i=>{const f=FMT[i.dataset.sl];i.oninput=()=>{const v=+i.value;root.querySelector(`[data-out="${i.dataset.sl}"]`).textContent=f(v);set(i.dataset.sl,v);onChange(i.dataset.sl)}});
+  root.querySelectorAll("[data-txt]").forEach(i=>i.oninput=()=>{set(i.dataset.txt,i.value);onChange(i.dataset.txt)})}
+const abs=rel=>rel&&rel.startsWith("/")?rel:(V.carpeta?V.carpeta.replace(/\/$/,"")+"/"+rel:rel);
+
+const STEPS=[
+ ["material","Material",()=>V.material.clips.length>0],["historia","Historia",()=>V.historia.bloques?.length>0],["cortes","Cortes",()=>true],
+ ["color","Color",()=>Object.values(V.color.looks).some(l=>l.lut)],["audio","Audio",()=>true],["musica","Música",()=>V.musica.temas.length>0],
+ ["textos","Textos",()=>true],["exportar","Exportar",()=>V.estado.versiones?.length>0]];
+function editorHTML(){return `<div class="editor"><div class="ecol" id="ecol">
+  <div class="ehead"><div class="etitle"><button class="back" type="button" id="back" aria-label="Volver a proyectos">${icon.back}</button><b>${esc(V.titulo||"Vlog sin título")}</b><span style="margin-left:auto">${connHTML()}</span><button class="btn mc-top" type="button" id="openC" style="background:var(--violet);color:#fff">Claude</button></div>
+   <div class="stepper" id="stepper"></div></div>
+  <div class="epage" id="epage"></div></div>
+ <aside class="claude" id="claude"><div class="ch"><h3><span class="spark" aria-hidden="true">C</span>Claude<button class="btn ghost mclose" type="button" id="mclose">Cerrar</button></h3><span class="note" id="cstatus"></span></div>
+  <div class="feed" id="feed" aria-live="polite"></div>
+  <div class="cf"><div class="quick" id="quick"></div><textarea id="pedido" placeholder="Pedile algo a Claude. Ej: editá el vlog completo y exportá una preview."></textarea>
+   <button class="btn accent go" id="goC" type="button">Editar con Claude</button><button class="btn ghost" id="stopC" type="button" hidden>Parar</button></div></aside></div>
+ <div class="mbar"><button class="btn ghost" type="button" id="mprev">‹</button><button class="btn" type="button" id="mnext"><span>Siguiente</span></button><button class="btn mc" type="button" id="mclaude">Claude</button></div>`}
+function renderSteps(){const s=$("stepper");if(!s)return;s.innerHTML=STEPS.map(([k,l,ok],i)=>`<button class="st" type="button" data-step="${k}" ${TAB===k?'aria-current="page"':""}><span class="n">${i+1}</span>${l}<i class="dot ${ok()?"ok":"pend"}"></i></button>`).join("");
+  s.querySelectorAll("[data-step]").forEach(b=>b.onclick=()=>step(b.dataset.step));s.querySelector('[aria-current="page"]')?.scrollIntoView({block:"nearest",inline:"center"});
+  const i=STEPS.findIndex(t=>t[0]===TAB);if($("mprev")){$("mprev").disabled=i<=0;$("mnext").firstElementChild.textContent=i<STEPS.length-1?"Siguiente: "+STEPS[i+1][1]:"Listo · abrir Claude"}}
+function step(k){TAB=k;ls.set("tab",k);renderSteps();renderStep();$("ecol").scrollTop=0;window.scrollTo(0,0)}
+function head(i,title,lede){return `<div><div class="eyebrow">Paso ${i} de 8</div><h1>${title}</h1>${lede?`<p class="lede">${lede}</p>`:""}</div>`}
+function renderStep(){onChange=()=>{};stopViewer();const P=$("epage");P.innerHTML=STEP_VIEWS[TAB]();wire(P);STEP_AFTER[TAB]?.(P)}
+function wireEditor(v){renderSteps();renderStep();$("back").onclick=()=>{saveNow();go("proyectos")};
+  const sheet=o=>$("claude").classList.toggle("open",o);$("mclaude").onclick=()=>sheet(true);$("openC").onclick=()=>sheet(true);$("mclose").onclick=()=>sheet(false);
+  $("mprev").onclick=()=>{const i=STEPS.findIndex(t=>t[0]===TAB);if(i>0)step(STEPS[i-1][0])};
+  $("mnext").onclick=()=>{const i=STEPS.findIndex(t=>t[0]===TAB);if(i<STEPS.length-1)step(STEPS[i+1][0]);else sheet(true)};
+  claudeInit()}
+
+const STEP_VIEWS={
+material:()=>`${head(1,"Material","Los clips en el orden de la carpeta. Corregí el perfil si se detectó mal y marcá lo que no va.")}
+ <div class="card"><div class="grid2">${fld("titulo","Título","Un día cerrando clientes en Madrid")}${fld("carpeta","Carpeta del día","/Volumes/Disco/Vlogs/2026-10-26")}</div>
+  <div class="row"><button class="btn accent" type="button" id="scan">${V.material.clips.length?"Volver a escanear":"Escanear carpeta"}</button><span class="note">${V.material.clips.length?`${V.material.clips.length} clips · ${mmss(V.material.clips.reduce((a,c)=>a+(c.descartado?0:c.duracion||0),0))} útiles`:SERVER?"Lee los clips en orden y los de broll/.":"En la vista previa no se pueden leer carpetas."}</span></div></div>
+ ${V.material.clips.length?`<div class="clips">${V.material.clips.map((c,i)=>`<div class="clip ${c.descartado?"off":""}"><div class="thumb">${c.thumb&&SERVER?`<img src="${Store.media(abs(c.thumb))}" alt="" loading="lazy">`:esc(c.archivo)}<span class="ord">${String(c.orden??i+1).padStart(2,"0")}</span><span class="dur">${mmss(c.duracion)}</span></div>
+   <div class="body"><div class="name" title="${esc(c.archivo)}">${esc(c.archivo)}</div><select data-clip="${i}" data-k="perfil" aria-label="Perfil">${[...CAMS,["desconocido","¿Perfil?"]].map(([v,l])=>`<option value="${v}" ${c.perfil===v?"selected":""}>${l}</option>`).join("")}</select>
+    <div class="acts"><button class="mini" type="button" data-clip="${i}" data-k="broll" aria-pressed="${!!c.broll}">B-roll</button><button class="mini" type="button" data-clip="${i}" data-k="descartado" aria-pressed="${!!c.descartado}">Descartar</button></div></div></div>`).join("")}</div>`
+ :`<div class="empty"><b>Todavía no hay clips</b><span>Escaneá la carpeta del día. Los clips de <code>broll/</code> se marcan solos.</span></div>`}`,
+historia:()=>{const b=V.historia.bloques||[];const tot=b.reduce((a,x)=>a+Math.max(0,(x.salida||0)-(x.entrada||0)),0)||1;const col={teaser:"var(--accent)",montaje:"var(--violet)",charla:"#8a8880",cierre:"var(--ok)"};
+ return `${head(2,"Historia","Claude transcribe todo y arma la estructura según el título: avance de apertura, bloques de charla, montajes entre bloques y cierre.")}
+ <div class="grid2"><div class="card"><h3>Apertura</h3>${sw("historia.teaser.activo","Avance al principio","Lo mejor del vlog en 15–30 s, con música y cortes en el beat")}${sl("historia.teaser.duracion_s","Duración del avance",10,40,1,v=>v+" s")}</div>
+ <div class="card"><h3>Capítulos</h3>${sw("historia.capitulos_lugar_hora","Lugar y hora entre bloques","“Bali · 11:00 AM” sobre un plano general")}</div></div>
+ <div class="card"><h3>Qué es lo importante <small>Claude lo usa para elegir</small></h3><textarea data-txt="historia.notas" placeholder="Ej: el gancho es cuando cierro el cliente en el auto.">${esc(V.historia.notas)}</textarea></div>
+ <div class="card"><h3>Estructura <small>${b.length?mmss(tot):"la arma Claude"}</small></h3>
+ ${b.length?`<div class="timeline">${b.map(x=>`<div style="flex:${Math.max(.5,(x.salida-x.entrada)/tot*100)};background:${col[x.tipo]||"#888"}" title="${esc(x.tipo)} · ${esc(x.resumen||x.clip)}">${x.tipo==="charla"||(x.salida-x.entrada)/tot<.08?"":esc(x.tipo)}</div>`).join("")}</div>
+  <div class="blocks">${b.map(x=>`<div class="block"><span class="k ${esc(x.tipo)}">${esc(x.tipo)}</span><span>${esc(x.resumen||x.clip)}</span><span class="pill">${mmss(x.salida-x.entrada)}</span></div>`).join("")}</div>`
+ :`<div class="empty"><b>Sin estructura todavía</b><span>Pedile a Claude que la arme: transcribe y propone los bloques acá.</span><button class="btn ghost" type="button" data-ask="Transcribí y armá la historia (sin exportar todavía).">Armá la historia</button></div>`}</div>`},
+cortes:()=>`${head(3,"Cortes","Como en tus referencias: casi sin pausas entre frases, sin muletillas y sin arranques en falso.")}
+ <div class="grid2"><div class="card"><h3>Silencios</h3>${sl("cortes.silencio_max_s","Pausa máxima entre frases",.1,.6,.05,v=>v.toFixed(2)+" s")}<p class="note">Guillermo y Brez dejan menos de 0,25 s.</p><div class="field"><span>Intensidad general</span>${seg("cortes.agresividad",[["suave","Suave"],["normal","Normal"],["fuerte","Fuerte"]])}</div></div>
+ <div class="card"><h3>Limpieza</h3>${sw("cortes.muletillas","Sacar muletillas","“eh”, “este”, “o sea” sueltos")}${sw("cortes.correcciones","Sacar correcciones","Cuando arrancás una frase y la repetís mejor")}${sw("cortes.punch_in","Alternar encuadre","Zoom suave entre jump cuts")}</div></div>`,
+color:()=>`${head(4,"Color","Elegí uno de tus looks para cada perfil de cámara y ajustá la intensidad mirando tus clips.")}
+ <div class="card"><div class="stage" id="stage"><canvas id="cv"></canvas><div class="bar t" id="barT"></div><div class="bar b" id="barB"></div><div class="split" id="split"></div><span class="stag l">Antes</span><span class="stag r">Después</span></div><div class="strip" id="strip"></div></div>
+ <div class="card"><h3>Perfil de cámara</h3><div id="camSeg"></div><div class="carousel" id="lookPick"></div></div>
+ <div class="grid2"><div class="card"><h3>Intensidad</h3><div class="bigpct" id="pct"></div><input type="range" id="amt" min="0" max="100" aria-label="Intensidad"></div>
+ <div class="card"><h3>Barras</h3>${seg("color.barras.formato",[[null,"Sin"],["2:1","2:1"],["2.22:1","2.22:1"],["2.39:1","2.39:1"]])}${seg("color.barras.donde",[["todo","Todo el video"],["montajes","Solo montajes"]])}</div></div>`,
+audio:()=>`${head(5,"Audio","La voz manda. Claude la limpia y la empareja entre clips para que no salte de volumen.")}
+ <div class="grid2"><div class="card"><h3>Voz</h3><div class="field"><span>Fuente de la voz</span>${seg("audio.fuente_voz",[["auto","Automático"],["mic","Micrófono"],["camara","Cámara"]])}</div>${sw("audio.reducir_ruido","Reducir ruido y viento","Suave, sin que la voz suene a lata")}</div>
+ <div class="card"><h3>Ambiente</h3>${sl("audio.ambiente_montajes_db","Sonido ambiente en montajes",-40,0,1,v=>v+" dB")}<p class="note">Debajo de la música, para que se sienta el lugar.</p></div></div>`,
+musica:()=>`${head(6,"Música","Montaje con música fuerte y cortes en el beat; charla limpia.")}
+ <div class="card"><h3>Temas <small>instrumentales que bajaste</small></h3><div class="blocks">${V.musica.temas.map((t,i)=>`<div class="block"><select data-tema="${i}" aria-label="Uso">${[["teaser","Avance"],["montajes","Montajes"],["cierre","Cierre"]].map(([v,l])=>`<option value="${v}" ${t.uso===v?"selected":""}>${l}</option>`).join("")}</select><span style="font:12.5px var(--f-mono);overflow-wrap:anywhere">${esc(t.archivo)}</span><button class="mini" type="button" data-deltema="${i}">Quitar</button></div>`).join("")||`<p class="note">Todavía no agregaste temas.</p>`}</div>
+  <div class="row"><input type="text" id="temaPath" placeholder="/Volumes/Disco/Musica/passionfruit_instrumental.mp3" style="flex:1;min-width:200px"><button class="btn ghost" type="button" id="addTema">Agregar</button></div></div>
+ <div class="grid2"><div class="card"><h3>En la charla</h3>${seg("musica.en_charla",[["nada","Sin música"],["baja","Muy baja"]])}${sl("musica.fade_s","Fade al volver a hablar",1,8,.5,v=>v+" s")}</div>
+ <div class="card"><h3>En los montajes</h3>${sw("musica.corte_en_beat","Cortar en el beat","Planos de 1, 2, 4 u 8 beats")}${sl("musica.volumen_montaje_db","Volumen de la música",-24,-4,1,v=>v+" dB")}</div></div>`,
+textos:()=>`${head(7,"Textos","Discretos como en tus referencias: subtítulos chicos, un título de episodio fuerte y el lugar como separador.")}
+ <div class="card"><div class="frames" id="frame">${frameHTML()}</div></div>
+ <div class="grid2"><div class="card"><h3>Título de episodio</h3>${sw("textos.titulo_episodio.activo","Mostrar título al principio","Rojo neón condensado")}<div class="grid2" style="grid-template-columns:90px minmax(0,1fr)">${fld("textos.titulo_episodio.numero","Número","2")}${fld("textos.titulo_episodio.texto","Texto","CONSTRUYENDO")}</div></div>
+ <div class="card"><h3>En pantalla</h3>${sw("textos.subtitulos","Subtítulos","Chicos, blancos, sin caja")}${sw("textos.lugar_hora","Lugar y hora","En los separadores de capítulo")}</div></div>`,
+exportar:()=>{const vs=V.estado.versiones||[];return `${head(8,"Exportar y revisar","Primero una preview liviana; cuando esté, la final. Las versiones nunca se pisan.")}
+ <div class="grid2"><div class="card"><h3>Formato</h3><div class="field"><span>Resolución</span>${seg("exportar.resolucion",[["1080p","1080p"],["4k","4K"]])}</div>${sw("exportar.preview","Empezar con preview","Más rápida, para revisar cortes y música")}<p class="note">16:9 · audio a ${V.exportar.lufs} LUFS</p></div>
+ <div class="card"><h3>Versiones</h3>${vs.length?`<div class="vers">${vs.map((v,i)=>`<div class="ver"><span><b>${esc(v.archivo.split("/").pop())}</b> <span class="pill ${v.preview?"v":"o"}">${v.preview?"preview":"final"}</span><br><small class="note">${esc((v.fecha||"").replace("T"," ").slice(0,16))}${v.duracion?" · "+mmss(v.duracion):""}</small></span><button class="mini" type="button" data-play="${i}">Ver</button></div>`).join("")}</div><video id="player" controls hidden playsinline></video>`:`<div class="empty"><b>Sin versiones todavía</b><span>Tocá Editar con Claude para sacar la primera.</span></div>`}</div></div>
+ <div class="card"><h3>Notas de revisión <small>Claude las aplica en la próxima versión</small></h3><div class="notes">${(V.revision.notas||[]).map((n,i)=>`<div class="notei"><input type="text" value="${esc(n.tc)}" data-nota="${i}" data-k="tc" aria-label="Minuto"><input type="text" value="${esc(n.texto)}" data-nota="${i}" data-k="texto" aria-label="Nota"><span class="pill ${n.hecha?"o":"a"}">${n.hecha?"hecha":"pendiente"}</span><button class="mini" type="button" data-delnota="${i}">Quitar</button></div>`).join("")}</div>
+  <div class="row"><button class="btn ghost" type="button" id="addNota">Agregar nota</button><button class="btn ghost" type="button" data-ask="Aplicá las notas de revisión pendientes y exportá una versión nueva.">Aplicar notas con Claude</button></div></div>`}
+};
+function frameHTML(){const t=V.textos.titulo_episodio;return `<div class="frame"><small class="cap">Apertura</small>${t.activo?`<div class="neon"><small>#${esc(t.numero)}</small>${esc(t.texto||V.titulo||"Título")}</div>`:""}</div><div class="frame talk"><small class="cap">Charla y separadores</small>${V.textos.lugar_hora?`<div class="place"><span>Madrid</span><span>11:00 AM</span></div>`:""}${V.textos.subtitulos?`<div class="sub">y ahí fue cuando cerramos el primer cliente</div>`:""}</div>`}
+const STEP_AFTER={
+material(P){$("scan").onclick=async()=>{if(!SERVER)return toast("Escanear necesita la app abierta en tu Mac");$("scan").disabled=true;$("scan").textContent="Escaneando…";await saveNow();
+  try{const d=await post("/api/escanear",{carpeta:V.carpeta});V=merge(DEFAULT_VLOG(),d.vlog);toast(V.material.clips.length+" clips")}catch(e){toast(e.message)}renderSteps();renderStep()};
+  P.querySelectorAll("[data-clip]").forEach(el=>{const c=V.material.clips[el.dataset.clip],k=el.dataset.k;if(el.tagName==="SELECT")el.onchange=()=>{c[k]=el.value;save();renderSteps()};else el.onclick=()=>{c[k]=!c[k];save();renderStep()}});
+  onChange=k=>{if(k==="titulo")document.querySelector(".etitle b").textContent=V.titulo||"Vlog sin título"}},
+historia(P){wireAsk(P)},
+musica(P){$("addTema").onclick=()=>{const v=$("temaPath").value.trim();if(!v)return;V.musica.temas.push({archivo:v,uso:"montajes"});save();renderSteps();renderStep()};
+  P.querySelectorAll("[data-tema]").forEach(s=>s.onchange=()=>{V.musica.temas[s.dataset.tema].uso=s.value;save()});P.querySelectorAll("[data-deltema]").forEach(b=>b.onclick=()=>{V.musica.temas.splice(b.dataset.deltema,1);save();renderSteps();renderStep()})},
+textos(P){onChange=()=>{$("frame").innerHTML=frameHTML()}},
+exportar(P){wireAsk(P);$("addNota").onclick=()=>{V.revision.notas.push({tc:"00:00",texto:"",hecha:false});save();renderStep()};
+  P.querySelectorAll("[data-nota]").forEach(i=>i.oninput=()=>{V.revision.notas[i.dataset.nota][i.dataset.k]=i.value;save()});P.querySelectorAll("[data-delnota]").forEach(b=>b.onclick=()=>{V.revision.notas.splice(b.dataset.delnota,1);save();renderStep()});
+  P.querySelectorAll("[data-play]").forEach(b=>b.onclick=()=>{const v=$("player");v.hidden=false;v.src=Store.media(abs(V.estado.versiones[b.dataset.play].archivo));v.play().catch(()=>{})})},
+color(P){colorStep(P)}};
+function wireAsk(P){P.querySelectorAll("[data-ask]").forEach(b=>b.onclick=()=>{$("pedido").value=b.dataset.ask;$("claude").classList.add("open");runClaude()})}
+
+/* ---------- paso Color ---------- */
+let VIEWER=null;let CAM=ls.get("cam")||"dlog";
+function stopViewer(){VIEWER=null}
+function colorStep(P){const g=makeGL($("cv"));if(!g){$("stage").innerHTML='<div class="empty" style="color:#bbb">Este navegador no soporta WebGL2</div>';return}
+  const me={};VIEWER=me;let split=.5;const cv=$("cv");
+  const entry=()=>V.color.looks[CAM]??={look_id:"",lut:"",intensidad:100};
+  const draw=()=>{if(VIEWER!==me)return;g.draw((entry().intensidad??100)/100,split);$("split").style.left=`calc(${split*100}% - 1px)`};
+  const bars=()=>{const f=V.color.barras.formato;const r=f?parseFloat(f):0;const ar=cv.width/cv.height;const h=r>ar?(1-ar/r)/2*100:0;$("barT").style.height=$("barB").style.height=h+"%"};
+  async function useLut(){g.setLut(null);draw();const e=entry();const look=PERFIL.looks.find(l=>l.id===e.look_id)||(e.lut?{archivo:e.lut}:null);if(!look)return;
+    try{const l=await lutOf(look);if(VIEWER===me){g.setLut(l);draw()}}catch(err){toast(err.message)}}
+  async function src(u){try{const im=await loadImg(u);if(VIEWER!==me)return;g.setImage(im);bars();draw()}catch(e){}}
+  function strip(){const cs=V.material.clips.filter(c=>c.perfil===CAM&&c.thumb&&!c.descartado);
+    const items=cs.length&&SERVER?cs.map(c=>[Store.media(abs(c.thumb)),c.archivo]):[[CARTA,"Carta D-Log"]];
+    $("strip").innerHTML=items.map(([u,n],i)=>`<button type="button" data-src="${esc(u)}" aria-pressed="${i===0}" title="${esc(n)}">${u===CARTA?"Carta D-Log":`<img src="${esc(u)}" alt="">`}</button>`).join("");
+    $("strip").querySelectorAll("button").forEach(b=>b.onclick=()=>{$("strip").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));src(b.dataset.src)});src(items[0][0])}
+  function panel(){$("camSeg").innerHTML=`<div class="seg">${CAMS.map(([k,l])=>`<button type="button" data-cam="${k}" aria-pressed="${CAM===k}">${l}</button>`).join("")}</div>`;
+    $("camSeg").querySelectorAll("[data-cam]").forEach(b=>b.onclick=()=>{CAM=b.dataset.cam;ls.set("cam",CAM);panel();strip();useLut()});
+    const e=entry();const list=PERFIL.looks.filter(l=>l.perfil_camara===CAM);
+    $("lookPick").innerHTML=list.map(l=>lookCard(l,{sel:e.look_id===l.id})).join("")+`<button type="button" class="icard add" data-newlook><div class="plus"><i>+</i>Nuevo look</div></button>`;
+    $("lookPick").querySelectorAll("[data-look]").forEach(b=>b.onclick=()=>{const l=PERFIL.looks.find(x=>x.id===b.dataset.look);const sel=e.look_id===l.id;
+      V.color.looks[CAM]=sel?{look_id:"",lut:"",intensidad:100}:{look_id:l.id,lut:l.archivo,intensidad:l.intensidad??100};save();renderSteps();panel();useLut()});
+    $("lookPick").querySelector("[data-newlook]").onclick=()=>lookModal(null);fillCovers($("lookPick"));
+    $("amt").value=entry().intensidad??100;$("pct").textContent=$("amt").value+"%"}
+  $("amt").oninput=e=>{entry().intensidad=+e.target.value;$("pct").textContent=e.target.value+"%";save();draw()};
   onChange=k=>{if(k.startsWith("color.barras"))bars()};
-  const st=$("stage");const mv=e=>{const r=st.getBoundingClientRect();split=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));draw()};
-  st.onpointerdown=e=>{st.setPointerCapture(e.pointerId);mv(e)};st.onpointermove=e=>{if(e.buttons)mv(e)};
+  const st=$("stage");const mv=e=>{const r=st.getBoundingClientRect();split=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));draw()};st.onpointerdown=e=>{st.setPointerCapture(e.pointerId);mv(e)};st.onpointermove=e=>{if(e.buttons)mv(e)};
   panel();strip();useLut()}
 
 /* ---------- Claude ---------- */
+let JOB=null, ES=null;
 const QUICK=[["Editá todo","Editá el vlog completo y exportá una preview."],["Armá la historia","Transcribí y armá la historia (sin exportar todavía)."],["Exportá la final","Exportá la versión final en la resolución elegida."],["Aplicá las notas","Aplicá las notas de revisión pendientes y exportá una versión nueva."]];
-$("quick").innerHTML=QUICK.map(([l,p])=>`<button type="button" data-q="${esc(p)}">${l}</button>`).join("");
-$("quick").querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{$("pedido").value=b.dataset.q;$("pedido").focus()});
-function feed(ev){const el=document.createElement("div");el.className="ev "+ev.tipo;
+const FEED=[];
+function claudeInit(){$("quick").innerHTML=QUICK.map(([l,p])=>`<button type="button" data-q="${esc(p)}">${l}</button>`).join("");
+  $("quick").querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{$("pedido").value=b.dataset.q;$("pedido").focus()});
+  $("cstatus").textContent=!SERVER?"Vista previa: Claude Code trabaja cuando abrís la app en tu Mac.":!CLAUDE?"No encontré Claude Code en esta Mac (ver LEEME).":"Conectado · "+CLAUDE;
+  $("goC").onclick=runClaude;$("stopC").onclick=()=>{if(JOB)post("/api/claude/parar",{job:JOB}).catch(()=>{})};
+  $("pedido").onkeydown=e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey))runClaude()};
+  if(!FEED.length)FEED.push({tipo:"texto",texto:"Configurá el vlog paso a paso y tocá Editar con Claude cuando quieras. Acá te muestro lo que voy haciendo."});
+  FEED.forEach(paint);if(JOB)busy(true)}
+function paint(ev){const f=$("feed");if(!f)return;const el=document.createElement("div");el.className="ev "+ev.tipo;
   const label=ev.tipo==="herramienta"?`${ev.nombre}: ${ev.texto}`:ev.tipo==="fin"?(ev.ok?"Listo. ":"Terminó con problemas. ")+(ev.texto||""):ev.texto;
-  el.innerHTML=`<i></i><span>${esc(label)}</span>`;$("feed").appendChild(el);$("feed").scrollTop=$("feed").scrollHeight}
-function setConn(){setConn2();const m=$("mconn"),c0=$("conn");m.className=c0.className;m.querySelector("span").textContent=!SERVER?"Vista previa":!CLAUDE?"Sin Claude Code":"Conectado"}
-function setConn2(){const c=$("conn");
-  if(!SERVER){c.className="conn off";c.querySelector("span").textContent="Vista previa · sin servidor local";return}
-  if(!CLAUDE){c.className="conn off";c.querySelector("span").textContent="No encontré Claude Code en esta Mac";return}
-  c.className="conn on";c.querySelector("span").textContent="Conectado · "+CLAUDE}
-async function runClaude(){
-  if(!SERVER)return toast("Abrí la app desde el servidor local para usar Claude Code");
-  if(!CLAUDE)return toast("Instalá Claude Code y logueate (ver LEEME)");
-  if(!V.carpeta)return go("vlog");
-  clearTimeout(saveT);await fetch("/api/vlog",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({carpeta:V.carpeta,vlog:V})});
-  const pedido=$("pedido").value.trim()||"Editá el vlog completo y exportá una preview.";
-  feed({tipo:"texto",texto:"Vos: "+pedido});
-  const r=await fetch("/api/claude/editar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({carpeta:V.carpeta,pedido})});
-  const d=await r.json();if(!d.job)return feed({tipo:"error",texto:d.error||"No pude lanzar Claude Code"});
-  JOB=d.job;sheet(true);$("claude").classList.add("running");$("go").textContent="Claude está trabajando…";$("go").disabled=true;$("stop").hidden=false;
-  es=new EventSource("/api/claude/eventos?job="+JOB);
-  es.onmessage=e=>{const ev=JSON.parse(e.data);feed(ev);if(ev.tipo==="paso"||ev.tipo==="fin")refresh()};
-  es.addEventListener("fin",done);es.onerror=done}
-function done(){es&&es.close();es=null;JOB=null;$("claude").classList.remove("running");$("go").textContent="Editar con Claude";$("go").disabled=false;$("stop").hidden=true;refresh()}
-async function refresh(){if(!SERVER||!V.carpeta)return;try{const d=await (await fetch("/api/vlog?carpeta="+encodeURIComponent(V.carpeta))).json();if(d.vlog){V=merge(DEFAULT,d.vlog);renderNav();if(TAB!=="color")render()}}catch(e){}}
-$("go").onclick=runClaude;
-$("stop").onclick=()=>{if(JOB)fetch("/api/claude/parar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({job:JOB})})};
-$("pedido").onkeydown=e=>{if(e.key==="Enter"&&(e.metaKey||e.ctrlKey))runClaude()};
+  el.innerHTML=`<i></i><span>${esc(label)}</span>`;f.appendChild(el);f.scrollTop=f.scrollHeight}
+function feed(ev){FEED.push(ev);paint(ev)}
+function busy(on){const c=$("claude");if(!c)return;c.classList.toggle("running",on);$("goC").textContent=on?"Claude está trabajando…":"Editar con Claude";$("goC").disabled=on;$("stopC").hidden=!on}
+async function runClaude(){if(!SERVER)return toast("Claude Code trabaja cuando abrís la app en tu Mac");if(!CLAUDE)return toast("Instalá Claude Code y logueate (ver LEEME)");
+  await saveNow();const pedido=$("pedido").value.trim()||"Editá el vlog completo y exportá una preview.";feed({tipo:"texto",texto:"Vos: "+pedido});$("pedido").value="";
+  let d;try{d=await post("/api/claude/editar",{carpeta:V.carpeta,pedido})}catch(e){return feed({tipo:"error",texto:e.message})}
+  JOB=d.job;busy(true);$("claude").classList.add("open");
+  ES=new EventSource("/api/claude/eventos?job="+JOB);ES.onmessage=e=>{const ev=JSON.parse(e.data);feed(ev);if(ev.tipo==="fin"||ev.tipo==="fin_paso")refresh()};ES.addEventListener("fin",done);ES.onerror=done}
+function done(){ES&&ES.close();ES=null;JOB=null;busy(false);refresh()}
+async function refresh(){if(!SERVER||!V)return;try{const d=await (await fetch("/api/vlog?carpeta="+encodeURIComponent(V.carpeta))).json();if(d.vlog){V=merge(DEFAULT_VLOG(),d.vlog);if(VIEW==="editor"){renderSteps();if(TAB!=="color")renderStep()}}}catch(e){}}
 
 /* ---------- arranque ---------- */
 (async()=>{
-  const b=ls.get("vlog_borrador");if(b)V=merge(DEFAULT,b);
-  TAB=ls.get("tab")||"vlog";
   try{const r=await fetch("/api/estado");if(r.ok){const d=await r.json();SERVER=!!d.servidor;CLAUDE=d.claude}}catch(e){}
-  if(SERVER&&V.carpeta){try{const d=await (await fetch("/api/vlog?carpeta="+encodeURIComponent(V.carpeta))).json();if(d.vlog)V=merge(DEFAULT,d.vlog)}catch(e){}}
-  setConn();renderNav();render();
-  if(!$("feed").children.length)feed({tipo:"texto",texto:SERVER?"Configurá el vlog en las pestañas y tocá Editar con Claude cuando quieras. Te muestro acá lo que voy haciendo.":"Estás viendo la app sin el servidor local. Podés recorrer las pestañas; para editar, abrila con el servidor (ver LEEME)."});
-})();
+  try{PERFILES=await Store.perfiles()}catch(e){PERFILES=[structuredClone(SEED)]}
+  setPerfil(PERFILES.find(p=>p.id===ls.get("perfil"))||PERFILES[0]);
+  const last=ls.get("view");if(last==="editor"&&ls.get("ultimo")){await abrirProyecto(ls.get("ultimo"));if(V)return}
+  go(["inicio","proyectos","looks","perfil"].includes(last)?last:"inicio")})();
 </script>
 </body>
 </html>

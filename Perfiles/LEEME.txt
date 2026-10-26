@@ -1,0 +1,11 @@
+PERFILES - Editor de Vlogs
+==========================
+Una carpeta por perfil (persona o cliente). La app Editor de Vlogs la lee y la escribe.
+
+  <Perfil>/perfil.json   nombre, color, camara, looks (LUTs con su foto), looks por defecto
+                         por perfil de camara (D-Log / D-Log 2 / Rec709), barras y proyectos.
+  <Perfil>/luts/         LUTs subidas desde la app (.cube). Las aprobadas del repo se
+                         referencian directo desde Powergrade/ (no se copian).
+  <Perfil>/fotos/        fotos de ejemplo de cada look (la "antes" y la ya graduada).
+
+Quitar un look desde la app lo saca del perfil pero NO borra sus archivos.

@@ -10,7 +10,7 @@ Solo escucha en 127.0.0.1 (tu Mac). Abri http://localhost:8787
 import argparse, json, os, shutil, subprocess, sys, threading, time, uuid, mimetypes, re
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, unquote
 
 SKILL = Path(__file__).resolve().parent
 REPO = SKILL.parents[2]
@@ -19,6 +19,7 @@ SCRIPTS = SKILL / "scripts" / "edicion"
 HERRAMIENTAS = ["Read", "Write", "Edit", "Glob", "Grep",
                 "Bash(ffmpeg *)", "Bash(ffprobe *)", "Bash(python3 *)", "Bash(ls *)", "Bash(mkdir *)"]
 
+PERFILES = Path(os.environ.get("EDITOR_VLOGS_PERFILES") or REPO / "Perfiles")  # para pruebas se puede apuntar a otra carpeta
 JOBS = {}          # id -> {"eventos": [...], "proc": Popen, "fin": bool}
 LOCK = threading.Lock()
 
@@ -39,6 +40,82 @@ def guardar_vlog(carpeta, vlog):
     tmp = p.with_suffix(".tmp")
     tmp.write_text(json.dumps(vlog, ensure_ascii=False, indent=2), encoding="utf-8")
     tmp.replace(p)
+
+
+# ---------- perfiles y looks ----------
+import base64, unicodedata
+
+def slug(t):
+    t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode()
+    return re.sub(r"[^A-Za-z0-9]+", "_", t).strip("_") or "x"
+
+def leer_perfil(pid):
+    p = PERFILES / pid / "perfil.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+
+def guardar_perfil(perfil):
+    d = PERFILES / perfil["id"]
+    d.mkdir(parents=True, exist_ok=True)
+    tmp = d / "perfil.tmp"
+    tmp.write_text(json.dumps(perfil, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(d / "perfil.json")
+    return perfil
+
+def listar_perfiles():
+    if not PERFILES.exists():
+        return []
+    out = []
+    for d in sorted(PERFILES.iterdir()):
+        p = leer_perfil(d.name) if d.is_dir() else None
+        if p:
+            out.append(p)
+    return out
+
+def rel(p: Path):
+    """Ruta relativa al repo (asi la app la sirve por /repo/). Si esta fuera del repo, absoluta."""
+    try:
+        return str(p.resolve().relative_to(REPO))
+    except ValueError:
+        return str(p.resolve())
+
+def guardar_dataurl(dataurl, destino: Path):
+    """Guarda una imagen data:image/...;base64 como archivo. Devuelve ruta relativa al repo."""
+    cab, _, datos = dataurl.partition(",")
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_bytes(base64.b64decode(datos))
+    return rel(destino)
+
+def perfil_inicial():
+    """Primer arranque: perfil 'Snati' con las LUTs aprobadas del repo."""
+    if listar_perfiles():
+        return
+    looks = [
+        ("ma_vivo_dia", "MA Vivo Día", "dlog", "Powergrade/D-Log/MA_Vivo_DLog_DIA.cube"),
+        ("ma_vivo_noche", "MA Vivo Noche", "dlog", "Powergrade/D-Log/MA_Vivo_DLog_NOCHE.cube"),
+        ("high_ticket", "High Ticket", "dlog", "Powergrade/High Ticket/High_Ticket_DLog.cube"),
+        ("ma_vivo_dia_dl2", "MA Vivo Día", "dlog2", "Powergrade/D-Log 2 (sin probar)/MA_Vivo_DLog2_DIA.cube"),
+        ("ma_vivo_noche_dl2", "MA Vivo Noche", "dlog2", "Powergrade/D-Log 2 (sin probar)/MA_Vivo_DLog2_NOCHE.cube"),
+        ("high_ticket_dl2", "High Ticket", "dlog2", "Powergrade/High Ticket/High_Ticket_DLog2.cube"),
+        ("high_ticket_709", "High Ticket", "rec709", "Powergrade/High Ticket/High_Ticket_Rec709.cube"),
+    ]
+    guardar_perfil({"id": "Snati", "nombre": "Snati", "color": "#C96442", "foto": None,
+                    "camara": "DJI Osmo Pocket 4P",
+                    "looks": [{"id": i, "nombre": n, "perfil_camara": c, "archivo": a, "intensidad": 100,
+                               "foto": None, "foto_antes": None} for i, n, c, a in looks],
+                    "predeterminados": {"dlog": "ma_vivo_dia", "dlog2": "ma_vivo_dia_dl2", "rec709": "high_ticket_709"},
+                    "ajustes": {"barras": {"formato": "2.22:1", "donde": "montajes"}},
+                    "proyectos": []})
+
+def resumen_proyecto(carpeta):
+    v = leer_vlog(carpeta)
+    if not v:
+        return {"carpeta": carpeta, "disponible": False}
+    clips = v.get("material", {}).get("clips", [])
+    thumb = next((c.get("thumb") for c in clips if c.get("thumb") and not c.get("descartado")), None)
+    vers = v.get("estado", {}).get("versiones", [])
+    return {"carpeta": carpeta, "disponible": True, "titulo": v.get("titulo", ""), "fecha": v.get("fecha", ""),
+            "paso": v.get("estado", {}).get("paso", ""), "clips": len(clips), "versiones": len(vers),
+            "thumb": str(Path(carpeta) / thumb) if thumb else None}
 
 
 # ---------- Claude Code ----------
@@ -198,6 +275,7 @@ class H(BaseHTTPRequestHandler):
 
     def do_GET(self):
         u = urlparse(self.path)
+        u = u._replace(path=unquote(u.path))   # "High%20Ticket" -> "High Ticket"
         q = parse_qs(u.query)
         if u.path in ("/", "/index.html"):
             return self._archivo(APP / "index.html")
@@ -215,6 +293,11 @@ class H(BaseHTTPRequestHandler):
                                "ffmpeg": bool(shutil.which("ffmpeg")), "repo": str(REPO)})
         if u.path == "/api/vlog":
             return self._json({"vlog": leer_vlog(q.get("carpeta", [""])[0])})
+        if u.path == "/api/perfiles":
+            return self._json({"perfiles": listar_perfiles()})
+        if u.path == "/api/proyectos":
+            p = leer_perfil(q.get("perfil", [""])[0]) or {}
+            return self._json({"proyectos": [resumen_proyecto(c) for c in p.get("proyectos", [])]})
         if u.path == "/api/claude/eventos":       # Server-Sent Events con el avance
             job = q.get("job", [""])[0]
             if job not in JOBS:
@@ -249,7 +332,51 @@ class H(BaseHTTPRequestHandler):
             if not carpeta or not Path(carpeta).expanduser().is_dir():
                 return self._json({"error": "La carpeta no existe"}, 400)
             guardar_vlog(carpeta, d["vlog"])
+            pf = leer_perfil(d["vlog"].get("perfil") or "")
+            if pf and carpeta not in pf.setdefault("proyectos", []):   # el proyecto queda en el perfil
+                pf["proyectos"].insert(0, carpeta)
+                guardar_perfil(pf)
             return self._json({"ok": True})
+        if u.path == "/api/perfil":
+            p = d["perfil"]
+            if not p.get("id"):
+                base = slug(p.get("nombre") or "perfil"); p["id"] = base; i = 2
+                while (PERFILES / p["id"]).exists():
+                    p["id"] = f"{base}_{i}"; i += 1
+            if d.get("foto"):
+                p["foto"] = guardar_dataurl(d["foto"], PERFILES / p["id"] / f"avatar_{int(time.time())}.jpg")
+            return self._json({"perfil": guardar_perfil(p)})
+        if u.path == "/api/look":
+            p = leer_perfil(d["perfil_id"])
+            if not p:
+                return self._json({"error": "Perfil no encontrado"}, 404)
+            look = d["look"]
+            if not look.get("id"):
+                look["id"] = slug(look.get("nombre", "look")).lower() + "_" + uuid.uuid4().hex[:4]
+            base = PERFILES / p["id"]
+            if d.get("cube"):                         # LUT subida: se guarda en el perfil
+                destino = base / "luts" / (slug(look.get("archivo_original") or look["nombre"]) + ".cube")
+                destino.parent.mkdir(parents=True, exist_ok=True)
+                destino.write_text(d["cube"], encoding="utf-8")
+                look["archivo"] = rel(destino)
+            stamp = int(time.time())
+            if d.get("foto"):
+                look["foto"] = guardar_dataurl(d["foto"], base / "fotos" / f"{look['id']}_{stamp}.jpg")
+            if d.get("foto_antes"):
+                look["foto_antes"] = guardar_dataurl(d["foto_antes"], base / "fotos" / f"{look['id']}_{stamp}_antes.jpg")
+            look.pop("archivo_original", None)
+            looks = [x for x in p.get("looks", []) if x["id"] != look["id"]]
+            idx = next((i for i, x in enumerate(p.get("looks", [])) if x["id"] == look["id"]), len(looks))
+            looks.insert(idx, look)
+            p["looks"] = looks
+            return self._json({"perfil": guardar_perfil(p), "look": look})
+        if u.path == "/api/look/quitar":             # saca el look del perfil; los archivos no se borran
+            p = leer_perfil(d["perfil_id"])
+            p["looks"] = [x for x in p.get("looks", []) if x["id"] != d["look_id"]]
+            for k, v in list(p.get("predeterminados", {}).items()):
+                if v == d["look_id"]:
+                    p["predeterminados"][k] = None
+            return self._json({"perfil": guardar_perfil(p)})
         if u.path == "/api/escanear":
             if not Path(carpeta).expanduser().is_dir():
                 return self._json({"error": "La carpeta no existe"}, 400)
@@ -274,6 +401,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--puerto", type=int, default=8787)
     a = ap.parse_args()
+    perfil_inicial()
     srv = ThreadingHTTPServer(("127.0.0.1", a.puerto), H)
     print(f"Editor de Vlogs en http://localhost:{a.puerto}  (Ctrl+C para cerrar)")
     try:

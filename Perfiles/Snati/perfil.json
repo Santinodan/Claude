@@ -1,0 +1,84 @@
+{
+  "id": "Snati",
+  "nombre": "Snati",
+  "color": "#C96442",
+  "foto": null,
+  "camara": "DJI Osmo Pocket 4P",
+  "looks": [
+    {
+      "id": "ma_vivo_dia",
+      "nombre": "MA Vivo Día",
+      "perfil_camara": "dlog",
+      "archivo": "Powergrade/D-Log/MA_Vivo_DLog_DIA.cube",
+      "intensidad": 100,
+      "foto": null,
+      "foto_antes": null
+    },
+    {
+      "id": "ma_vivo_noche",
+      "nombre": "MA Vivo Noche",
+      "perfil_camara": "dlog",
+      "archivo": "Powergrade/D-Log/MA_Vivo_DLog_NOCHE.cube",
+      "intensidad": 100,
+      "foto": null,
+      "foto_antes": null
+    },
+    {
+      "id": "high_ticket",
+      "nombre": "High Ticket",
+      "perfil_camara": "dlog",
+      "archivo": "Powergrade/High Ticket/High_Ticket_DLog.cube",
+      "intensidad": 100,
+      "foto": null,
+      "foto_antes": null
+    },
+    {
+      "id": "ma_vivo_dia_dl2",
+      "nombre": "MA Vivo Día",
+      "perfil_camara": "dlog2",
+      "archivo": "Powergrade/D-Log 2 (sin probar)/MA_Vivo_DLog2_DIA.cube",
+      "intensidad": 100,
+      "foto": null,
+      "foto_antes": null
+    },
+    {
+      "id": "ma_vivo_noche_dl2",
+      "nombre": "MA Vivo Noche",
+      "perfil_camara": "dlog2",
+      "archivo": "Powergrade/D-Log 2 (sin probar)/MA_Vivo_DLog2_NOCHE.cube",
+      "intensidad": 100,
+      "foto": null,
+      "foto_antes": null
+    },
+    {
+      "id": "high_ticket_dl2",
+      "nombre": "High Ticket",
+      "perfil_camara": "dlog2",
+      "archivo": "Powergrade/High Ticket/High_Ticket_DLog2.cube",
+      "intensidad": 100,
+      "foto": null,
+      "foto_antes": null
+    },
+    {
+      "id": "high_ticket_709",
+      "nombre": "High Ticket",
+      "perfil_camara": "rec709",
+      "archivo": "Powergrade/High Ticket/High_Ticket_Rec709.cube",
+      "intensidad": 100,
+      "foto": null,
+      "foto_antes": null
+    }
+  ],
+  "predeterminados": {
+    "dlog": "ma_vivo_dia",
+    "dlog2": "ma_vivo_dia_dl2",
+    "rec709": "high_ticket_709"
+  },
+  "ajustes": {
+    "barras": {
+      "formato": "2.22:1",
+      "donde": "montajes"
+    }
+  },
+  "proyectos": []
+}
