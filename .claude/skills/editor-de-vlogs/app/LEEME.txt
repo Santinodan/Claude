@@ -4,9 +4,9 @@ Que es: la interfaz para editar vlogs. Elegis en pestanas (Vlog, Material, Histo
 Color, Audio, Musica, Textos, Exportar) y con "Editar con Claude" Claude Code edita en tu Mac.
 
 Como abrirla (Mac):
-  Doble clic en  .claude/skills/editor-de-vlogs/Abrir Editor de Vlogs.command
-  (o en Terminal, parado en el repo:  python3 .claude/skills/editor-de-vlogs/servidor.py)
-  Se abre http://localhost:8787 . Solo escucha en tu Mac.
+  Doble clic en  "Editor de Vlogs.app"  (raiz del repo; arrastrala al Dock).  O pedirle a Claude Code
+  "abri el editor de vlogs". Las dos corren abrir.sh: git pull, instala lo que falte, prende el
+  servidor y abre http://localhost:8787 . Solo escucha en tu Mac. Log: ~/Library/Logs/EditorDeVlogs.log
 
 Que necesita la Mac (una sola vez):
   1. Claude Code instalado y logueado con tu plan:  curl -fsSL https://claude.ai/install.sh | bash   y despues  claude  (login)
