@@ -1,0 +1,18 @@
+SALA DE COLOR - elegir LUT e intensidad para el vlog
+=====================================================
+Que hace: cargas un clip o una captura, elegis el perfil (D-Log / D-Log 2 / Rec709),
+la LUT y el % de intensidad mirando antes/despues. Tambien previsualizas las barras negras
+y cargas los datos del vlog (titulo, carpeta, musica, notas). Todo queda en un JSON
+("Configuracion") que se pega en el chat o se guarda como vlog.json en la carpeta del dia.
+
+Como abrirla:
+  - Web: https://claude.ai/artifact/LuZiicQii7ba9eCzMg2Joh (ya trae las 7 LUTs del repo).
+  - Local: desde la raiz del repo levantar un servidor web simple (python3 -m http.server 8000)
+           y abrir http://localhost:8000/.claude/skills/editor-de-vlogs/app/sala_de_color.html
+           (lee las LUTs directo de Powergrade/). Tambien podes arrastrar cualquier .cube.
+
+Notas:
+  - Los clips H.265 10-bit de la Osmo pueden no abrirse en el navegador: en ese caso subi una captura.
+  - Intensidad X% = mezcla entre el original y la LUT. En ffmpeg:
+    ffmpeg -i clip.mp4 -filter_complex "[0:v]split[a][b];[b]lut3d=LUT.cube[g];[a][g]blend=all_mode=normal:all_opacity=0.X" ...
+  - La carta de ejemplo es sintetica (ColorChecker 24 + rampa de exposicion codificada en D-Log / D-Gamut).

@@ -23,11 +23,11 @@ Documento vivo con lo que vamos definiendo con Snati antes de armar la skill.
 
 ## Pendientes
 
-1. **Analisis de musica en vlogs de referencia**: Snati baja los videos, Claude analiza
-   como sincroniza la musica con los cortes (BPM, cortes en beat, drops, cambios de tema, ducking bajo la voz).
-2. **App de color**: elegir LUT con antes/despues sobre capturas del propio material.
-   Idea a futuro: que la app sea el "panel de carga" del vlog (titulo, carpeta, LUT, musica, notas).
-3. Referencias de vlogs (las pasa Snati, se analizan sin commitear el material).
+1. ~~Analisis de musica en vlogs de referencia~~ HECHO → `references/analisis_referencias.md`.
+2. ~~App de color~~ v1 HECHA → `app/sala_de_color.html` (LUT + % + antes/despues + barras + datos del vlog).
+   Falta probarla con material real de Snati.
+3. Definir barras: finas 2:1 / 2.22:1 / cine 2.39:1, y si van en todo el video o solo en montajes.
+4. Probar el pipeline completo con un vlog real (sesion local con el disco conectado).
 
 ## Referencias
 
