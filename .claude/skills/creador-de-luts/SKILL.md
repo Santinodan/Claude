@@ -38,6 +38,9 @@ Instalar una vez: `pip install -r .claude/skills/creador-de-luts/scripts/require
   `--negro`, `--mezcla`). Sin flags devuelve la misma LUT (verificado), asi que el look aprobado no se pierde.
 - `preview.py` – aplica LUTs a un fotograma LOG y arma una comparativa vertical rotulada
   (+ referencia opcional) e imprime metricas OKLab (luminancia y croma por zona) para comparar sin mirar.
+- `analizar_referencias.py` – analiza reels/capturas de referencia: saca fotogramas de cada video,
+  mide negros/medios/altas, contraste, saturacion, split toning por zona, tono de piel y colores dominantes.
+  Genera `informe.md`, `metricas.json` y `contactos.jpg`.
 - `lutlib.py` – libreria: curvas D-Log / D-Log2, matrices de gamut, tonemap, grade OKLab, leer/escribir/aplicar `.cube`.
 
 ## Como se construyo el look (pipeline)
@@ -78,6 +81,22 @@ Este fue el "v2" que se aprobo frente al "v1" (ver `Powergrade/Ejemplos/NOCHE_tu
    los parametros/comandos usados, para poder regenerarla despues.
 6. **Validar** antes de entregar: el `.cube` tiene `LUT_3D_SIZE 33` y 35937 lineas de datos; negros y
    blancos no se dan vuelta; probarla en el fotograma con `preview.py`.
+
+## Crear un look NUEVO a partir de referencias (ej. "High Ticket")
+
+1. Conseguir las referencias. Instagram bloquea las descargas desde este servidor (pide login y los
+   descargadores web bloquean IPs de servidores): NO intentar esquivarlo. Pedirle a Snati que baje
+   los reels desde su celu/compu (ej. sssinstagram) y los suba a Google Drive (conector disponible)
+   o los adjunte en el chat. Con 8-15 reels variados alcanza. Capturas de pantalla tambien sirven.
+2. Guardarlas fuera del repo (scratchpad): son material de terceros, solo para analizar.
+3. `analizar_referencias.py CARPETA --out analisis/` → leer `informe.md` y mirar `contactos.jpg`.
+4. Traducir el informe a parametros (ver `references/parametros.md`, seccion "Que tocar segun el pedido"):
+   negros → `black`; contraste → `contrast`/`pivot`; tintes por zona → `shadow_hue/amt`, `high_hue/amt`;
+   piel → `warm_center/warm_sat`; saturacion → `sat`; azules/verdes dominantes → `blue_*`/`green_*`.
+5. Generar con `generar_familia.py --set '{...}' --set-boost '{...}' --prefijo <Nombre> --titulo "<Nombre>"`,
+   comparar con `preview.py --ref` sobre un clip LOG de Snati, iterar hasta que las metricas se parezcan.
+6. Guardar en `Powergrade/<Nombre>/` con su `LEEME.txt` y los parametros en `_Fuente/` (solo el
+   analisis y los parametros, nunca los videos de referencia).
 
 ## Instrucciones de uso para el usuario (repetirlas al entregar)
 
