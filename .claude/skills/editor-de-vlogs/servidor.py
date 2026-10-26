@@ -471,6 +471,11 @@ class H(BaseHTTPRequestHandler):
                     p["id"] = f"{base}_{i}"; i += 1
             if d.get("foto"):
                 p["foto"] = guardar_dataurl(d["foto"], PERFILES / p["id"] / f"avatar_{int(time.time())}.jpg")
+            fb = d.get("foto_base")                   # foto de prueba por perfil de camara (dlog/dlog2/rec709)
+            if fb and fb.get("cam") in ("dlog", "dlog2", "rec709"):
+                p.setdefault("fotos_base", {})[fb["cam"]] = (
+                    guardar_dataurl(fb["foto"], PERFILES / p["id"] / "fotos" / f"base_{fb['cam']}_{int(time.time())}.jpg")
+                    if fb.get("foto") else None)
             return self._json({"perfil": guardar_perfil(p)})
         if u.path == "/api/look":
             p = leer_perfil(d["perfil_id"])

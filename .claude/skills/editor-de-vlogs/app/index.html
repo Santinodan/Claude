@@ -404,6 +404,13 @@ input[type=file]{display:none}
   .epage.tlpage>div:first-child{order:0}
   .mstage{max-height:none;max-width:none}
 }
+/* fotos de prueba */
+.fbase{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.fbase{grid-template-columns:minmax(0,1fr)}}
+.fb{display:grid;gap:8px}
+.fbimg{aspect-ratio:16/9;border-radius:10px;border:1.5px dashed var(--line);background:var(--bg);overflow:hidden;padding:0;display:grid;place-items:center;color:var(--ink-2);font-size:13px;text-align:center}
+.fbimg:hover{border-color:var(--accent)}
+.fbimg img{width:100%;height:100%;object-fit:cover;display:block}
 /* elegir carpeta / archivo */
 .pathrow{display:flex;gap:8px;align-items:flex-end}
 .pathrow .field{flex:1;min-width:0}
@@ -470,8 +477,8 @@ const post=async(u,b)=>{const r=await fetch(u,{method:"POST",headers:{"Content-T
 const Store={
   async perfiles(){if(SERVER)return (await (await fetch("/api/perfiles")).json()).perfiles;
     let ps=await IDB.tx("perfiles","readonly",s=>s.getAll());if(!ps.length){await IDB.tx("perfiles","readwrite",s=>s.put(SEED));ps=[structuredClone(SEED)]}return ps},
-  async savePerfil(p,foto){if(SERVER)return (await post("/api/perfil",{perfil:p,foto})).perfil;
-    if(!p.id)p.id="p_"+uid();if(foto)p.foto=foto;await IDB.tx("perfiles","readwrite",s=>s.put(p));return p},
+  async savePerfil(p,foto,foto_base){if(SERVER)return (await post("/api/perfil",{perfil:p,foto,foto_base})).perfil;
+    if(!p.id)p.id="p_"+uid();if(foto)p.foto=foto;if(foto_base){p.fotos_base??={};p.fotos_base[foto_base.cam]=foto_base.foto||null}await IDB.tx("perfiles","readwrite",s=>s.put(p));return p},
   async saveLook(pid,look,files){if(SERVER)return post("/api/look",{perfil_id:pid,look,...files});
     const p=(await this.perfiles()).find(x=>x.id===pid);if(!look.id)look.id="l_"+uid();
     if(files.cube){await IDB.tx("blobs","readwrite",s=>s.put(files.cube,"cube:"+look.id));look.archivo="idb:"+look.id}
@@ -492,6 +499,7 @@ const Store={
 /* =========================================================
    Color: LUT .cube -> WebGL (visor interactivo y miniaturas)
    ========================================================= */
+const baseFor=cam=>Store.img(PERFIL?.fotos_base?.[cam])||(cam==="dlog"||cam==="dlog2"||!cam?CARTA:CARTA);
 function parseCube(t){let n=0;const v=[];for(const line of t.split(/\r?\n/)){const s=line.trim();if(!s||s[0]=="#")continue;if(/^LUT_3D_SIZE/i.test(s)){n=parseInt(s.split(/\s+/)[1]);continue}if(/^[A-Z_]/i.test(s))continue;const p=s.split(/\s+/);if(p.length>=3)v.push(+p[0],+p[1],+p[2],1)}if(!n||v.length!==n*n*n*4)throw Error("El archivo no es una LUT 3D válida");return{n,data:new Float32Array(v)}}
 const lutCache={};
 async function lutOf(look){const k=look.archivo;if(!k)return null;return lutCache[k]||(lutCache[k]=Store.cube(look).then(parseCube).catch(e=>{delete lutCache[k];throw e}))}
@@ -523,7 +531,7 @@ async function gradedThumb(src,look,amt,maxW=720){const key=src+"|"+look.archivo
     thumbGL??=(()=>{const cv=document.createElement("canvas");return{cv,g:makeGL(cv)}})();if(!thumbGL.g)return src;
     thumbGL.g.setImage(tmp);thumbGL.g.setLut(l);thumbGL.g.draw(amt/100,0);c.width=w;c.height=h;c.getContext("2d").drawImage(thumbGL.cv,0,0);return c.toDataURL("image/jpeg",.86)})().catch(()=>null)}
 // imagen que se muestra en la tarjeta del look
-async function lookCover(look){if(look.foto&&!look.foto_antes)return Store.img(look.foto);if(look.foto)return Store.img(look.foto);return gradedThumb(CARTA,look,look.intensidad??100)}
+async function lookCover(look){if(look.foto)return Store.img(look.foto);return gradedThumb(baseFor(look.perfil_camara),look,look.intensidad??100)}
 async function fillCovers(root){const els=[...root.querySelectorAll("[data-cover]")];els.forEach(el=>{const l=PERFIL.looks.find(x=>x.id===el.dataset.cover);if(l&&!l.foto)lutOf(l).catch(()=>{})});for(const el of els){const look=PERFIL.looks.find(l=>l.id===el.dataset.cover);if(!look)continue;
   const src=await lookCover(look);if(src&&el.isConnected){el.innerHTML=`<img class="after" src="${src}" alt="">${look.foto_antes&&el.closest(".icard")?`<img class="before" src="${Store.img(look.foto_antes)}" alt="">`:""}`}}}
 
@@ -591,6 +599,8 @@ async perfil(){const p=PERFIL;
   <div style="display:grid;gap:4px;min-width:0;flex:1"><div class="eyebrow">Perfil</div><input class="name" type="text" id="pNombre" value="${esc(p.nombre)}" aria-label="Nombre del perfil"><span class="note">${esc(p.camara||"")} · ${p.looks.length} looks · ${(p.proyectos||[]).length} proyectos</span></div>
   <button class="btn ghost" type="button" id="switchP">Cambiar de perfil</button></div>
  <div class="card"><h3>Looks por defecto <small>Se cargan solos en cada vlog nuevo</small></h3><div class="defaults">${CAMS.map(([k,l])=>`<div class="drow"><b>${l}</b><div class="minilooks">${[{id:"",nombre:"Sin LUT"},...p.looks.filter(x=>x.perfil_camara===k)].map(x=>`<button type="button" class="ml" data-def="${k}" data-id="${esc(x.id)}" aria-pressed="${(p.predeterminados?.[k]||"")===x.id}"><div class="im" ${x.id?`data-cover="${esc(x.id)}"`:""}></div><span>${esc(x.nombre)}</span></button>`).join("")}</div></div>`).join("")}</div></div>
+ <div class="card"><h3>Fotos de prueba <small>Una captura tuya sin color de cada perfil. Se usa para mostrar los looks.</small></h3>
+  <div class="fbase">${CAMS.map(([k,l])=>{const f=p.fotos_base?.[k];return `<div class="fb"><button type="button" class="fbimg" data-fb="${k}" aria-label="Cargar foto de prueba ${l}">${f?`<img src="${Store.img(f)}" alt="">`:`<span>${icon.img}<br>Cargar foto</span>`}</button><div class="row" style="justify-content:space-between"><b>${l}</b>${f?`<button type="button" class="mini" data-fbdel="${k}">Quitar</button>`:""}</div></div>`}).join("")}</div></div>
  <div class="grid2"><div class="card"><h3>Cámara</h3><label class="field"><span>Cámara principal</span><input type="text" id="pCam" value="${esc(p.camara||"")}" placeholder="DJI Osmo Pocket 4P"></label><label class="field"><span>Color del perfil</span><input type="color" id="pColor" value="${esc(p.color||"#C96442")}" style="width:56px;height:36px;border:0;background:none;padding:0"></label></div>
  <div class="card"><h3>Barras por defecto</h3>${segRaw("pb",[[null,"Sin"],["2:1","2:1"],["2.22:1","2.22:1"],["2.39:1","2.39:1"]],p.ajustes?.barras?.formato)}${segRaw("pd",[["todo","Todo el video"],["montajes","Solo montajes"]],p.ajustes?.barras?.donde)}</div></div>`}
 };
@@ -605,7 +615,9 @@ const PAGE_AFTER={
   v.querySelectorAll("[data-def]").forEach(b=>b.onclick=async()=>{p.predeterminados??={};p.predeterminados[b.dataset.def]=b.dataset.id||null;PERFIL=await Store.savePerfil(p);render()});
   v.querySelectorAll("[data-segraw]").forEach(sg=>sg.querySelectorAll("button").forEach(b=>b.onclick=async()=>{p.ajustes??={};p.ajustes.barras??={};p.ajustes.barras[sg.dataset.segraw==="pb"?"formato":"donde"]=JSON.parse(b.dataset.v);PERFIL=await Store.savePerfil(p);render()}));
   $("avBtn").onclick=()=>pickImage(async url=>{PERFIL=await Store.savePerfil(p,await shrink(url,400));setPerfil(PERFIL);render()});
-  $("switchP").onclick=perfilPop}
+  $("switchP").onclick=perfilPop;
+  v.querySelectorAll("[data-fb]").forEach(b=>b.onclick=()=>pickImage(async url=>{const cam=b.dataset.fb;PERFIL=await Store.savePerfil(p,null,{cam,foto:await shrink(url,1600)});setPerfil(PERFIL);Object.keys(thumbCache).forEach(k=>delete thumbCache[k]);toast("Foto de prueba de "+camName(cam)+" guardada");render()}));
+  v.querySelectorAll("[data-fbdel]").forEach(b=>b.onclick=async()=>{PERFIL=await Store.savePerfil(p,null,{cam:b.dataset.fbdel,foto:null});setPerfil(PERFIL);Object.keys(thumbCache).forEach(k=>delete thumbCache[k]);render()})}
 };
 function common(v){v.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>go(b.dataset.goto));
   v.querySelectorAll("[data-newlook]").forEach(b=>b.onclick=()=>lookModal(null));
@@ -668,8 +680,8 @@ function lookModal(look){const nuevo=!look;const L=nuevo?{id:"",nombre:"",perfil
   document.body.appendChild(m);
   const g=makeGL($("mCv"));
   const draw=()=>{if(!g)return;g.draw(tipo==="ref"?0:L.intensidad/100,tipo==="ref"?1:split);$("mSplit").style.left=`calc(${split*100}% - 1px)`;$("mSplit").hidden=tipo==="ref"};
-  const hint=()=>{$("mHint").textContent=tipo==="ref"?"La foto ya tiene el look: se muestra tal cual.":fotoSrc?"Antes y después sobre tu foto. Arrastrá la línea.":"Sin foto: se muestra la carta de color en D-Log."};
-  async function loadImgSrc(){try{const im=await loadImg(fotoSrc||CARTA);g?.setImage(im);draw()}catch(e){}}
+  const hint=()=>{$("mHint").textContent=tipo==="ref"?"La foto ya tiene el look: se muestra tal cual.":fotoSrc?"Antes y después sobre tu foto. Arrastrá la línea.":PERFIL?.fotos_base?.[L.perfil_camara]?"Sin foto propia: se usa tu foto de prueba de "+camName(L.perfil_camara)+".":"Sin foto: se muestra la carta de color. Cargá una foto de prueba en tu Perfil."};
+  async function loadImgSrc(){try{const im=await loadImg(fotoSrc||baseFor(L.perfil_camara));g?.setImage(im);draw()}catch(e){}}
   async function loadLut(){try{lut=cube?parseCube(cube):(L.archivo?await lutOf(L):null);g?.setLut(lut);draw()}catch(e){toast(e.message)}}
   loadImgSrc();loadLut();hint();
   const close=()=>m.remove();$("mX").onclick=close;m.onclick=e=>{if(e.target===m)close()};
@@ -682,7 +694,7 @@ function lookModal(look){const nuevo=!look;const L=nuevo?{id:"",nombre:"",perfil
     d.ondrop=async e=>{e.preventDefault();d.classList.remove("on");const f=e.dataTransfer.files[0];if(!f)return;
       if(/\.cube$/i.test(f.name))takeCube(await f.text(),f.name);else if(f.type.startsWith("image/")){const r=new FileReader();r.onload=async()=>{foto=await shrink(r.result);fotoSrc=foto;$("fotoIc").innerHTML=`<img src="${foto}" alt="">`;hint();loadImgSrc()};r.readAsDataURL(f)}}}
   m.querySelectorAll("[data-segraw]").forEach(sg=>sg.querySelectorAll("button").forEach(b=>b.onclick=()=>{sg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));const v=JSON.parse(b.dataset.v);
-    if(sg.dataset.segraw==="mCam")L.perfil_camara=v;else{tipo=v;hint();draw()}}));
+    if(sg.dataset.segraw==="mCam"){L.perfil_camara=v;hint();if(!fotoSrc)loadImgSrc()}else{tipo=v;hint();draw()}}));
   $("mAmt").oninput=e=>{L.intensidad=+e.target.value;$("mPct").textContent=L.intensidad+"%";draw()};
   if($("mDel"))$("mDel").onclick=async()=>{if(!confirmDel){confirmDel=true;$("mDel").textContent="¿Seguro? Tocá de nuevo";return}
     PERFIL=await Store.quitarLook(PERFIL.id,L.id);setPerfil(PERFIL);PERFILES=await Store.perfiles();close();toast("Look quitado del perfil");render()};
@@ -831,8 +843,8 @@ function colorStep(P){const g=makeGL($("cv"));if(!g){$("stage").innerHTML='<div 
     try{const l=await lutOf(look);if(VIEWER===me){g.setLut(l);draw()}}catch(err){toast(err.message)}}
   async function src(u){try{const im=await loadImg(u);if(VIEWER!==me)return;g.setImage(im);bars();draw()}catch(e){}}
   function strip(){const cs=V.material.clips.filter(c=>c.perfil===CAM&&c.thumb&&!c.descartado);
-    const items=cs.length&&SERVER?cs.map(c=>[Store.media(abs(c.thumb)),c.archivo]):[[CARTA,"Carta D-Log"]];
-    $("strip").innerHTML=items.map(([u,n],i)=>`<button type="button" data-src="${esc(u)}" aria-pressed="${i===0}" title="${esc(n)}">${u===CARTA?"Carta D-Log":`<img src="${esc(u)}" alt="">`}</button>`).join("");
+    const fb=PERFIL?.fotos_base?.[CAM];const items=cs.length&&SERVER?cs.map(c=>[Store.media(abs(c.thumb)),c.archivo]):[[baseFor(CAM),fb?"Foto de prueba":"Carta"]];
+    $("strip").innerHTML=items.map(([u,n],i)=>`<button type="button" data-src="${esc(u)}" aria-pressed="${i===0}" title="${esc(n)}">${u===CARTA?"Carta":`<img src="${esc(u)}" alt="">`}</button>`).join("");
     $("strip").querySelectorAll("button").forEach(b=>b.onclick=()=>{$("strip").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));src(b.dataset.src)});src(items[0][0])}
   function panel(){$("camSeg").innerHTML=`<div class="seg">${CAMS.map(([k,l])=>`<button type="button" data-cam="${k}" aria-pressed="${CAM===k}">${l}</button>`).join("")}</div>`;
     $("camSeg").querySelectorAll("[data-cam]").forEach(b=>b.onclick=()=>{CAM=b.dataset.cam;ls.set("cam",CAM);panel();strip();useLut()});
