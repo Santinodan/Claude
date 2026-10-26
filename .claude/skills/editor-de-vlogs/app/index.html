@@ -639,7 +639,7 @@ async function shrink(dataUrl,maxW=1600){const im=await loadImg(dataUrl);const s
   const c=document.createElement("canvas");c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.88)}
 
 /* ---------- guia: abrir la app en la Mac ---------- */
-const CMDS=[["Pegá esto en la Terminal (Cmd + Espacio → Terminal) y dale Enter","[ -d ~/EditorDeVlogs/.git ] || git clone -b claude/magical-archimedes-wub8rb https://github.com/Santinodan/Claude.git ~/EditorDeVlogs; cd ~/EditorDeVlogs && git pull -q; open \"Editor de Vlogs.app\""]];
+const CMDS=[["Pegá esto en la Terminal (Cmd + Espacio → Terminal) y dale Enter. Sirve para instalar y para actualizar.","cd ~ && if [ -d EditorDeVlogs/.git ]; then cd EditorDeVlogs && git checkout -q claude/magical-archimedes-wub8rb && git pull -q; else [ -e EditorDeVlogs ] && mv EditorDeVlogs \"EditorDeVlogs_viejo_$(date +%s)\"; git clone -b claude/magical-archimedes-wub8rb https://github.com/Santinodan/Claude.git EditorDeVlogs && cd EditorDeVlogs; fi && open \"Editor de Vlogs.app\""]];
 function macModal(motivo){const m=document.createElement("div");m.className="modal";
   m.innerHTML=`<div class="sheet small" role="dialog" aria-modal="true"><div class="form"><h2>Abrí la app en tu Mac<button class="x" type="button" id="gX" aria-label="Cerrar">${icon.x}</button></h2>
    <p class="note">${esc(motivo||"Esto necesita la app de tu Mac.")} Ahora estás en la <b>vista previa</b> (el link de claude.ai): es una página web y no puede leer tu disco ni lanzar a Claude Code, aunque estés en la Mac.</p>
