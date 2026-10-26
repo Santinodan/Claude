@@ -65,6 +65,11 @@ El orden es el del trabajo real. Cada sección tiene un estado: `pendiente` / `e
 - **Snati:** escucha los cortes dudosos y decide si quedan.
 - **Sale:** lista de cortes por clip.
 
+### 4b. Audio
+- **Snati:** qué fuente de voz usar si hay dos (mic o cámara).
+- **Claude:** limpia ruido y viento, empareja el volumen de la voz entre clips, deja el ambiente bajo en los montajes.
+- **Sale:** ajustes de voz por clip.
+
 ### 5. Música
 - **Snati:** temas (instrumentales bajadas) y en qué montajes van.
 - **Claude:** detecta tempo y beats, corta los montajes en el beat (1/2/4/8 beats por plano),
@@ -87,6 +92,14 @@ El orden es el del trabajo real. Cada sección tiene un estado: `pendiente` / `e
 - **Sale:** historial de versiones y notas.
 
 ---
+
+## Quién necesita qué
+
+| Uso | Qué necesita la persona | Quién paga a Claude |
+|---|---|---|
+| **Snati (uso propio)** — modo actual | Mac + Claude Code instalado y logueado con su plan (Pro/Max) + ffmpeg/Python (los instala la skill) | Su suscripción |
+| **Otros usuarios con Claude Code** | Lo mismo: cada uno con su Claude Code y su plan; se le pasa el repo/skill + la app | La suscripción de cada uno |
+| **Otros usuarios SIN Claude Code** (producto) | Solo la app. Claude va adentro con el Claude Agent SDK | Una API key (de Snati o del usuario), se paga por uso. No se puede usar el login de claude.ai de otros |
 
 ## Datos en la base (por vlog)
 
