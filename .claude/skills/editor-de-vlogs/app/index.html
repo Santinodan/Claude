@@ -382,7 +382,7 @@ const LUTS=[
 let GL=null, PERF=ls.get("perf")||"dlog", split=.5, lutCache={};
 function stopViewer(){GL=null}
 function parseCube(t){let n=0;const v=[];for(const line of t.split(/\r?\n/)){const s=line.trim();if(!s||s[0]=="#")continue;if(/^LUT_3D_SIZE/i.test(s)){n=parseInt(s.split(/\s+/)[1]);continue}if(/^[A-Z_]/i.test(s))continue;const p=s.split(/\s+/);if(p.length>=3)v.push(+p[0],+p[1],+p[2],1)}if(!n||v.length!==n*n*n*4)throw Error("LUT inválida");return{n,data:new Float32Array(v)}}
-async function loadLut(path){if(lutCache[path])return lutCache[path];const r=await fetch("/repo/"+path.split("/").map(encodeURIComponent).join("/"));if(!r.ok)throw Error("no");return lutCache[path]=parseCube(await r.text())}
+async function loadLut(path){if(lutCache[path])return lutCache[path];const r=await fetch("repo/"+path.split("/").map(encodeURIComponent).join("/"));if(!r.ok)throw Error("no");return lutCache[path]=parseCube(await r.text())}
 function startViewer(P){
   const cv=$("cv"),gl=cv.getContext("webgl2");if(!gl){$("stage").innerHTML='<div class="empty" style="color:#bbb">Este navegador no soporta WebGL2</div>';return}
   const sh=(t,s)=>{const x=gl.createShader(t);gl.shaderSource(x,s);gl.compileShader(x);return x};
