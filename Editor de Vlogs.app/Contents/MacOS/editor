@@ -1,8 +1,8 @@
 #!/bin/bash
 # Busca abrir.sh: dentro del repo (si la app esta en el repo) o en ~/Claude (si la app se copio a otro lado).
 APP="$(cd "$(dirname "$0")/../.." && pwd)"
-for R in "$(dirname "$APP")" "$HOME/Claude"; do
+for R in "$(dirname "$APP")" "$HOME/EditorDeVlogs" "$HOME/Claude"; do
   S="$R/.claude/skills/editor-de-vlogs/abrir.sh"
   [ -f "$S" ] && exec /bin/bash "$S"
 done
-osascript -e 'display alert "Editor de Vlogs" message "No encuentro el proyecto. Bajalo una vez con: git clone https://github.com/Santinodan/Claude.git ~/Claude"'
+osascript -e 'display alert "Editor de Vlogs" message "No encuentro el proyecto. Bajalo una vez con: git clone -b claude/magical-archimedes-wub8rb https://github.com/Santinodan/Claude.git ~/EditorDeVlogs"'

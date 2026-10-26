@@ -15,10 +15,10 @@ alerta() { osascript -e "display alert \"Editor de Vlogs\" message \"$1\"" >/dev
 # Carpeta del repo: la de este script (.claude/skills/editor-de-vlogs) o ~/Claude
 SKILL="$(cd "$(dirname "$0")" && pwd)"
 REPO="$(cd "$SKILL/../../.." 2>/dev/null && pwd)"
-[ -f "$REPO/.claude/skills/editor-de-vlogs/servidor.py" ] || REPO="$HOME/Claude"
+[ -f "$REPO/.claude/skills/editor-de-vlogs/servidor.py" ] || REPO="$HOME/EditorDeVlogs"
 SKILL="$REPO/.claude/skills/editor-de-vlogs"
 if [ ! -f "$SKILL/servidor.py" ]; then
-  alerta "No encuentro el proyecto en $REPO. Bajalo una vez con: git clone https://github.com/Santinodan/Claude.git ~/Claude"
+  alerta "No encuentro el proyecto en $REPO. Bajalo una vez con: git clone -b claude/magical-archimedes-wub8rb https://github.com/Santinodan/Claude.git ~/EditorDeVlogs"
   exit 1
 fi
 

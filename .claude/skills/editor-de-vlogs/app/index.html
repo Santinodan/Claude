@@ -639,14 +639,14 @@ async function shrink(dataUrl,maxW=1600){const im=await loadImg(dataUrl);const s
   const c=document.createElement("canvas");c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.88)}
 
 /* ---------- guia: abrir la app en la Mac ---------- */
-const CMDS=[["Pegá esto en la Terminal (Cmd + Espacio → Terminal) y dale Enter","[ -d ~/Claude ] || git clone https://github.com/Santinodan/Claude.git ~/Claude; cd ~/Claude && git checkout -q claude/magical-archimedes-wub8rb && git pull -q; open \"Editor de Vlogs.app\""]];
+const CMDS=[["Pegá esto en la Terminal (Cmd + Espacio → Terminal) y dale Enter","[ -d ~/EditorDeVlogs/.git ] || git clone -b claude/magical-archimedes-wub8rb https://github.com/Santinodan/Claude.git ~/EditorDeVlogs; cd ~/EditorDeVlogs && git pull -q; open \"Editor de Vlogs.app\""]];
 function macModal(motivo){const m=document.createElement("div");m.className="modal";
   m.innerHTML=`<div class="sheet small" role="dialog" aria-modal="true"><div class="form"><h2>Abrí la app en tu Mac<button class="x" type="button" id="gX" aria-label="Cerrar">${icon.x}</button></h2>
    <p class="note">${esc(motivo||"Esto necesita la app de tu Mac.")} Ahora estás en la <b>vista previa</b> (el link de claude.ai): es una página web y no puede leer tu disco ni lanzar a Claude Code, aunque estés en la Mac.</p>
    <a class="btn accent" href="http://localhost:8787" target="_blank" rel="noopener">Ya la tengo abierta · ir a la app</a>
    <p class="note"><b>La primera vez</b> (después ya no hace falta):</p>
    ${CMDS.map(([t,c],i)=>`<div class="field"><span>${t}</span><div class="pathrow"><code class="cmd" id="cmd${i}">${esc(c)}</code><button type="button" class="pick" data-copy="${i}">Copiar</button></div></div>`).join("")}
-   <p class="note">Se abre la app <b>Editor de Vlogs</b> y te lleva a la versión completa. Arrastrala al <b>Dock</b> (está en la carpeta <code>Claude</code> de tu usuario): desde ahí la abrís con un clic, como cualquier programa. También podés pedirle a Claude Code: <b>“abrí el editor de vlogs”</b>.</p>
+   <p class="note">Se abre la app <b>Editor de Vlogs</b> y te lleva a la versión completa. Arrastrala al <b>Dock</b> (está en la carpeta <code>EditorDeVlogs</code> de tu usuario): desde ahí la abrís con un clic, como cualquier programa. También podés pedirle a Claude Code: <b>“abrí el editor de vlogs”</b>.</p>
    <p class="note">Si pide usuario y contraseña de GitHub, bajalo con <b>GitHub Desktop</b> (File → Clone repository → Santinodan/Claude, en tu carpeta de usuario) y después abrí <b>Editor de Vlogs.app</b> desde esa carpeta.</p></div></div>`;
   document.body.appendChild(m);const c=()=>m.remove();$("gX").onclick=c;m.onclick=e=>{if(e.target===m)c()};
   m.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{const t=CMDS[b.dataset.copy][1];navigator.clipboard.writeText(t).then(()=>{b.textContent="Copiado"}).catch(()=>{const r=document.createRange();r.selectNodeContents($("cmd"+b.dataset.copy));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Seleccionado"})})}
