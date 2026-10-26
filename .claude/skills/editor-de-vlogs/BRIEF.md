@@ -13,6 +13,12 @@ Documento vivo con lo que vamos definiendo con Snati antes de armar la skill.
 | Perfiles | D-Log (Osmo Pocket 4P) o Rec709. Una LUT por perfil que llegue al **mismo look**. |
 | Audio | Camara + mics. **Musica = de lo mas importante.** |
 | Cortes | Sacar silencios largos, muletillas y correcciones ("no, mejor dicho..."). |
+| Orden | El de la **carpeta** (Snati ya ordena los clips). Hay carpeta `broll/` aparte (pocos clips). |
+| Barras | Barras negras finas arriba y abajo (letterbox) sobre el 16:9. |
+| Texto | Textos en pantalla estilo los vlogs de referencia (a analizar). |
+| Musica: origen | Snati identifica temas con Shazam en referencias, baja la **instrumental** y la usa. |
+| Musica: gusto | Playlist "Soul" de Spotify (ver abajo): rap/R&B melodico y oscuro, mucho Drake. |
+| LUT | Se elige en la app con antes/despues **y con % de intensidad** (mezcla LUT vs original). |
 | Fuera | Higgsfield no se usa. |
 
 ## Pendientes
@@ -22,6 +28,19 @@ Documento vivo con lo que vamos definiendo con Snati antes de armar la skill.
 2. **App de color**: elegir LUT con antes/despues sobre capturas del propio material.
    Idea a futuro: que la app sea el "panel de carga" del vlog (titulo, carpeta, LUT, musica, notas).
 3. Referencias de vlogs (las pasa Snati, se analizan sin commitear el material).
+
+## Referencias
+
+Vlogs (analizar musica, cortes y textos; el material NO se commitea):
+- https://www.youtube.com/watch?v=ZXkM4__FWXM
+- https://www.youtube.com/watch?v=FjvRn5WJq60
+- https://www.youtube.com/watch?v=VZK-hAz9SpE  (Brez — "celebrating my 22nd birthday in spain as a millionaire...", 28 min)
+
+Nota: YouTube bloquea descargas desde la sesion en la nube. Los videos se bajan en la compu de Snati.
+
+Playlist "Soul" (65 temas): https://open.spotify.com/playlist/1VPEOAAeVsQvlF41O6pXhX
+Artistas: Drake (mayoria), 6LACK, Travis Scott, 21 Savage + Metro Boomin, Gunna, Don Toliver,
+A$AP Rocky, Yeat, SZA, Playboi Carti. Vibe: nocturno, melodico, lujo, R&B/trap lento.
 
 ## Pipeline tentativo
 
