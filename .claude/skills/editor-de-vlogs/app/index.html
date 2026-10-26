@@ -444,6 +444,9 @@ input[type=file]{display:none}
 <div class="toast" id="toast" hidden></div>
 <input type="file" id="fileCube" accept=".cube">
 <input type="file" id="fileImg" accept="image/*">
+<input type="file" id="fileDir" webkitdirectory directory multiple>
+<input type="file" id="fileVids" accept="video/*,.mov,.mp4,.MP4,.MOV" multiple>
+<input type="file" id="fileAud" accept="audio/*">
 
 <script>
 const $=id=>document.getElementById(id);
@@ -650,7 +653,29 @@ function premiereInfo(d){const m=document.createElement("div");m.className="moda
   document.body.appendChild(m);const c=()=>m.remove();$("pX").onclick=$("pOk").onclick=c;m.onclick=e=>{if(e.target===m)c()}}
 
 /* ---------- elegir carpeta o archivo de la Mac ---------- */
-async function elegirRuta(modo="carpeta",titulo){if(!SERVER){toast("Elegir carpetas funciona con la app abierta en tu Mac");return null}
+/* sin servidor (link de claude.ai o navegador): el navegador abre el Finder y lee la carpeta.
+   No da la ruta completa, pero alcanza para ver los clips; para editar con Claude se usa la app de la Mac. */
+let LOCAL_PICK=null;
+const VID_RE=/\.(mp4|mov|m4v|mts|mxf)$/i;
+function elegirCarpetaLocal(){return new Promise(res=>{const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||!("webkitdirectory" in document.createElement("input"));
+  const f=$(ios?"fileVids":"fileDir");f.value="";f.onchange=async()=>{const ok=x=>{const parts=(x.webkitRelativePath||x.name).split("/").slice(1);return parts.length<=1||(parts.length===2&&/^b-?roll$/i.test(parts[0]))};
+    const fs=[...f.files].filter(x=>VID_RE.test(x.name)&&!x.name.startsWith(".")&&ok(x));
+    if(!fs.length){toast("No encontré videos en esa carpeta");return res(null)}
+    const nombre=ios?"Clips elegidos":(fs[0].webkitRelativePath||"").split("/")[0]||"Carpeta";
+    toast("Leyendo "+fs.length+" clips…");const clips=await leerClipsLocales(fs);res({nombre,clips})};f.click()})}
+async function leerClipsLocales(files){const rel=f=>(f.webkitRelativePath||f.name).split("/").slice(1).join("/")||f.name;
+  const orden=[...files].sort((a,b)=>{const ra=rel(a),rb=rel(b),ba=/(^|\/)b-?roll\//i.test(ra),bb=/(^|\/)b-?roll\//i.test(rb);return ba!==bb?(ba?1:-1):ra.localeCompare(rb,undefined,{numeric:true})});
+  const out=[];for(const [i,f] of orden.entries()){const r=rel(f);const meta=await metaVideo(f);
+    out.push({archivo:r,orden:i+1,duracion:meta.dur,ancho:meta.w,alto:meta.h,audio:true,perfil:/^DJI/i.test(f.name)?"dlog":"desconocido",broll:/(^|\/)b-?roll\//i.test(r),descartado:false,thumb_data:meta.thumb,local:true,peso_mb:Math.round(f.size/1e6)})}
+  return out}
+function metaVideo(file){return new Promise(res=>{const v=document.createElement("video");const url=URL.createObjectURL(file);v.muted=true;v.preload="metadata";v.playsInline=true;
+  let done=false;const fin=(o)=>{if(done)return;done=true;URL.revokeObjectURL(url);res(o)};
+  v.onloadedmetadata=()=>{v.currentTime=Math.min(1,(v.duration||2)/2)};
+  v.onseeked=()=>{let thumb=null;try{const c=document.createElement("canvas");const s=320/(v.videoWidth||320);c.width=320;c.height=Math.round((v.videoHeight||180)*s);c.getContext("2d").drawImage(v,0,0,c.width,c.height);thumb=c.toDataURL("image/jpeg",.7)}catch(e){}
+    fin({dur:v.duration||0,w:v.videoWidth||null,h:v.videoHeight||null,thumb})};
+  v.onerror=()=>fin({dur:0,w:null,h:null,thumb:null});setTimeout(()=>fin({dur:v.duration||0,w:v.videoWidth||null,h:v.videoHeight||null,thumb:null}),8000);v.src=url})}
+function elegirAudioLocal(){return new Promise(res=>{const f=$("fileAud");f.value="";f.onchange=()=>res(f.files[0]?.name||null);f.click()})}
+async function elegirRuta(modo="carpeta",titulo){if(!SERVER){if(modo==="archivo")return elegirAudioLocal();LOCAL_PICK=await elegirCarpetaLocal();return LOCAL_PICK?LOCAL_PICK.nombre:null}
   try{const d=await post("/api/elegir",{modo,titulo});if(d.nativo)return d.ruta}catch(e){}
   return explorador(modo,titulo)}
 function explorador(modo,titulo){return new Promise(res=>{const m=document.createElement("div");m.className="modal";let sel=null,dir="";
@@ -740,6 +765,7 @@ function lookModal(look){const nuevo=!look;const L=nuevo?{id:"",nombre:"",perfil
 async function crearVlog(titulo,carpeta){if(!titulo)return $("cTitulo").focus(),toast("Escribí el título del vlog");
   if(!carpeta&&SERVER)return $("cCarpeta").focus(),toast("Escribí la ruta de la carpeta del día");
   V=DEFAULT_VLOG();V.titulo=titulo;V.carpeta=carpeta||("vista-previa/"+uid());
+  if(!SERVER&&LOCAL_PICK&&carpeta===LOCAL_PICK.nombre){V.carpeta="vista-previa/"+LOCAL_PICK.nombre+"-"+uid();V.carpeta_nombre=LOCAL_PICK.nombre;V.material.clips=LOCAL_PICK.clips;LOCAL_PICK=null}
   if(SERVER){try{const d=await (await fetch("/api/vlog?carpeta="+encodeURIComponent(V.carpeta))).json();if(d.vlog){V=merge(DEFAULT_VLOG(),d.vlog);V.titulo=V.titulo||titulo;toast("Ese vlog ya existía: lo abrí")}}catch(e){}}
   V.perfil=PERFIL.id;await saveNow();if(!(PERFIL.proyectos||[]).includes(V.carpeta)){PERFIL.proyectos=[V.carpeta,...(PERFIL.proyectos||[])]}
   ls.set("ultimo",V.carpeta);TAB="material";go("editor")}
@@ -794,8 +820,8 @@ function wireEditor(v){renderSteps();renderStep();$("back").onclick=()=>{saveNow
 const STEP_VIEWS={
 material:()=>`${head(1,"Material","Los clips en el orden de la carpeta. Corregí el perfil si se detectó mal y marcá lo que no va.")}
  <div class="card"><div class="grid2">${fld("titulo","Título","Un día cerrando clientes en Madrid")}<div class="pathrow">${fld("carpeta","Carpeta del día","/Volumes/Disco/Vlogs/2026-10-26")}<button type="button" class="pick" id="mPick">${icon.folder} Elegir…</button></div></div>
-  <div class="row"><button class="btn accent" type="button" id="scan">${V.material.clips.length?"Volver a escanear":"Escanear carpeta"}</button><span class="note">${V.material.clips.length?`${V.material.clips.length} clips · ${mmss(V.material.clips.reduce((a,c)=>a+(c.descartado?0:c.duracion||0),0))} útiles`:SERVER?"Lee los clips en orden y los de broll/.":"En la vista previa no se pueden leer carpetas."}</span></div></div>
- ${V.material.clips.length?`<div class="clips">${V.material.clips.map((c,i)=>`<div class="clip ${c.descartado?"off":""}"><div class="thumb">${c.thumb&&SERVER?`<img src="${Store.media(abs(c.thumb))}" alt="" loading="lazy">`:esc(c.archivo)}<span class="ord">${String(c.orden??i+1).padStart(2,"0")}</span><span class="dur">${mmss(c.duracion)}</span></div>
+  <div class="row"><button class="btn accent" type="button" id="scan">${V.material.clips.length?"Volver a escanear":"Escanear carpeta"}</button><span class="note">${V.material.clips.length?`${V.material.clips.length} clips · ${mmss(V.material.clips.reduce((a,c)=>a+(c.descartado?0:c.duracion||0),0))} útiles`:SERVER?"Lee los clips en orden y los de broll/.":"Tocá Elegir… y seleccioná la carpeta en el Finder."}</span></div></div>
+ ${V.material.clips.length?`<div class="clips">${V.material.clips.map((c,i)=>`<div class="clip ${c.descartado?"off":""}"><div class="thumb">${c.thumb&&SERVER?`<img src="${Store.media(abs(c.thumb))}" alt="" loading="lazy">`:c.thumb_data?`<img src="${c.thumb_data}" alt="">`:esc(c.archivo)}<span class="ord">${String(c.orden??i+1).padStart(2,"0")}</span><span class="dur">${mmss(c.duracion)}</span></div>
    <div class="body"><div class="name" title="${esc(c.archivo)}">${esc(c.archivo)}</div><select data-clip="${i}" data-k="perfil" aria-label="Perfil">${[...CAMS,["desconocido","¿Perfil?"]].map(([v,l])=>`<option value="${v}" ${c.perfil===v?"selected":""}>${l}</option>`).join("")}</select>
     <div class="acts"><button class="mini" type="button" data-clip="${i}" data-k="broll" aria-pressed="${!!c.broll}">B-roll</button><button class="mini" type="button" data-clip="${i}" data-k="descartado" aria-pressed="${!!c.descartado}">Descartar</button></div></div></div>`).join("")}</div>`
  :`<div class="empty"><b>Todavía no hay clips</b><span>Escaneá la carpeta del día. Los clips de <code>broll/</code> se marcan solos.</span></div>`}`,
@@ -836,7 +862,9 @@ exportar:()=>{const vs=V.estado.versiones||[];return `${head(8,"Exportar y revis
 };
 function frameHTML(){const t=V.textos.titulo_episodio;return `<div class="frame"><small class="cap">Apertura</small>${t.activo?`<div class="neon"><small>#${esc(t.numero)}</small>${esc(t.texto||V.titulo||"Título")}</div>`:""}</div><div class="frame talk"><small class="cap">Charla y separadores</small>${V.textos.lugar_hora?`<div class="place"><span>Madrid</span><span>11:00 AM</span></div>`:""}${V.textos.subtitulos?`<div class="sub">y ahí fue cuando cerramos el primer cliente</div>`:""}</div>`}
 const STEP_AFTER={
-material(P){$("mPick").onclick=async()=>{const r=await elegirRuta("carpeta","Elegí la carpeta del día con los clips");if(!r)return;V.carpeta=r;save();renderStep();$("scan").click()};$("scan").onclick=async()=>{if(!SERVER)return toast("Escanear necesita la app abierta en tu Mac");$("scan").disabled=true;$("scan").textContent="Escaneando…";await saveNow();
+material(P){$("mPick").onclick=async()=>{const r=await elegirRuta("carpeta","Elegí la carpeta del día con los clips");if(!r)return;
+    if(!SERVER&&LOCAL_PICK){V.carpeta_nombre=LOCAL_PICK.nombre;V.material.clips=LOCAL_PICK.clips;LOCAL_PICK=null;save();renderSteps();renderStep();toast(V.material.clips.length+" clips cargados");return}
+    V.carpeta=r;save();renderStep();$("scan").click()};$("scan").onclick=async()=>{if(!SERVER)return toast("Escanear necesita la app abierta en tu Mac");$("scan").disabled=true;$("scan").textContent="Escaneando…";await saveNow();
   try{const d=await post("/api/escanear",{carpeta:V.carpeta});V=merge(DEFAULT_VLOG(),d.vlog);toast(V.material.clips.length+" clips")}catch(e){toast(e.message)}renderSteps();renderStep()};
   P.querySelectorAll("[data-clip]").forEach(el=>{const c=V.material.clips[el.dataset.clip],k=el.dataset.k;if(el.tagName==="SELECT")el.onchange=()=>{c[k]=el.value;save();renderSteps()};else el.onclick=()=>{c[k]=!c[k];save();renderStep()}});
   onChange=k=>{if(k==="titulo")document.querySelector(".etitle b").textContent=V.titulo||"Vlog sin título"}},

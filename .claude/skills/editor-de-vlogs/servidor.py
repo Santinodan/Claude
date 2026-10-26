@@ -187,18 +187,26 @@ VIDEO_EXT = {".mp4", ".mov", ".m4v", ".mts", ".mxf"}
 AUDIO_EXT = {".mp3", ".wav", ".m4a", ".aac", ".aif", ".aiff", ".flac", ".ogg"}
 
 def elegir_nativo(modo, titulo):
-    """Selector de macOS (Finder). Devuelve ruta, "" si cancela, o None si no hay selector nativo."""
+    """Selector de macOS (Finder). Devuelve ruta, "" si cancela, o None si no hay selector nativo.
+    Corre 'choose folder' directo (sin 'tell System Events'): no pide permisos de automatizacion
+    y 'activate' lo trae adelante del navegador."""
     if sys.platform != "darwin":
         return None
     titulo = (titulo or "Elegí").replace('"', "'")
     if modo == "archivo":
-        orden = f'choose file with prompt "{titulo}" of type {{"public.audio"}}'
+        orden = f'POSIX path of (choose file with prompt "{titulo}" of type {{"public.audio", "public.movie"}})'
     else:
-        orden = f'choose folder with prompt "{titulo}"'
-    script = f'tell application "System Events"\nactivate\nset f to {orden}\nend tell\nPOSIX path of f'
-    r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True, timeout=600)
+        orden = f'POSIX path of (choose folder with prompt "{titulo}" default location (path to home folder))'
+    try:
+        r = subprocess.run(["osascript", "-e", "activate", "-e", orden], capture_output=True, text=True, timeout=900)
+    except Exception as e:
+        print("AVISO selector de Finder:", e, flush=True)
+        return None
     if r.returncode != 0:
-        return ""            # cancelado
+        if "-128" in r.stderr:      # el usuario toco Cancelar
+            return ""
+        print("AVISO selector de Finder:", r.stderr.strip(), flush=True)
+        return None                 # otro error: la app usa su explorador propio
     return r.stdout.strip().rstrip("/") or "/"
 
 def explorar(carpeta, modo):
