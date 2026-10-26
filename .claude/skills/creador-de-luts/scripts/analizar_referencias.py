@@ -56,11 +56,20 @@ def fotogramas(path, n, tmp):
     return salida
 
 
+def recortar_franjas(a, umbral=0.06):
+    """Saca franjas negras (letterbox/pillarbox) para no falsear la medicion de negros."""
+    filas = np.where(a.max(axis=(1, 2)) > umbral)[0]
+    cols = np.where(a.max(axis=(0, 2)) > umbral)[0]
+    if len(filas) < a.shape[0] * 0.3 or len(cols) < a.shape[1] * 0.3:
+        return a  # imagen muy oscura: no recortar
+    return a[filas[0]:filas[-1] + 1, cols[0]:cols[-1] + 1]
+
+
 def cargar(p, ancho=540):
     im = Image.open(p).convert('RGB')
     if im.width > ancho:
         im = im.resize((ancho, round(im.height * ancho / im.width)), Image.LANCZOS)
-    return np.asarray(im).astype(np.float64) / 255.0
+    return recortar_franjas(np.asarray(im).astype(np.float64) / 255.0)
 
 
 def medir(img):

@@ -123,7 +123,7 @@ def grade(disp_lin, p=DEFAULT):
         return 1.0 / (1.0 + np.exp(-k * (v - p['pivot'])))
     s0, s1 = sig(0.0), sig(1.0)
     Lc = (sig(L2) - s0) / (s1 - s0)
-    Lc = p['black'] + (1 - p['black']) * Lc
+    Lc = p['black'] + (p.get('white', 1.0) - p['black']) * Lc  # white<1 = blancos comprimidos (look cine)
     # contrast boosts perceived chroma too; keep chroma proportional in shadows
     a2 = C2 * np.cos(np.radians(h2))
     b2 = C2 * np.sin(np.radians(h2))
