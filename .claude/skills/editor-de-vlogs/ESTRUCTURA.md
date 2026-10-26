@@ -94,6 +94,11 @@ El orden es el del trabajo real. Cada sección tiene un estado: `pendiente` / `e
   Primero una versión liviana para revisar y después la final.
 - **Sale:** `Vlog_<titulo>_v1.mp4` (versionado: v2, v3…) en `_edicion/`.
 
+### 7b. Abrir en Premiere
+- Botón en Exportar y en la Línea de tiempo: arma `_edicion/premiere/` con el XML de la secuencia,
+  subtítulos `.srt` y textos/barras en PNG. En la Mac lo abre con Premiere y muestra la carpeta en Finder.
+- La LUT va en el nombre de cada clip y en marcadores (se aplica en Lumetri).
+
 ### 8. Revisión
 - **Snati:** mira la versión y deja notas con minuto ("2:14 cortar antes").
 - **Claude:** aplica las notas y saca la siguiente versión.

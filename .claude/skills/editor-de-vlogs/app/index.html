@@ -631,6 +631,24 @@ function pickCube(cb){const f=$("fileCube");f.value="";f.onchange=async()=>{cons
 async function shrink(dataUrl,maxW=1600){const im=await loadImg(dataUrl);const s=Math.min(1,maxW/im.naturalWidth);if(s===1&&dataUrl.startsWith("data:image/jpeg"))return dataUrl;
   const c=document.createElement("canvas");c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.88)}
 
+/* ---------- abrir en Premiere ---------- */
+async function abrirPremiere(btn){if(!SERVER)return toast("Pasar a Premiere funciona con la app abierta en tu Mac");
+  if(typeof PLAN!=="undefined"&&PLAN&&!PLAN._demo&&TAB==="timeline"){clearTimeout(tlSaveT);await post("/api/plan",{carpeta:V.carpeta,plan:PLAN}).catch(()=>{})}
+  const txt=btn?.textContent;if(btn){btn.disabled=true;btn.textContent="Generando…"}
+  try{const d=await post("/api/premiere",{carpeta:V.carpeta});
+    premiereInfo(d)}catch(e){toast(e.message)}finally{if(btn){btn.disabled=false;btn.textContent=txt}}}
+function premiereInfo(d){const m=document.createElement("div");m.className="modal";
+  m.innerHTML=`<div class="sheet small" role="dialog" aria-modal="true"><div class="form"><h2>Listo para Premiere<button class="x" type="button" id="pX" aria-label="Cerrar">${icon.x}</button></h2>
+   <p class="note">${d.premiere?`Se está abriendo en <b>${esc(d.premiere)}</b>. Si Premiere pregunta, elegí crear la secuencia.`:d.finder?"Se abrió la carpeta en Finder.":"Los archivos quedaron en la carpeta _edicion/premiere del vlog."}</p>
+   <div class="field"><span>Proyecto</span><code style="font:12px var(--f-mono);overflow-wrap:anywhere">${esc(d.xml)}</code></div>
+   <ol class="note" style="margin:0;padding-left:18px;display:grid;gap:6px">
+    <li>En Premiere: <b>Archivo → Importar</b> → el archivo <b>.xml</b>. Se crea la secuencia con todas las pistas.</li>
+    <li><b>Color:</b> cada clip dice en su nombre qué LUT lleva, y hay marcadores donde cambia. Aplicala en Lumetri → Creativo → Look.</li>
+    <li><b>Subtítulos:</b> importá <b>subtitulos.srt</b> y arrastralo a la secuencia.</li>
+    <li>Pistas: V1 clips · V2 textos · V3 barras · A1 voz · A2 música · A3 efectos.</li></ol>
+   <button class="btn accent" type="button" id="pOk">Entendido</button></div></div>`;
+  document.body.appendChild(m);const c=()=>m.remove();$("pX").onclick=$("pOk").onclick=c;m.onclick=e=>{if(e.target===m)c()}}
+
 /* ---------- elegir carpeta o archivo de la Mac ---------- */
 async function elegirRuta(modo="carpeta",titulo){if(!SERVER){toast("Elegir carpetas funciona con la app abierta en tu Mac");return null}
   try{const d=await post("/api/elegir",{modo,titulo});if(d.nativo)return d.ruta}catch(e){}
@@ -811,7 +829,7 @@ textos:()=>`${head(7,"Textos","Discretos como en tus referencias: subtítulos ch
  <div class="grid2"><div class="card"><h3>Título de episodio</h3>${sw("textos.titulo_episodio.activo","Mostrar título al principio","Rojo neón condensado")}<div class="grid2" style="grid-template-columns:90px minmax(0,1fr)">${fld("textos.titulo_episodio.numero","Número","2")}${fld("textos.titulo_episodio.texto","Texto","CONSTRUYENDO")}</div></div>
  <div class="card"><h3>En pantalla</h3>${sw("textos.subtitulos","Subtítulos","Chicos, blancos, sin caja")}${sw("textos.lugar_hora","Lugar y hora","En los separadores de capítulo")}</div></div>`,
 exportar:()=>{const vs=V.estado.versiones||[];return `${head(8,"Exportar y revisar","Primero una preview liviana; cuando esté, la final. Las versiones nunca se pisan.")}
- <div class="grid2"><div class="card"><h3>Formato</h3><div class="field"><span>Resolución</span>${seg("exportar.resolucion",[["1080p","1080p"],["4k","4K"]])}</div>${sw("exportar.preview","Empezar con preview","Más rápida, para revisar cortes y música")}<p class="note">16:9 · audio a ${V.exportar.lufs} LUFS</p></div>
+ <div class="grid2"><div class="card"><h3>Formato</h3><div class="field"><span>Resolución</span>${seg("exportar.resolucion",[["1080p","1080p"],["4k","4K"]])}</div>${sw("exportar.preview","Empezar con preview","Más rápida, para revisar cortes y música")}<p class="note">16:9 · audio a ${V.exportar.lufs} LUFS</p><button class="btn ghost" type="button" id="toPremiere">Abrir en Premiere</button><p class="note">Te arma la secuencia con todas las pistas para seguir en Premiere Pro.</p></div>
  <div class="card"><h3>Versiones</h3>${vs.length?`<div class="vers">${vs.map((v,i)=>`<div class="ver"><span><b>${esc(v.archivo.split("/").pop())}</b> <span class="pill ${v.preview?"v":"o"}">${v.preview?"preview":"final"}</span><br><small class="note">${esc((v.fecha||"").replace("T"," ").slice(0,16))}${v.duracion?" · "+mmss(v.duracion):""}</small></span><button class="mini" type="button" data-play="${i}">Ver</button></div>`).join("")}</div><video id="player" controls hidden playsinline></video>`:`<div class="empty"><b>Sin versiones todavía</b><span>Tocá Editar con Claude para sacar la primera.</span></div>`}</div></div>
  <div class="card"><h3>Notas de revisión <small>Claude las aplica en la próxima versión</small></h3><div class="notes">${(V.revision.notas||[]).map((n,i)=>`<div class="notei"><input type="text" value="${esc(n.tc)}" data-nota="${i}" data-k="tc" aria-label="Minuto"><input type="text" value="${esc(n.texto)}" data-nota="${i}" data-k="texto" aria-label="Nota"><span class="pill ${n.hecha?"o":"a"}">${n.hecha?"hecha":"pendiente"}</span><button class="mini" type="button" data-delnota="${i}">Quitar</button></div>`).join("")}</div>
   <div class="row"><button class="btn ghost" type="button" id="addNota">Agregar nota</button><button class="btn ghost" type="button" data-ask="Aplicá las notas de revisión pendientes y exportá una versión nueva.">Aplicar notas con Claude</button></div></div>`}
@@ -826,7 +844,7 @@ historia(P){wireAsk(P)},
 musica(P){$("pickTema").onclick=async()=>{const r=await elegirRuta("archivo","Elegí la instrumental");if(!r)return;V.musica.temas.push({archivo:r,uso:"montajes"});save();renderSteps();renderStep()};$("addTema").onclick=()=>{const v=$("temaPath").value.trim();if(!v)return;V.musica.temas.push({archivo:v,uso:"montajes"});save();renderSteps();renderStep()};
   P.querySelectorAll("[data-tema]").forEach(s=>s.onchange=()=>{V.musica.temas[s.dataset.tema].uso=s.value;save()});P.querySelectorAll("[data-deltema]").forEach(b=>b.onclick=()=>{V.musica.temas.splice(b.dataset.deltema,1);save();renderSteps();renderStep()})},
 textos(P){onChange=()=>{$("frame").innerHTML=frameHTML()}},
-exportar(P){wireAsk(P);$("addNota").onclick=()=>{V.revision.notas.push({tc:"00:00",texto:"",hecha:false});save();renderStep()};
+exportar(P){wireAsk(P);$("toPremiere").onclick=e=>abrirPremiere(e.currentTarget);$("addNota").onclick=()=>{V.revision.notas.push({tc:"00:00",texto:"",hecha:false});save();renderStep()};
   P.querySelectorAll("[data-nota]").forEach(i=>i.oninput=()=>{V.revision.notas[i.dataset.nota][i.dataset.k]=i.value;save()});P.querySelectorAll("[data-delnota]").forEach(b=>b.onclick=()=>{V.revision.notas.splice(b.dataset.delnota,1);save();renderStep()});
   P.querySelectorAll("[data-play]").forEach(b=>b.onclick=()=>{const v=$("player");v.hidden=false;v.src=Store.media(abs(V.estado.versiones[b.dataset.play].archivo));v.play().catch(()=>{})})},
 color(P){colorStep(P)}};
@@ -927,7 +945,7 @@ STEP_VIEWS.timeline=()=>`<div class="tl-top"><div class="monitor"><div class="ms
   <button class="tb" type="button" id="aTexto">+ Texto</button><button class="tb" type="button" id="aColor">+ Color</button><button class="tb" type="button" id="aMusica">+ Música</button><button class="tb" type="button" id="aSfx">+ Efecto</button><span class="tsep"></span>
   <button class="tb" type="button" id="tSnap" title="Imán">🧲 Imán</button><span class="grow"></span>
   <label class="tb" title="Zoom">－<input type="range" id="tZoom" min="4" max="160" value="${TL.pps}" aria-label="Zoom de la línea de tiempo">＋</label><button class="tb" type="button" id="tFit">Ajustar</button><span class="tsep"></span>
-  <button class="tb" type="button" id="tExpP">Exportar preview</button><button class="btn accent" type="button" id="tExpF" style="height:32px;padding:0 12px">Exportar final</button></div>
+  <button class="tb" type="button" id="tPr">Abrir en Premiere</button><button class="tb" type="button" id="tExpP">Exportar preview</button><button class="btn accent" type="button" id="tExpF" style="height:32px;padding:0 12px">Exportar final</button></div>
  <div class="tl-status" id="tlStatus"></div>
  <div class="tl" id="tl"><div class="tl-heads" id="tlHeads"></div><div class="tl-scroll" id="tls"><div class="tl-content" id="tlc"></div></div></div>`;
 
@@ -982,7 +1000,7 @@ function wireTools(){const T=$("tlTools");
   $("aTexto").onclick=()=>{push();PLAN.textos.push({id:nid(),tipo:"texto",texto:"Texto nuevo",estilo:"simple",pos:"abajo",t:r4(TL.time),dur:3});commit();select("textos",PLAN.textos.length-1)};
   $("aColor").onclick=()=>{const l=(PERFIL?.looks||[])[0];if(!l)return toast("Primero cargá un look en tu perfil");push();PLAN.capas_color.push({id:nid(),nombre:l.nombre,t:r4(TL.time),dur:6,lut:l.archivo,intensidad:l.intensidad??100});commit();select("capas_color",PLAN.capas_color.length-1)};
   $("aMusica").onclick=()=>audioModal("musica");$("aSfx").onclick=()=>audioModal("sfx");
-  $("tExpP").onclick=()=>exportar(true);$("tExpF").onclick=()=>exportar(false);
+  $("tExpP").onclick=()=>exportar(true);$("tPr").onclick=e=>abrirPremiere(e.currentTarget);$("tExpF").onclick=()=>exportar(false);
   $("tPlay").onclick=togglePlay;$("tStart").onclick=()=>seek(0);
   $("tPrevE").onclick=()=>{const b=PLAN.segmentos.map(s=>s.t).filter(t=>t<TL.time-.01);seek(b.length?b.at(-1):0)};
   $("tNextE").onclick=()=>{const b=PLAN.segmentos.map(s=>s.t+s.dur).find(t=>t>TL.time+.01);seek(b??PLAN.duracion)};

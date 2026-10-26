@@ -32,3 +32,6 @@ Notas:
 - render.py recalcula t / dur / frames de los segmentos desde entrada/salida y guarda en
   planes/plan_vN.json el plan tal cual se renderizo.
 - comun.py tiene lo compartido (defaults del vlog.json, ffmpeg, progreso).
+
+premiere.py <vlog.json>   -> _edicion/premiere/: XML para Premiere (V1 clips, V2 textos PNG, V3 barras,
+                            A1 voz, A2 musica, A3 efectos; pistas extra si se cruzan), subtitulos.srt, marcadores con LUTs.

@@ -459,6 +459,25 @@ class H(BaseHTTPRequestHandler):
                 return self._json({"error": "La carpeta no existe"}, 400)
             guardar_plan(carpeta, d["plan"])
             return self._json({"ok": True})
+        if u.path == "/api/premiere":
+            vp = ruta_vlog(carpeta)
+            if not ruta_plan(carpeta).exists():
+                return self._json({"error": "Todavía no hay edición para pasar a Premiere"}, 400)
+            r = subprocess.run([sys.executable, str(SCRIPTS / "premiere.py"), str(vp)], cwd=str(REPO),
+                               capture_output=True, text=True, timeout=900)
+            linea = [l for l in r.stdout.splitlines() if l.startswith("OK ")]
+            if r.returncode != 0 or not linea:
+                return self._json({"error": (r.stderr or r.stdout)[-600:] or "No se pudo generar"}, 500)
+            xml = linea[-1][3:].strip()
+            abierto = None
+            if sys.platform == "darwin":                  # Mac: abrir con Premiere y mostrar en Finder
+                apps = sorted(Path("/Applications").glob("Adobe Premiere Pro*/Adobe Premiere Pro*.app")) + \
+                    sorted(Path("/Applications").glob("Adobe Premiere Pro*.app"))
+                if apps and d.get("abrir", True):
+                    subprocess.Popen(["open", "-a", str(apps[-1]), xml])
+                    abierto = apps[-1].stem
+                subprocess.Popen(["open", "-R", xml])
+            return self._json({"xml": xml, "carpeta": str(Path(xml).parent), "premiere": abierto, "finder": sys.platform == "darwin"})
         if u.path == "/api/render":
             if not ruta_plan(carpeta).exists():
                 return self._json({"error": "Todavía no hay edición para exportar"}, 400)

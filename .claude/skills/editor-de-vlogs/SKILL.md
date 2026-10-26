@@ -93,3 +93,10 @@ Snati puede retocar `_edicion/plan.json` en la **Linea de tiempo** de la app (co
 - En `_edicion/`: `vlog.json`, `thumbs/`, `transcripciones/`, `transcripcion.txt`, `historia.json`,
   `plan.json`, `planes/plan_vN.json`, `musica/` (cache de beats), `progreso.log`, `Vlog_<titulo>_vN.mp4`.
 - Si algo se repite o falla seguido, proponer a Snati mejorar el script y guardarlo en el repo.
+
+## Pasar a Premiere Pro
+
+Si Snati pide seguir en Premiere: `python3 .claude/skills/editor-de-vlogs/scripts/edicion/premiere.py <vlog.json>`.
+Genera `_edicion/premiere/<titulo>.xml` (secuencia XML de Premiere: Archivo > Importar), `subtitulos.srt`,
+textos y barras como PNG. La LUT de cada clip va en su nombre y en marcadores (se aplica en Lumetri).
+
