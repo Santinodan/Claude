@@ -411,6 +411,9 @@ input[type=file]{display:none}
 .fbimg{aspect-ratio:16/9;border-radius:10px;border:1.5px dashed var(--line);background:var(--bg);overflow:hidden;padding:0;display:grid;place-items:center;color:var(--ink-2);font-size:13px;text-align:center}
 .fbimg:hover{border-color:var(--accent)}
 .fbimg img{width:100%;height:100%;object-fit:cover;display:block}
+a.btn{text-decoration:none}
+code.cmd{flex:1;min-width:0;display:block;font:11.5px/1.5 var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;overflow-wrap:anywhere;user-select:all}
+.conn{cursor:default}.conn.prev{cursor:pointer}
 /* elegir carpeta / archivo */
 .pathrow{display:flex;gap:8px;align-items:flex-end}
 .pathrow .field{flex:1;min-width:0}
@@ -560,8 +563,9 @@ function go(view,opts={}){VIEW=view;if(opts.tab)TAB=opts.tab;ls.set("view",view=
   document.querySelectorAll(".rb").forEach(b=>b.setAttribute("aria-current",b.dataset.go===view||(view==="editor"&&b.dataset.go==="proyectos")?"page":"false"));
   $("app").classList.toggle("in-editor",view==="editor");render();$("view").scrollTop=0;window.scrollTo(0,0)}
 document.querySelectorAll(".rb").forEach(b=>b.onclick=()=>go(b.dataset.go));
+document.addEventListener("click",e=>{if(e.target.closest("[data-mac]"))macModal("Para escanear, editar con Claude y exportar se usa la app de tu Mac.")});
 $("railAv").onclick=()=>perfilPop();
-function connHTML(){return `<span class="conn ${SERVER&&CLAUDE?"on":""}"><i></i>${!SERVER?"Vista previa":!CLAUDE?"Sin Claude Code":"Claude Code conectado"}</span>`}
+function connHTML(){return `<span class="conn ${SERVER&&CLAUDE?"on":""} ${SERVER?"":"prev"}" ${SERVER?"":'role="button" tabindex="0" data-mac title="Cómo abrir la app en tu Mac"'}><i></i>${!SERVER?"Vista previa":!CLAUDE?"Sin Claude Code":"Claude Code conectado"}</span>`}
 async function render(){stopViewer();const v=$("view");if(VIEW==="editor"&&!V)VIEW="inicio";
   if(VIEW==="editor"&&V){v.innerHTML=editorHTML();wireEditor(v);return}
   v.innerHTML=`<div class="wrap">${await PAGES[VIEW]()}</div>`;PAGE_AFTER[VIEW]?.(v);fillCovers(v)}
@@ -634,8 +638,23 @@ function pickCube(cb){const f=$("fileCube");f.value="";f.onchange=async()=>{cons
 async function shrink(dataUrl,maxW=1600){const im=await loadImg(dataUrl);const s=Math.min(1,maxW/im.naturalWidth);if(s===1&&dataUrl.startsWith("data:image/jpeg"))return dataUrl;
   const c=document.createElement("canvas");c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.88)}
 
+/* ---------- guia: abrir la app en la Mac ---------- */
+const CMDS=[["1 · Bajar el proyecto (una sola vez)","git clone https://github.com/Santinodan/Claude.git ~/Claude && cd ~/Claude && git checkout claude/magical-archimedes-wub8rb"],
+ ["2 · Instalar lo necesario (una sola vez)","brew install ffmpeg && pip3 install -r ~/Claude/.claude/skills/editor-de-vlogs/requirements.txt && curl -fsSL https://claude.ai/install.sh | bash"],
+ ["3 · Abrir la app (cada vez)","cd ~/Claude && git pull && python3 .claude/skills/editor-de-vlogs/servidor.py"]];
+function macModal(motivo){const m=document.createElement("div");m.className="modal";
+  m.innerHTML=`<div class="sheet small" role="dialog" aria-modal="true"><div class="form"><h2>Abrí la app en tu Mac<button class="x" type="button" id="gX" aria-label="Cerrar">${icon.x}</button></h2>
+   <p class="note">${esc(motivo||"Esto necesita la app de tu Mac.")} Ahora estás en la <b>vista previa</b> (el link de claude.ai): es una página web y no puede leer tu disco ni lanzar a Claude Code, aunque estés en la Mac.</p>
+   <a class="btn accent" href="http://localhost:8787" target="_blank" rel="noopener">Ya la tengo abierta · ir a la app</a>
+   <p class="note">Si todavía no la instalaste, abrí la app <b>Terminal</b> y pegá estos comandos en orden:</p>
+   ${CMDS.map(([t,c],i)=>`<div class="field"><span>${t}</span><div class="pathrow"><code class="cmd" id="cmd${i}">${esc(c)}</code><button type="button" class="pick" data-copy="${i}">Copiar</button></div></div>`).join("")}
+   <p class="note">Después del paso 3 se abre <b>http://localhost:8787</b>: esa es la app con acceso a tus carpetas y a Claude Code. La próxima vez alcanza con el paso 3 (o doble clic en <b>Abrir Editor de Vlogs.command</b> dentro de la carpeta <code>.claude/skills/editor-de-vlogs</code>).</p>
+   <p class="note">Si el paso 1 pide usuario y contraseña de GitHub, clonalo con <b>GitHub Desktop</b> (File → Clone repository → Santinodan/Claude) en tu carpeta de usuario.</p></div></div>`;
+  document.body.appendChild(m);const c=()=>m.remove();$("gX").onclick=c;m.onclick=e=>{if(e.target===m)c()};
+  m.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{const t=CMDS[b.dataset.copy][1];navigator.clipboard.writeText(t).then(()=>{b.textContent="Copiado"}).catch(()=>{const r=document.createRange();r.selectNodeContents($("cmd"+b.dataset.copy));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Seleccionado"})})}
+
 /* ---------- abrir en Premiere ---------- */
-async function abrirPremiere(btn){if(!SERVER)return toast("Pasar a Premiere funciona con la app abierta en tu Mac");
+async function abrirPremiere(btn){if(!SERVER)return macModal("Pasar a Premiere necesita la app de tu Mac.");
   if(typeof PLAN!=="undefined"&&PLAN&&!PLAN._demo&&TAB==="timeline"){clearTimeout(tlSaveT);await post("/api/plan",{carpeta:V.carpeta,plan:PLAN}).catch(()=>{})}
   const txt=btn?.textContent;if(btn){btn.disabled=true;btn.textContent="Generando…"}
   try{const d=await post("/api/premiere",{carpeta:V.carpeta});
@@ -864,7 +883,7 @@ function frameHTML(){const t=V.textos.titulo_episodio;return `<div class="frame"
 const STEP_AFTER={
 material(P){$("mPick").onclick=async()=>{const r=await elegirRuta("carpeta","Elegí la carpeta del día con los clips");if(!r)return;
     if(!SERVER&&LOCAL_PICK){V.carpeta_nombre=LOCAL_PICK.nombre;V.material.clips=LOCAL_PICK.clips;LOCAL_PICK=null;save();renderSteps();renderStep();toast(V.material.clips.length+" clips cargados");return}
-    V.carpeta=r;save();renderStep();$("scan").click()};$("scan").onclick=async()=>{if(!SERVER)return toast("Escanear necesita la app abierta en tu Mac");$("scan").disabled=true;$("scan").textContent="Escaneando…";await saveNow();
+    V.carpeta=r;save();renderStep();$("scan").click()};$("scan").onclick=async()=>{if(!SERVER)return $("mPick").click();$("scan").disabled=true;$("scan").textContent="Escaneando…";await saveNow();
   try{const d=await post("/api/escanear",{carpeta:V.carpeta});V=merge(DEFAULT_VLOG(),d.vlog);toast(V.material.clips.length+" clips")}catch(e){toast(e.message)}renderSteps();renderStep()};
   P.querySelectorAll("[data-clip]").forEach(el=>{const c=V.material.clips[el.dataset.clip],k=el.dataset.k;if(el.tagName==="SELECT")el.onchange=()=>{c[k]=el.value;save();renderSteps()};else el.onclick=()=>{c[k]=!c[k];save();renderStep()}});
   onChange=k=>{if(k==="titulo")document.querySelector(".etitle b").textContent=V.titulo||"Vlog sin título"}},
@@ -922,7 +941,7 @@ function paint(ev){const f=$("feed");if(!f)return;const el=document.createElemen
   el.innerHTML=`<i></i><span>${esc(label)}</span>`;f.appendChild(el);f.scrollTop=f.scrollHeight}
 function feed(ev){FEED.push(ev);paint(ev)}
 function busy(on){const c=$("claude");if(!c)return;c.classList.toggle("running",on);$("goC").textContent=on?"Claude está trabajando…":"Editar con Claude";$("goC").disabled=on;$("stopC").hidden=!on}
-async function runClaude(){if(!SERVER)return toast("Claude Code trabaja cuando abrís la app en tu Mac");if(!CLAUDE)return toast("Instalá Claude Code y logueate (ver LEEME)");
+async function runClaude(){if(!SERVER)return macModal("Editar con Claude necesita la app de tu Mac.");if(!CLAUDE)return toast("Instalá Claude Code y logueate (ver LEEME)");
   await saveNow();const pedido=$("pedido").value.trim()||"Editá el vlog completo y exportá una preview.";feed({tipo:"texto",texto:"Vos: "+pedido});$("pedido").value="";
   let d;try{d=await post("/api/claude/editar",{carpeta:V.carpeta,pedido})}catch(e){return feed({tipo:"error",texto:e.message})}
   JOB=d.job;busy(true);$("claude").classList.add("open");
@@ -1174,7 +1193,7 @@ function audios(t){if(!SERVER)return;for(const[k,base]of [["musica",10],["sfx",1
 function stopAudios(){Object.values(MON.audios||{}).forEach(a=>a.pause())}
 
 /* ---------- exportar ---------- */
-async function exportar(preview){if(!SERVER||PLAN._demo)return toast("Exportar funciona con la app abierta en tu Mac");clearTimeout(tlSaveT);await post("/api/plan",{carpeta:V.carpeta,plan:PLAN});
+async function exportar(preview){if(!SERVER||PLAN._demo)return macModal("Exportar necesita la app de tu Mac.");clearTimeout(tlSaveT);await post("/api/plan",{carpeta:V.carpeta,plan:PLAN});
   let d;try{d=await post("/api/render",{carpeta:V.carpeta,preview})}catch(e){return toast(e.message)}TL.job=d.job;const st=$("tlStatus");st.textContent="Exportando…";["tExpP","tExpF"].forEach(id=>$(id).disabled=true);
   const es=new EventSource("/api/claude/eventos?job="+d.job);es.onmessage=e=>{const ev=JSON.parse(e.data);if($("tlStatus"))$("tlStatus").textContent=ev.texto||"";
     if(ev.tipo==="fin"){toast(ev.ok?"Listo: versión nueva en Exportar":"El export falló: mirá el detalle abajo");if($("tlStatus"))$("tlStatus").textContent=ev.ok?"✓ "+ev.texto:"✗ "+ev.texto}};
