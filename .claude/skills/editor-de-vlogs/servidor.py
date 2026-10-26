@@ -182,6 +182,48 @@ def lanzar_render(carpeta, preview):
     return job
 
 
+# ---------- elegir carpetas y archivos ----------
+VIDEO_EXT = {".mp4", ".mov", ".m4v", ".mts", ".mxf"}
+AUDIO_EXT = {".mp3", ".wav", ".m4a", ".aac", ".aif", ".aiff", ".flac", ".ogg"}
+
+def elegir_nativo(modo, titulo):
+    """Selector de macOS (Finder). Devuelve ruta, "" si cancela, o None si no hay selector nativo."""
+    if sys.platform != "darwin":
+        return None
+    titulo = (titulo or "Elegí").replace('"', "'")
+    if modo == "archivo":
+        orden = f'choose file with prompt "{titulo}" of type {{"public.audio"}}'
+    else:
+        orden = f'choose folder with prompt "{titulo}"'
+    script = f'tell application "System Events"\nactivate\nset f to {orden}\nend tell\nPOSIX path of f'
+    r = subprocess.run(["osascript", "-e", script], capture_output=True, text=True, timeout=600)
+    if r.returncode != 0:
+        return ""            # cancelado
+    return r.stdout.strip().rstrip("/") or "/"
+
+def explorar(carpeta, modo):
+    """Lista carpetas (y audios si modo=archivo) para el explorador de la app."""
+    d = Path(carpeta).expanduser() if carpeta else Path.home()
+    if not d.is_dir():
+        d = Path.home()
+    carpetas, archivos, videos = [], [], 0
+    try:
+        for x in sorted(d.iterdir(), key=lambda x: x.name.lower()):
+            if x.name.startswith("."):
+                continue
+            if x.is_dir():
+                carpetas.append(x.name)
+            elif x.suffix.lower() in VIDEO_EXT:
+                videos += 1
+            elif modo == "archivo" and x.suffix.lower() in AUDIO_EXT:
+                archivos.append(x.name)
+    except PermissionError:
+        pass
+    raices = [str(Path.home())] + ([str(v) for v in sorted(Path("/Volumes").iterdir())] if Path("/Volumes").is_dir() else [])
+    return {"dir": str(d), "padre": str(d.parent) if d.parent != d else None, "carpetas": carpetas,
+            "archivos": archivos, "videos": videos, "raices": raices}
+
+
 # ---------- Claude Code ----------
 def version_claude():
     exe = shutil.which("claude")
@@ -365,6 +407,8 @@ class H(BaseHTTPRequestHandler):
             return self._json(o or {"error": "no existe"}, 200 if o else 404)
         if u.path == "/api/perfiles":
             return self._json({"perfiles": listar_perfiles()})
+        if u.path == "/api/explorar":
+            return self._json(explorar(q.get("dir", [""])[0], q.get("modo", ["carpeta"])[0]))
         if u.path == "/api/proyectos":
             p = leer_perfil(q.get("perfil", [""])[0]) or {}
             return self._json({"proyectos": [resumen_proyecto(c) for c in p.get("proyectos", [])]})
@@ -407,6 +451,9 @@ class H(BaseHTTPRequestHandler):
                 pf["proyectos"].insert(0, carpeta)
                 guardar_perfil(pf)
             return self._json({"ok": True})
+        if u.path == "/api/elegir":
+            r = elegir_nativo(d.get("modo", "carpeta"), d.get("titulo"))
+            return self._json({"nativo": r is not None, "ruta": r or None})
         if u.path == "/api/plan":
             if not ruta_plan(carpeta).parent.is_dir():
                 return self._json({"error": "La carpeta no existe"}, 400)

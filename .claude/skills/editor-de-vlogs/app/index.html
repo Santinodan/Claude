@@ -404,6 +404,20 @@ input[type=file]{display:none}
   .epage.tlpage>div:first-child{order:0}
   .mstage{max-height:none;max-width:none}
 }
+/* elegir carpeta / archivo */
+.pathrow{display:flex;gap:8px;align-items:flex-end}
+.pathrow .field{flex:1;min-width:0}
+.pick{border:1px solid var(--line);background:var(--surface);border-radius:10px;height:42px;padding:0 12px;display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:13.5px;color:var(--ink);white-space:nowrap;flex:none}
+.pick:hover{border-color:var(--accent);color:var(--accent)}
+.composer .folder .pick{height:32px;margin-right:-6px;border-radius:8px}
+.exp{display:grid;gap:10px}
+.exp .crumb{font:12.5px var(--f-mono);color:var(--ink-2);overflow-wrap:anywhere}
+.exp .roots{display:flex;gap:6px;flex-wrap:wrap}
+.exp .list{display:grid;gap:2px;max-height:46vh;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:4px;background:var(--bg)}
+.exp .list button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;border-radius:8px;padding:8px 10px;font-size:14px}
+.exp .list button:hover{background:var(--surface-2)}
+.exp .list button[aria-pressed=true]{background:var(--accent-soft);color:var(--accent)}
+.exp .list .none{padding:14px;color:var(--ink-2);font-size:13.5px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -557,7 +571,7 @@ async inicio(){PROYECTOS=await Store.proyectos(PERFIL).catch(()=>[]);const def=P
  return `<div class="topbar"><span class="hello">Hola, ${esc(PERFIL.nombre)}</span>${connHTML()}</div>
  <section class="hero"><div class="eyebrow">Editor de vlogs con Claude Code</div><h1>¿Qué vlog <em>editamos</em> hoy?</h1>
   <form class="composer" id="composer"><input class="big" type="text" id="cTitulo" placeholder="Título del vlog. Ej: Un día cerrando clientes en Madrid" aria-label="Título del vlog" autocomplete="off">
-   <div class="cbar"><label class="folder">${icon.folder}<input type="text" id="cCarpeta" placeholder="Carpeta del día: /Volumes/Disco/Vlogs/2026-10-26" aria-label="Carpeta del día"></label>
+   <div class="cbar"><label class="folder">${icon.folder}<input type="text" id="cCarpeta" placeholder="Carpeta del día con los clips" aria-label="Carpeta del día"><button type="button" class="pick" id="cPick">Elegir…</button></label>
     ${def?`<button type="button" class="lookpick" data-golooks><span data-cover="${esc(def.id)}" class="ph" style="display:block;width:30px;height:30px;border-radius:7px;overflow:hidden"></span>${esc(def.nombre)}</button>`:""}
     <button class="btn accent" type="submit">Crear ${icon.arrow}</button></div></form>
   <div class="steps3"><div><b>1 · Cargá</b>El título y la carpeta con los clips en orden.</div><div><b>2 · Elegí</b>Look, música y textos en cada paso.</div><div><b>3 · Claude edita</b>En tu Mac, y te muestra el avance.</div></div></section>
@@ -582,7 +596,7 @@ async perfil(){const p=PERFIL;
 };
 function segRaw(id,opts,val){return `<div class="seg" data-segraw="${id}">${opts.map(([v,l])=>`<button type="button" data-v='${JSON.stringify(v)}' aria-pressed="${JSON.stringify(val)===JSON.stringify(v)}">${l}</button>`).join("")}</div>`}
 const PAGE_AFTER={
- inicio(v){common(v);$("composer").onsubmit=e=>{e.preventDefault();crearVlog($("cTitulo").value.trim(),$("cCarpeta").value.trim())};
+ inicio(v){common(v);$("cPick").onclick=async e=>{e.preventDefault();const r=await elegirRuta("carpeta","Elegí la carpeta del día con los clips");if(r){$("cCarpeta").value=r;if(!$("cTitulo").value)$("cTitulo").focus()}};$("composer").onsubmit=e=>{e.preventDefault();crearVlog($("cTitulo").value.trim(),$("cCarpeta").value.trim())};
   v.querySelector("[data-golooks]")?.addEventListener("click",()=>go("perfil"))},
  proyectos(v){common(v)},
  looks(v){common(v);v.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{LOOKFILTER=b.dataset.filter;render()})},
@@ -603,6 +617,24 @@ function pickImage(cb){const f=$("fileImg");f.value="";f.onchange=()=>{const x=f
 function pickCube(cb){const f=$("fileCube");f.value="";f.onchange=async()=>{const x=f.files[0];if(x)cb(await x.text(),x.name)};f.click()}
 async function shrink(dataUrl,maxW=1600){const im=await loadImg(dataUrl);const s=Math.min(1,maxW/im.naturalWidth);if(s===1&&dataUrl.startsWith("data:image/jpeg"))return dataUrl;
   const c=document.createElement("canvas");c.width=Math.round(im.naturalWidth*s);c.height=Math.round(im.naturalHeight*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.88)}
+
+/* ---------- elegir carpeta o archivo de la Mac ---------- */
+async function elegirRuta(modo="carpeta",titulo){if(!SERVER){toast("Elegir carpetas funciona con la app abierta en tu Mac");return null}
+  try{const d=await post("/api/elegir",{modo,titulo});if(d.nativo)return d.ruta}catch(e){}
+  return explorador(modo,titulo)}
+function explorador(modo,titulo){return new Promise(res=>{const m=document.createElement("div");m.className="modal";let sel=null,dir="";
+  m.innerHTML=`<div class="sheet small" role="dialog" aria-modal="true"><div class="form"><h2>${esc(titulo||(modo==="archivo"?"Elegí el archivo":"Elegí la carpeta"))}<button class="x" type="button" id="eX" aria-label="Cerrar">${icon.x}</button></h2><div class="exp" id="exp"></div>
+   <div class="row" style="justify-content:flex-end"><button class="btn ghost" type="button" id="eCancel">Cancelar</button><button class="btn accent" type="button" id="eOk">${modo==="archivo"?"Usar este archivo":"Usar esta carpeta"}</button></div></div></div>`;
+  document.body.appendChild(m);const close=v=>{m.remove();res(v)};$("eX").onclick=$("eCancel").onclick=()=>close(null);m.onclick=e=>{if(e.target===m)close(null)};
+  $("eOk").onclick=()=>{if(modo==="archivo"&&!sel)return toast("Elegí un archivo de la lista");close(modo==="archivo"?sel:dir)};
+  async function ir(d){const r=await (await fetch("/api/explorar?modo="+modo+"&dir="+encodeURIComponent(d||""))).json();dir=r.dir;sel=null;const J=n=>(r.dir==="/"?"":r.dir)+"/"+n;
+    $("exp").innerHTML=`<div class="roots">${r.raices.map(x=>`<button type="button" class="chip" data-d="${esc(x)}">${esc(x.split("/").pop()||x)}</button>`).join("")}</div>
+     <div class="crumb">${esc(r.dir)}${modo==="carpeta"&&r.videos?` · <b style="color:var(--ok)">${r.videos} clips</b>`:""}</div>
+     <div class="list">${r.padre?`<button type="button" data-d="${esc(r.padre)}">${icon.back} Subir</button>`:""}${r.carpetas.map(c=>`<button type="button" data-d="${esc(J(c))}">${icon.folder} ${esc(c)}</button>`).join("")}
+      ${r.archivos.map(f=>`<button type="button" data-f="${esc(J(f))}">♪ ${esc(f)}</button>`).join("")}${!r.carpetas.length&&!r.archivos.length?`<div class="none">Carpeta vacía</div>`:""}</div>`;
+    $("exp").querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>ir(b.dataset.d));
+    $("exp").querySelectorAll("[data-f]").forEach(b=>{b.onclick=()=>{sel=b.dataset.f;$("exp").querySelectorAll("[data-f]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))};b.ondblclick=()=>close(b.dataset.f)})}
+  ir("")})}
 
 /* ---------- perfiles ---------- */
 function perfilPop(){closePop();const el=document.createElement("div");el.className="pop";el.id="pop";
@@ -730,7 +762,7 @@ function wireEditor(v){renderSteps();renderStep();$("back").onclick=()=>{saveNow
 
 const STEP_VIEWS={
 material:()=>`${head(1,"Material","Los clips en el orden de la carpeta. Corregí el perfil si se detectó mal y marcá lo que no va.")}
- <div class="card"><div class="grid2">${fld("titulo","Título","Un día cerrando clientes en Madrid")}${fld("carpeta","Carpeta del día","/Volumes/Disco/Vlogs/2026-10-26")}</div>
+ <div class="card"><div class="grid2">${fld("titulo","Título","Un día cerrando clientes en Madrid")}<div class="pathrow">${fld("carpeta","Carpeta del día","/Volumes/Disco/Vlogs/2026-10-26")}<button type="button" class="pick" id="mPick">${icon.folder} Elegir…</button></div></div>
   <div class="row"><button class="btn accent" type="button" id="scan">${V.material.clips.length?"Volver a escanear":"Escanear carpeta"}</button><span class="note">${V.material.clips.length?`${V.material.clips.length} clips · ${mmss(V.material.clips.reduce((a,c)=>a+(c.descartado?0:c.duracion||0),0))} útiles`:SERVER?"Lee los clips en orden y los de broll/.":"En la vista previa no se pueden leer carpetas."}</span></div></div>
  ${V.material.clips.length?`<div class="clips">${V.material.clips.map((c,i)=>`<div class="clip ${c.descartado?"off":""}"><div class="thumb">${c.thumb&&SERVER?`<img src="${Store.media(abs(c.thumb))}" alt="" loading="lazy">`:esc(c.archivo)}<span class="ord">${String(c.orden??i+1).padStart(2,"0")}</span><span class="dur">${mmss(c.duracion)}</span></div>
    <div class="body"><div class="name" title="${esc(c.archivo)}">${esc(c.archivo)}</div><select data-clip="${i}" data-k="perfil" aria-label="Perfil">${[...CAMS,["desconocido","¿Perfil?"]].map(([v,l])=>`<option value="${v}" ${c.perfil===v?"selected":""}>${l}</option>`).join("")}</select>
@@ -758,7 +790,7 @@ audio:()=>`${head(5,"Audio","La voz manda. Claude la limpia y la empareja entre 
  <div class="card"><h3>Ambiente</h3>${sl("audio.ambiente_montajes_db","Sonido ambiente en montajes",-40,0,1,v=>v+" dB")}<p class="note">Debajo de la música, para que se sienta el lugar.</p></div></div>`,
 musica:()=>`${head(6,"Música","Montaje con música fuerte y cortes en el beat; charla limpia.")}
  <div class="card"><h3>Temas <small>instrumentales que bajaste</small></h3><div class="blocks">${V.musica.temas.map((t,i)=>`<div class="block"><select data-tema="${i}" aria-label="Uso">${[["teaser","Avance"],["montajes","Montajes"],["cierre","Cierre"]].map(([v,l])=>`<option value="${v}" ${t.uso===v?"selected":""}>${l}</option>`).join("")}</select><span style="font:12.5px var(--f-mono);overflow-wrap:anywhere">${esc(t.archivo)}</span><button class="mini" type="button" data-deltema="${i}">Quitar</button></div>`).join("")||`<p class="note">Todavía no agregaste temas.</p>`}</div>
-  <div class="row"><input type="text" id="temaPath" placeholder="/Volumes/Disco/Musica/passionfruit_instrumental.mp3" style="flex:1;min-width:200px"><button class="btn ghost" type="button" id="addTema">Agregar</button></div></div>
+  <div class="row"><input type="text" id="temaPath" placeholder="/Volumes/Disco/Musica/passionfruit_instrumental.mp3" style="flex:1;min-width:200px"><button class="btn ghost" type="button" id="addTema">Agregar</button><button type="button" class="pick" id="pickTema">♪ Elegir archivo…</button></div></div>
  <div class="grid2"><div class="card"><h3>En la charla</h3>${seg("musica.en_charla",[["nada","Sin música"],["baja","Muy baja"]])}${sl("musica.fade_s","Fade al volver a hablar",1,8,.5,v=>v+" s")}</div>
  <div class="card"><h3>En los montajes</h3>${sw("musica.corte_en_beat","Cortar en el beat","Planos de 1, 2, 4 u 8 beats")}${sl("musica.volumen_montaje_db","Volumen de la música",-24,-4,1,v=>v+" dB")}</div></div>`,
 textos:()=>`${head(7,"Textos","Discretos como en tus referencias: subtítulos chicos, un título de episodio fuerte y el lugar como separador.")}
@@ -773,12 +805,12 @@ exportar:()=>{const vs=V.estado.versiones||[];return `${head(8,"Exportar y revis
 };
 function frameHTML(){const t=V.textos.titulo_episodio;return `<div class="frame"><small class="cap">Apertura</small>${t.activo?`<div class="neon"><small>#${esc(t.numero)}</small>${esc(t.texto||V.titulo||"Título")}</div>`:""}</div><div class="frame talk"><small class="cap">Charla y separadores</small>${V.textos.lugar_hora?`<div class="place"><span>Madrid</span><span>11:00 AM</span></div>`:""}${V.textos.subtitulos?`<div class="sub">y ahí fue cuando cerramos el primer cliente</div>`:""}</div>`}
 const STEP_AFTER={
-material(P){$("scan").onclick=async()=>{if(!SERVER)return toast("Escanear necesita la app abierta en tu Mac");$("scan").disabled=true;$("scan").textContent="Escaneando…";await saveNow();
+material(P){$("mPick").onclick=async()=>{const r=await elegirRuta("carpeta","Elegí la carpeta del día con los clips");if(!r)return;V.carpeta=r;save();renderStep();$("scan").click()};$("scan").onclick=async()=>{if(!SERVER)return toast("Escanear necesita la app abierta en tu Mac");$("scan").disabled=true;$("scan").textContent="Escaneando…";await saveNow();
   try{const d=await post("/api/escanear",{carpeta:V.carpeta});V=merge(DEFAULT_VLOG(),d.vlog);toast(V.material.clips.length+" clips")}catch(e){toast(e.message)}renderSteps();renderStep()};
   P.querySelectorAll("[data-clip]").forEach(el=>{const c=V.material.clips[el.dataset.clip],k=el.dataset.k;if(el.tagName==="SELECT")el.onchange=()=>{c[k]=el.value;save();renderSteps()};else el.onclick=()=>{c[k]=!c[k];save();renderStep()}});
   onChange=k=>{if(k==="titulo")document.querySelector(".etitle b").textContent=V.titulo||"Vlog sin título"}},
 historia(P){wireAsk(P)},
-musica(P){$("addTema").onclick=()=>{const v=$("temaPath").value.trim();if(!v)return;V.musica.temas.push({archivo:v,uso:"montajes"});save();renderSteps();renderStep()};
+musica(P){$("pickTema").onclick=async()=>{const r=await elegirRuta("archivo","Elegí la instrumental");if(!r)return;V.musica.temas.push({archivo:r,uso:"montajes"});save();renderSteps();renderStep()};$("addTema").onclick=()=>{const v=$("temaPath").value.trim();if(!v)return;V.musica.temas.push({archivo:v,uso:"montajes"});save();renderSteps();renderStep()};
   P.querySelectorAll("[data-tema]").forEach(s=>s.onchange=()=>{V.musica.temas[s.dataset.tema].uso=s.value;save()});P.querySelectorAll("[data-deltema]").forEach(b=>b.onclick=()=>{V.musica.temas.splice(b.dataset.deltema,1);save();renderSteps();renderStep()})},
 textos(P){onChange=()=>{$("frame").innerHTML=frameHTML()}},
 exportar(P){wireAsk(P);$("addNota").onclick=()=>{V.revision.notas.push({tc:"00:00",texto:"",hecha:false});save();renderStep()};
@@ -1023,11 +1055,12 @@ function inspector(){const box=$("insp");if(!box||!PLAN)return;const s=TL.sel?it
 /* ---------- agregar música / efecto ---------- */
 function audioModal(kind){const m=document.createElement("div");m.className="modal";const prev=kind==="musica"?(V.musica.temas||[]).map(t=>t.archivo):[...new Set((PLAN.sfx||[]).map(x=>x.archivo))];
   m.innerHTML=`<div class="sheet small" role="dialog" aria-modal="true"><div class="form"><h2>${kind==="musica"?"Agregar música":"Agregar efecto de sonido"}<button class="x" type="button" id="aX" aria-label="Cerrar">${icon.x}</button></h2>
-   <label class="field"><span>Ruta del archivo en tu Mac</span><input type="text" id="aPath" placeholder="${kind==="musica"?"/Volumes/Disco/Musica/instrumental.mp3":"/Volumes/Disco/SFX/whoosh.wav"}"></label>
+   <div class="pathrow"><label class="field"><span>Archivo en tu Mac</span><input type="text" id="aPath" placeholder="${kind==="musica"?"/Volumes/Disco/Musica/instrumental.mp3":"/Volumes/Disco/SFX/whoosh.wav"}"></label><button type="button" class="pick" id="aPick">♪ Elegir…</button></div>
    ${prev.length?`<div class="field"><span>Usados en este vlog</span><div class="chips">${prev.map(p=>`<button type="button" class="chip" data-p="${esc(p)}">${esc(fname(p))}</button>`).join("")}</div></div>`:""}
    <p class="note">Se agrega en la posición del cabezal (${tcf(TL.time)}).</p><button class="btn accent" type="button" id="aOk">Agregar</button></div></div>`;
   document.body.appendChild(m);const close=()=>m.remove();$("aX").onclick=close;m.onclick=e=>{if(e.target===m)close()};
   m.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{$("aPath").value=b.dataset.p});
+  $("aPick").onclick=async()=>{const r=await elegirRuta("archivo",kind==="musica"?"Elegí la música":"Elegí el efecto de sonido");if(r)$("aPath").value=r};
   $("aOk").onclick=async()=>{const p=$("aPath").value.trim();if(!p)return $("aPath").focus();let dur=kind==="musica"?20:1.5;
     const w=await wave(p);if(SERVER&&!w)return toast("No encuentro ese archivo en la Mac");if(w)dur=Math.min(kind==="musica"?30:dur*4,w.picos.length/w.por_seg);
     push();const base={id:nid(),t:r4(TL.time),dur:r4(dur),desde:0,fade_in:kind==="musica"?.5:0,fade_out:kind==="musica"?3:0};
