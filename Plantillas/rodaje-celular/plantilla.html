@@ -168,12 +168,12 @@ h1 {
 .ojo li { padding-left: 18px; position: relative; }
 .ojo li::before { content: "!"; position: absolute; left: 2px; font-weight: 700; color: var(--rec); font-family: var(--mono); }
 
-.slots { display: grid; gap: 10px; }
+.slots { display: grid; gap: 8px; }
 .slot { display: grid; gap: 4px; }
 .slot label { font-size: 14px; color: var(--muted); }
 .slot input, textarea {
   width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: 8px;
-  padding: 10px 12px; font-size: 16px; min-width: 0;
+  padding: 8px 10px; font-size: 16px; min-width: 0;
 }
 textarea { min-height: 70px; resize: vertical; }
 .slot input:disabled, textarea:disabled { opacity: .6; }
@@ -200,6 +200,16 @@ textarea { min-height: 70px; resize: vertical; }
 .toast { font-size: 14px; color: var(--ok); text-align: center; min-height: 1.4em; margin: 0; }
 #copia { display: none; }
 #copia.show { display: block; min-height: 200px; font-family: var(--mono); font-size: 13px; }
+.pasos { margin: 0; padding-left: 22px; display: grid; gap: 6px; font-size: 16px; }
+.pasos li::marker { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.cierre { margin: 0; font-size: 15px; }
+.cierre b { font-family: var(--mono); font-weight: 500; background: var(--chip); padding: 1px 6px; border-radius: 4px; }
+.ojo1 { margin: 0; font-size: 14px; color: var(--rec); }
+.ojo1::before { content: "! "; font-family: var(--mono); font-weight: 700; }
+.full { border-top: 1px solid var(--line); padding-top: 10px; }
+.full > summary { cursor: pointer; font-size: 14px; color: var(--off); font-weight: 600; }
+.fullin { display: grid; gap: 16px; padding-top: 14px; }
+.body { gap: 12px; }
 @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
 </style>
 
@@ -217,8 +227,7 @@ textarea { min-height: 70px; resize: vertical; }
     </div>
   </header>
 
-  <p class="sub" id="subtitulo"></p>
-
+  
   <details class="info" id="info-reglas">
     <summary>Reglas en set</summary>
     <div class="in"><ul id="reglas"></ul><p class="sub" id="feria"></p></div>
@@ -297,8 +306,7 @@ textarea { min-height: 70px; resize: vertical; }
 
   // ---------- armado ----------
   document.getElementById("titulo").textContent = D.titulo || "Rodaje";
-  document.getElementById("subtitulo").textContent = D.subtitulo || "";
-  document.getElementById("feria").textContent = D.feria || "";
+    document.getElementById("feria").textContent = D.feria || "";
   (D.reglas || []).forEach(function (r) { document.getElementById("reglas").appendChild(el("li", null, r)); });
 
   function refBtn(id) {
@@ -388,10 +396,27 @@ textarea { min-height: 70px; resize: vertical; }
     if (p.hook.luego) h.appendChild(el("p", "luego", p.hook.luego));
     b.appendChild(h);
 
+    // Vista corta: pasos, cierre y un solo "ojo". El resto va en "Ver todo".
+    var full = el("details", "full");
+    full.appendChild(el("summary", null, "Ver todo: guion completo, permisos y pantalla"));
+    var fb = el("div", "fullin");
+    full.appendChild(fb);
+    if (p.corto) {
+      var ol = el("ol", "pasos");
+      p.corto.pasos.forEach(function (t) { ol.appendChild(el("li", null, t)); });
+      b.appendChild(ol);
+      var ci = el("p", "cierre");
+      ci.appendChild(document.createTextNode(p.ad ? "Cierre: mandame " : "Cierre: comentá "));
+      ci.appendChild(el("b", null, p.cta.kw));
+      if (p.ad) ci.appendChild(document.createTextNode(" por privado"));
+      b.appendChild(ci);
+      if (p.corto.ojo) b.appendChild(el("p", "ojo1", p.corto.ojo));
+    }
+
     var w = el("div", "sec");
     w.appendChild(el("p", "lab", "Dónde · " + p.formato + " · " + p.para));
     w.appendChild(el("p", "where", p.lugar));
-    b.appendChild(w);
+    fb.appendChild(w);
 
     if (p.prep && p.prep.length) {
       var pr = el("div", "sec");
@@ -405,7 +430,7 @@ textarea { min-height: 70px; resize: vertical; }
         cks.appendChild(lb);
       });
       pr.appendChild(cks);
-      b.appendChild(pr);
+      fb.appendChild(pr);
     }
 
     var g = el("div", "sec");
@@ -423,14 +448,14 @@ textarea { min-height: 70px; resize: vertical; }
       beats.appendChild(r);
     });
     g.appendChild(beats);
-    b.appendChild(g);
+    fb.appendChild(g);
 
     var ct = el("div", "cta");
     ct.appendChild(el("span", "lab", "CTA · keyword"));
     ct.appendChild(el("span", "k", p.cta.kw));
     ct.appendChild(el("p", null, p.cta.txt));
     if (p.cta.alt) ct.appendChild(el("p", "alt", p.cta.alt));
-    b.appendChild(ct);
+    fb.appendChild(ct);
 
     if (p.slots && p.slots.length) {
       var sl = el("div", "sec");
@@ -456,10 +481,10 @@ textarea { min-height: 70px; resize: vertical; }
       var ul = el("ul", "ojo");
       p.ojo.forEach(function (t) { ul.appendChild(el("li", null, t)); });
       oj.appendChild(ul);
-      b.appendChild(oj);
+      fb.appendChild(oj);
     }
 
-    if (p.juntas) b.appendChild(el("p", "join", "Se graba con: " + p.juntas));
+    if (p.juntas) fb.appendChild(el("p", "join", "Se graba con: " + p.juntas));
 
     if (p.pantalla && p.pantalla.length) {
       var pa = el("div", "sec");
@@ -467,7 +492,7 @@ textarea { min-height: 70px; resize: vertical; }
       var ul2 = el("ul", "plain");
       p.pantalla.forEach(function (t) { ul2.appendChild(el("li", null, t)); });
       pa.appendChild(ul2);
-      b.appendChild(pa);
+      fb.appendChild(pa);
     }
 
     var nt = el("div", "sec");
@@ -476,14 +501,14 @@ textarea { min-height: 70px; resize: vertical; }
     var ta = el("textarea"); ta.id = nid; ta.dataset.pid = p.id; ta.placeholder = "Número de toma, archivo, qué salió bien…";
     ta.addEventListener("input", function () { st(p.id).nota = ta.value; persist(p.id); });
     nt.appendChild(nl); nt.appendChild(ta);
-    b.appendChild(nt);
+    fb.appendChild(nt);
 
     if (p.refe) {
       var lk = el("p", "links");
       lk.appendChild(document.createTextNode("Refe: "));
       var a = el("a", null, "ver reel de referencia"); a.href = p.refe; a.target = "_blank"; a.rel = "noopener";
       lk.appendChild(a);
-      b.appendChild(lk);
+      fb.appendChild(lk);
     }
 
     var es = el("div", "estado"); es.setAttribute("role", "group"); es.setAttribute("aria-label", "Estado");
@@ -494,6 +519,7 @@ textarea { min-height: 70px; resize: vertical; }
       es.appendChild(bt);
     });
     b.appendChild(es);
+    b.appendChild(full);
 
     d.appendChild(b);
     lista.appendChild(d);
