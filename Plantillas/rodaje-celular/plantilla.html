@@ -297,7 +297,7 @@ textarea { min-height: 70px; resize: vertical; }
       }).then(function () {
         setSync("Compartido con el equipo");
       }).catch(function (e) {
-        if (e && e.code === "invalid_argument") { canWrite = false; lockInputs(); setSync("Solo lectura"); }
+        if (e && e.code === "invalid_argument") { soloLocal(); }
         else setSync("Sin conexión · guardado en este celu");
       });
     }, now ? 0 : 700);
@@ -559,8 +559,13 @@ textarea { min-height: 70px; resize: vertical; }
     document.getElementById("vacio").hidden = vis > 0;
   }
   function pintarTodo() { D.piezas.forEach(function (p) { pintar(p.id); }); resumen(); aplicarFiltro(); }
-  function lockInputs() {
-    document.querySelectorAll(".pz input, .pz textarea, .estado button").forEach(function (x) { x.disabled = true; });
+  // Sin permiso para escribir lo compartido: se sigue anotando, pero solo en este celu.
+  var unsub = null;
+  function soloLocal() {
+    canWrite = false;
+    if (unsub) { unsub(); unsub = null; }
+    loadLocal(); pintarTodo();
+    setSync("Guardado en este celu");
   }
   function abrir(id) {
     filtro = "todas";
@@ -610,7 +615,7 @@ textarea { min-height: 70px; resize: vertical; }
       if (!db) return;
       if (user && typeof user.can === "function") {
         return Promise.resolve(user.can("data.write")).then(function (c) {
-          if (c === false) { canWrite = false; lockInputs(); setSync("Solo lectura"); }
+          if (c === false) { soloLocal(); return; }
           escuchar();
         });
       }
@@ -618,8 +623,9 @@ textarea { min-height: 70px; resize: vertical; }
     }).catch(function () {});
   }
   function escuchar() {
-    if (canWrite) setSync("Compartido con el equipo");
-    db.collection("piezas").onSnapshot(function (snap) {
+    setSync("Compartido con el equipo");
+    unsub = db.collection("piezas").onSnapshot(function (snap) {
+      if (!canWrite) return;
       snap.docs.forEach(function (doc) {
         if (!byId[doc.id] || !doc.exists) return;
         var x = doc.data() || {};
