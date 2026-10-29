@@ -1,0 +1,14 @@
+CLIENTE: NAHUE (Casa Perfecta / consultora de importacion de China)
+===================================================================
+Infoproductor. Nahue sale a camara; Casa Perfecta es su operacion de importacion y la usa como prueba
+en el contenido. La consultora dura 6 meses (nunca decir que "vence").
+Quien aprueba cifras y ofertas: Tincho. Mateo mete clips y graficos en los ads.
+
+Keywords de CTA (ManyChat):
+  YO      -> setter abre con pregunta directa, sin precio ni vencimiento
+  GUIA    -> calculadora (calculadora.creatubrand.com). En cuarentena desde 29-sep: si sigue, usar COSTOS
+  COSTOS  -> auditoria de costos (impo-auditoria-costos.netlify.app)
+  LISTA   -> lista de 50 productos (consultoria.creatubrand.com/productos)
+
+Carpetas:
+  Rodaje_China_oct2026/  -> rodaje en China (feria de Canton fase 3, fabricas, depositos). 19 reels + 4 ads.

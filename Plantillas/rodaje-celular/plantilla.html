@@ -1,0 +1,612 @@
+<title>Rodaje China</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Hoja de rodaje de bolsillo: barra fija con filtros por lugar, lista de piezas que se abren
+   como fichas. El gancho va sobre "cinta gaffer" amarilla para encontrarlo de un vistazo. */
+:root {
+  --bg: #eef0ee;
+  --card: #ffffff;
+  --ink: #16191c;
+  --muted: #5b626a;
+  --line: #d6dad6;
+  --tape: #f5c62e;
+  --tape-ink: #1d1700;
+  --rec: #c8321f;
+  --ok: #1b7f45;
+  --off: #2b59a3;
+  --chip: #e2e5e2;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif-condensed, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1113; --card: #181b1f; --ink: #eceee9; --muted: #9aa1a8; --line: #2b3035;
+    --tape: #e8b923; --tape-ink: #1d1700; --rec: #ff6a55; --ok: #4fc27d; --off: #86a9ea; --chip: #23272c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1113; --card: #181b1f; --ink: #eceee9; --muted: #9aa1a8; --line: #2b3035;
+  --tape: #e8b923; --tape-ink: #1d1700; --rec: #ff6a55; --ok: #4fc27d; --off: #86a9ea; --chip: #23272c;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--body);
+  font-size: 16px; line-height: 1.45; -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+.wrap {
+  max-width: 720px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+}
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--off); outline-offset: 2px; }
+
+/* barra fija */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); padding-block: 12px 10px; border-bottom: 1px solid var(--line);
+  display: grid; gap: 10px;
+}
+.top-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+h1 {
+  font-family: var(--display); font-weight: 700; font-size: 28px; line-height: 1;
+  letter-spacing: .01em; margin: 0; text-transform: uppercase;
+}
+.count { font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+.count b { color: var(--ink); font-weight: 500; }
+.bar { height: 4px; background: var(--chip); border-radius: 2px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .3s; }
+.chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-inline: -4px; padding-inline: 4px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; border: 1px solid var(--line); background: var(--card); border-radius: 999px;
+  padding: 6px 12px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip small { font-family: var(--mono); font-weight: 500; opacity: .7; margin-left: 4px; }
+.tools { display: flex; gap: 12px; align-items: center; justify-content: space-between; font-size: 14px; color: var(--muted); }
+.tools label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.sync { font-family: var(--mono); font-size: 12px; }
+
+.sub { color: var(--muted); font-size: 14px; margin: 12px 0 0; }
+
+/* bloques plegables de arriba */
+.info { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+.info > summary {
+  list-style: none; cursor: pointer; padding: 12px 14px; display: flex; justify-content: space-between; gap: 8px;
+  font-family: var(--display); font-weight: 600; font-size: 19px; text-transform: uppercase; letter-spacing: .02em;
+}
+.info > summary::-webkit-details-marker { display: none; }
+.info > summary::after { content: "+"; font-family: var(--mono); color: var(--muted); }
+.info[open] > summary::after { content: "–"; }
+.info .in { padding: 0 14px 14px; display: grid; gap: 10px; }
+.info ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.dia { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 4px; }
+.dia:first-child { border-top: 0; padding-top: 0; }
+.dia h3 { margin: 0; font-size: 15px; }
+.dia p { margin: 0; font-size: 14px; color: var(--muted); }
+.refs { display: flex; flex-wrap: wrap; gap: 6px; }
+.ref {
+  font-family: var(--mono); font-size: 13px; border: 1px solid var(--line); background: var(--bg);
+  border-radius: 6px; padding: 3px 8px; cursor: pointer;
+}
+.ref.done { text-decoration: line-through; color: var(--muted); }
+
+/* lista */
+.list { display: grid; gap: 10px; margin-top: 16px; }
+.pz { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.pz.st-GRABADA { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.pz.st-DESCARTADA { opacity: .55; }
+.pz > summary {
+  list-style: none; cursor: pointer; padding: 12px 14px; display: grid;
+  grid-template-columns: 44px 1fr auto; gap: 10px; align-items: start;
+}
+.pz > summary::-webkit-details-marker { display: none; }
+.num { font-family: var(--display); font-weight: 700; font-size: 30px; line-height: .95; font-variant-numeric: tabular-nums; }
+.num.ad { font-size: 18px; line-height: 1.1; }
+.ttl { min-width: 0; }
+.ttl h2 { margin: 0; font-size: 17px; line-height: 1.25; font-weight: 700; text-wrap: balance; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 6px; font-size: 13px; color: var(--muted); }
+.meta .kw { font-family: var(--mono); font-weight: 500; color: var(--ink); background: var(--chip); padding: 0 6px; border-radius: 4px; }
+.meta .p1 { color: var(--rec); font-weight: 700; }
+.meta .nv { color: var(--off); font-weight: 700; }
+.dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--muted); margin-top: 6px; }
+.st-GRABADA .dot { background: var(--ok); border-color: var(--ok); }
+.st-DESCARTADA .dot { background: var(--muted); }
+
+.body { padding: 0 14px 16px; display: grid; gap: 16px; }
+.hook { background: var(--tape); color: var(--tape-ink); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; }
+.lab {
+  font-family: var(--display); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--muted); margin: 0;
+}
+.hook .lab { color: inherit; opacity: .75; }
+.hook .acc { font-size: 14px; margin: 0; }
+.hook .dice { font-size: 22px; line-height: 1.2; font-weight: 700; margin: 0; text-wrap: balance; }
+.hook .dice.off::before { content: "OFF · "; font-family: var(--mono); font-size: 13px; font-weight: 500; vertical-align: middle; }
+.hook .luego { font-size: 14px; margin: 0; }
+.sec { display: grid; gap: 8px; }
+.sec p { margin: 0; }
+.where { font-size: 15px; }
+
+.checks { display: grid; gap: 6px; }
+.checks label { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; font-size: 15px; cursor: pointer; }
+.checks input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--ok); }
+
+.beats { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 4px; }
+.beat { display: grid; grid-template-columns: 60px 1fr; gap: 8px; padding: 8px 0 8px 10px; position: relative; }
+.beat + .beat { border-top: 1px dashed var(--line); }
+.beat .t { font-family: var(--mono); font-size: 12px; color: var(--muted); padding-top: 3px; }
+.beat .who { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .04em; display: inline-block; margin-bottom: 2px; }
+.w-acc { color: var(--muted); }
+.w-nahue { color: var(--ink); }
+.w-off { color: var(--off); }
+.w-cta { color: var(--rec); }
+.beat .a { font-size: 14px; color: var(--muted); margin: 0; }
+.beat .d { font-size: 17px; font-weight: 600; margin: 2px 0 0; }
+.beat .d::before { content: "“"; } .beat .d::after { content: "”"; }
+
+.cta { border: 2px solid var(--ink); border-radius: 8px; padding: 10px 12px; display: grid; gap: 4px; }
+.cta .k { font-family: var(--mono); font-weight: 500; font-size: 22px; letter-spacing: .04em; }
+.cta p { font-size: 15px; }
+.cta .alt { font-size: 13px; color: var(--rec); }
+
+.plain { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 15px; }
+.ojo { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 15px; }
+.ojo li { padding-left: 18px; position: relative; }
+.ojo li::before { content: "!"; position: absolute; left: 2px; font-weight: 700; color: var(--rec); font-family: var(--mono); }
+
+.slots { display: grid; gap: 10px; }
+.slot { display: grid; gap: 4px; }
+.slot label { font-size: 14px; color: var(--muted); }
+.slot input, textarea {
+  width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: 8px;
+  padding: 10px 12px; font-size: 16px; min-width: 0;
+}
+textarea { min-height: 70px; resize: vertical; }
+.slot input:disabled, textarea:disabled { opacity: .6; }
+
+.join { font-size: 14px; background: var(--chip); border-radius: 8px; padding: 8px 10px; margin: 0; }
+.links { font-size: 14px; }
+.links a { color: var(--off); }
+
+.estado { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.estado button {
+  border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 10px 4px;
+  font-weight: 700; font-size: 14px; cursor: pointer;
+}
+.estado button[aria-pressed="true"][data-v="A GRABAR"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.estado button[aria-pressed="true"][data-v="GRABADA"] { background: var(--ok); color: #fff; border-color: var(--ok); }
+.estado button[aria-pressed="true"][data-v="DESCARTADA"] { background: var(--muted); color: var(--bg); border-color: var(--muted); }
+
+.empty { text-align: center; color: var(--muted); padding: 24px 0; }
+.foot { margin-top: 20px; display: grid; gap: 10px; }
+.big {
+  border: 0; background: var(--ink); color: var(--bg); border-radius: 10px; padding: 14px;
+  font-weight: 700; font-size: 16px; cursor: pointer;
+}
+.toast { font-size: 14px; color: var(--ok); text-align: center; min-height: 1.4em; margin: 0; }
+#copia { display: none; }
+#copia.show { display: block; min-height: 200px; font-family: var(--mono); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="top-row">
+      <h1 id="titulo">Rodaje</h1>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="bar"><i id="barra"></i></div>
+    <div class="chips" id="chips" role="toolbar" aria-label="Filtrar por lugar"></div>
+    <div class="tools">
+      <label><input type="checkbox" id="ocultar"> Ocultar grabadas</label>
+      <span class="sync" id="sync">Cargando…</span>
+    </div>
+  </header>
+
+  <p class="sub" id="subtitulo"></p>
+
+  <details class="info" id="info-reglas">
+    <summary>Reglas en set</summary>
+    <div class="in"><ul id="reglas"></ul><p class="sub" id="feria"></p></div>
+  </details>
+  <details class="info" id="info-plan">
+    <summary>Plan por día</summary>
+    <div class="in" id="plan"></div>
+  </details>
+  <details class="info" id="info-pend">
+    <summary>Antes de publicar</summary>
+    <div class="in" id="pend"></div>
+  </details>
+
+  <div class="list" id="lista"></div>
+  <p class="empty" id="vacio" hidden>No hay piezas para este filtro.</p>
+
+  <div class="foot">
+    <button class="big" id="copiar" type="button">Copiar notas del día</button>
+    <p class="toast" id="toast" role="status"></p>
+    <textarea id="copia" readonly aria-label="Notas para copiar"></textarea>
+  </div>
+</div>
+
+<script id="datos" type="application/json">__DATOS__</script>
+<script>
+(function () {
+  "use strict";
+  var D = JSON.parse(document.getElementById("datos").textContent);
+  var KEY = "rodaje:" + (D.id || "sin-id");
+  var ESTADOS = ["A GRABAR", "GRABADA", "DESCARTADA"];
+  var QUIEN = { acc: "ACCIÓN", nahue: "NAHUE", off: "OFF", cta: "CTA" };
+  var byId = {};
+  D.piezas.forEach(function (p) { byId[p.id] = p; });
+
+  // Estado: {id: {estado, slots:{}, prep:{}, nota}}
+  var S = {};
+  var db = null, canWrite = true, filtro = "todas";
+
+  function st(id) {
+    if (!S[id]) S[id] = { estado: "A GRABAR", slots: {}, prep: {}, nota: "" };
+    return S[id];
+  }
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  function loadLocal() {
+    try { var r = localStorage.getItem(KEY); if (r) S = JSON.parse(r) || {}; } catch (e) {}
+  }
+  function saveLocal() {
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  }
+
+  // ---------- guardado (compartido si hay db, si no en este celu) ----------
+  var timers = {}, chains = {};
+  function persist(id, now) {
+    saveLocal();
+    if (!db || !canWrite) return;
+    clearTimeout(timers[id]);
+    timers[id] = setTimeout(function () {
+      var body = JSON.parse(JSON.stringify(st(id)));
+      body.updatedAt = new Date().toISOString();
+      chains[id] = (chains[id] || Promise.resolve()).then(function () {
+        return db.doc("piezas/" + id).set(body);
+      }).then(function () {
+        setSync("Compartido con el equipo");
+      }).catch(function (e) {
+        if (e && e.code === "invalid_argument") { canWrite = false; lockInputs(); setSync("Solo lectura"); }
+        else setSync("Sin conexión · guardado en este celu");
+      });
+    }, now ? 0 : 700);
+  }
+  function setSync(t) { document.getElementById("sync").textContent = t; }
+
+  // ---------- armado ----------
+  document.getElementById("titulo").textContent = D.titulo || "Rodaje";
+  document.getElementById("subtitulo").textContent = D.subtitulo || "";
+  document.getElementById("feria").textContent = D.feria || "";
+  (D.reglas || []).forEach(function (r) { document.getElementById("reglas").appendChild(el("li", null, r)); });
+
+  function refBtn(id) {
+    var p = byId[id];
+    var b = el("button", "ref", p.n);
+    b.type = "button"; b.dataset.ref = id; b.title = p.titulo;
+    b.addEventListener("click", function () { abrir(id); });
+    return b;
+  }
+  (D.plan || []).forEach(function (d) {
+    var box = el("div", "dia");
+    box.appendChild(el("h3", null, d.cuando + " · " + d.donde));
+    var refs = el("div", "refs");
+    d.piezas.forEach(function (id) { refs.appendChild(refBtn(id)); });
+    box.appendChild(refs);
+    if (d.nota) box.appendChild(el("p", null, d.nota));
+    document.getElementById("plan").appendChild(box);
+  });
+  var pend = document.getElementById("pend");
+  var ulp = el("ul");
+  (D.pendientes || []).forEach(function (x) {
+    var li = el("li");
+    li.appendChild(el("span", null, x.txt + " "));
+    if (x.piezas.length) {
+      var refs = el("span", "refs"); refs.style.display = "inline-flex"; refs.style.marginTop = "4px";
+      x.piezas.forEach(function (id) { refs.appendChild(refBtn(id)); });
+      li.appendChild(refs);
+    }
+    ulp.appendChild(li);
+  });
+  pend.appendChild(ulp);
+  if (D.semanas && D.semanas.length) {
+    pend.appendChild(el("p", "lab", "Calendario de publicación"));
+    var uls = el("ul");
+    D.semanas.forEach(function (s) { uls.appendChild(el("li", null, s)); });
+    pend.appendChild(uls);
+  }
+
+  // chips de lugar
+  var chips = document.getElementById("chips");
+  function chip(key, label, n) {
+    var c = el("button", "chip", label);
+    c.type = "button"; c.dataset.f = key;
+    c.setAttribute("aria-pressed", key === filtro ? "true" : "false");
+    c.appendChild(el("small", null, String(n)));
+    c.addEventListener("click", function () {
+      filtro = key;
+      try { sessionStorage.setItem(KEY + ":f", key); } catch (e) {}
+      Array.prototype.forEach.call(chips.children, function (x) { x.setAttribute("aria-pressed", x.dataset.f === key ? "true" : "false"); });
+      aplicarFiltro();
+    });
+    chips.appendChild(c);
+  }
+  try { filtro = sessionStorage.getItem(KEY + ":f") || "todas"; } catch (e) {}
+  chip("todas", "Todas", D.piezas.length);
+  chip("p1", "Prioridad 1", D.piezas.filter(function (p) { return p.prio === 1; }).length);
+  Object.keys(D.lugares).forEach(function (k) {
+    var n = D.piezas.filter(function (p) { return p.lugares.indexOf(k) >= 0; }).length;
+    if (n) chip(k, D.lugares[k], n);
+  });
+
+  // fichas
+  var lista = document.getElementById("lista");
+  D.piezas.forEach(function (p) {
+    var d = el("details", "pz"); d.id = "pz-" + p.id;
+    var sm = el("summary");
+    sm.appendChild(el("span", "num" + (p.ad ? " ad" : ""), p.n));
+    var ttl = el("div", "ttl");
+    ttl.appendChild(el("h2", null, p.titulo));
+    var meta = el("div", "meta");
+    meta.appendChild(el("span", null, p.lugares.map(function (k) { return D.lugares[k]; }).join(" · ")));
+    meta.appendChild(el("span", null, p.dur));
+    meta.appendChild(el("span", p.prio === 1 ? "p1" : null, "P" + p.prio));
+    meta.appendChild(el("span", "kw", p.cta.kw));
+    if (p.nuevo) meta.appendChild(el("span", "nv", "NUEVO"));
+    ttl.appendChild(meta);
+    sm.appendChild(ttl);
+    sm.appendChild(el("span", "dot"));
+    d.appendChild(sm);
+
+    var b = el("div", "body");
+
+    var h = el("div", "hook");
+    h.appendChild(el("p", "lab", "Primer segundo"));
+    if (p.hook.accion) h.appendChild(el("p", "acc", p.hook.accion));
+    h.appendChild(el("p", "dice" + (p.hook.off ? " off" : ""), p.hook.dice));
+    if (p.hook.luego) h.appendChild(el("p", "luego", p.hook.luego));
+    b.appendChild(h);
+
+    var w = el("div", "sec");
+    w.appendChild(el("p", "lab", "Dónde · " + p.formato + " · " + p.para));
+    w.appendChild(el("p", "where", p.lugar));
+    b.appendChild(w);
+
+    if (p.prep && p.prep.length) {
+      var pr = el("div", "sec");
+      pr.appendChild(el("p", "lab", "Antes de grabar"));
+      var cks = el("div", "checks");
+      p.prep.forEach(function (txt, i) {
+        var lb = el("label");
+        var cb = el("input"); cb.type = "checkbox"; cb.id = "c-" + p.id + "-" + i; cb.dataset.pid = p.id; cb.dataset.i = i;
+        cb.addEventListener("change", function () { st(p.id).prep[i] = cb.checked; persist(p.id); });
+        lb.appendChild(cb); lb.appendChild(el("span", null, txt));
+        cks.appendChild(lb);
+      });
+      pr.appendChild(cks);
+      b.appendChild(pr);
+    }
+
+    var g = el("div", "sec");
+    g.appendChild(el("p", "lab", "Guion · " + p.dur + " · guía, no se memoriza"));
+    var beats = el("div", "beats");
+    p.guion.forEach(function (x) {
+      var r = el("div", "beat");
+      r.appendChild(el("span", "t", x.t ? x.t + " s" : "·"));
+      var c = el("div");
+      c.appendChild(el("span", "who w-" + x.q, QUIEN[x.q] || x.q.toUpperCase()));
+      if (x.a) c.appendChild(el("p", "a", x.a));
+      var dice = x.d || (x.q === "cta" ? p.cta.txt : "");
+      if (dice) c.appendChild(el("p", "d", dice));
+      r.appendChild(c);
+      beats.appendChild(r);
+    });
+    g.appendChild(beats);
+    b.appendChild(g);
+
+    var ct = el("div", "cta");
+    ct.appendChild(el("span", "lab", "CTA · keyword"));
+    ct.appendChild(el("span", "k", p.cta.kw));
+    ct.appendChild(el("p", null, p.cta.txt));
+    if (p.cta.alt) ct.appendChild(el("p", "alt", p.cta.alt));
+    b.appendChild(ct);
+
+    if (p.slots && p.slots.length) {
+      var sl = el("div", "sec");
+      sl.appendChild(el("p", "lab", "Anotá en el momento"));
+      var ss = el("div", "slots");
+      p.slots.forEach(function (s) {
+        var box = el("div", "slot");
+        var id = "s-" + p.id + "-" + s.k;
+        var lb = el("label", null, s.l); lb.htmlFor = id;
+        var inp = el("input"); inp.id = id; inp.type = "text"; inp.autocomplete = "off";
+        inp.dataset.pid = p.id; inp.dataset.k = s.k;
+        inp.addEventListener("input", function () { st(p.id).slots[s.k] = inp.value; persist(p.id); });
+        box.appendChild(lb); box.appendChild(inp);
+        ss.appendChild(box);
+      });
+      sl.appendChild(ss);
+      b.appendChild(sl);
+    }
+
+    if (p.ojo && p.ojo.length) {
+      var oj = el("div", "sec");
+      oj.appendChild(el("p", "lab", "Ojo"));
+      var ul = el("ul", "ojo");
+      p.ojo.forEach(function (t) { ul.appendChild(el("li", null, t)); });
+      oj.appendChild(ul);
+      b.appendChild(oj);
+    }
+
+    if (p.juntas) b.appendChild(el("p", "join", "Se graba con: " + p.juntas));
+
+    if (p.pantalla && p.pantalla.length) {
+      var pa = el("div", "sec");
+      pa.appendChild(el("p", "lab", "En pantalla (para edición)"));
+      var ul2 = el("ul", "plain");
+      p.pantalla.forEach(function (t) { ul2.appendChild(el("li", null, t)); });
+      pa.appendChild(ul2);
+      b.appendChild(pa);
+    }
+
+    var nt = el("div", "sec");
+    var nid = "n-" + p.id;
+    var nl = el("label", "lab", "Nota de la toma"); nl.htmlFor = nid;
+    var ta = el("textarea"); ta.id = nid; ta.dataset.pid = p.id; ta.placeholder = "Número de toma, archivo, qué salió bien…";
+    ta.addEventListener("input", function () { st(p.id).nota = ta.value; persist(p.id); });
+    nt.appendChild(nl); nt.appendChild(ta);
+    b.appendChild(nt);
+
+    if (p.refe) {
+      var lk = el("p", "links");
+      lk.appendChild(document.createTextNode("Refe: "));
+      var a = el("a", null, "ver reel de referencia"); a.href = p.refe; a.target = "_blank"; a.rel = "noopener";
+      lk.appendChild(a);
+      b.appendChild(lk);
+    }
+
+    var es = el("div", "estado"); es.setAttribute("role", "group"); es.setAttribute("aria-label", "Estado");
+    ESTADOS.forEach(function (v) {
+      var bt = el("button", null, v === "A GRABAR" ? "A grabar" : v === "GRABADA" ? "Grabada" : "Descartada");
+      bt.type = "button"; bt.dataset.v = v; bt.dataset.pid = p.id;
+      bt.addEventListener("click", function () { st(p.id).estado = v; persist(p.id, true); pintar(p.id); resumen(); aplicarFiltro(); });
+      es.appendChild(bt);
+    });
+    b.appendChild(es);
+
+    d.appendChild(b);
+    lista.appendChild(d);
+  });
+
+  function pintar(id) {
+    var s = st(id), d = document.getElementById("pz-" + id);
+    d.className = "pz st-" + s.estado.replace(" ", "_");
+    d.querySelectorAll(".estado button").forEach(function (bt) { bt.setAttribute("aria-pressed", bt.dataset.v === s.estado ? "true" : "false"); });
+    d.querySelectorAll("input[data-k]").forEach(function (inp) {
+      if (document.activeElement !== inp) inp.value = s.slots[inp.dataset.k] || "";
+    });
+    d.querySelectorAll("input[type=checkbox]").forEach(function (cb) { cb.checked = !!s.prep[cb.dataset.i]; });
+    var ta = d.querySelector("textarea");
+    if (ta && document.activeElement !== ta) ta.value = s.nota || "";
+    document.querySelectorAll('.ref[data-ref="' + id + '"]').forEach(function (r) {
+      r.classList.toggle("done", s.estado !== "A GRABAR");
+    });
+  }
+  function resumen() {
+    var total = D.piezas.length, hechas = 0;
+    D.piezas.forEach(function (p) { if (st(p.id).estado !== "A GRABAR") hechas++; });
+    var c = document.getElementById("count");
+    c.textContent = "";
+    var bb = el("b", null, String(hechas)); c.appendChild(bb);
+    c.appendChild(document.createTextNode(" / " + total + " resueltas"));
+    document.getElementById("barra").style.width = (total ? hechas / total * 100 : 0) + "%";
+  }
+  function aplicarFiltro() {
+    var ocultar = document.getElementById("ocultar").checked, vis = 0;
+    D.piezas.forEach(function (p) {
+      var ok = filtro === "todas" || (filtro === "p1" ? p.prio === 1 : p.lugares.indexOf(filtro) >= 0);
+      if (ocultar && st(p.id).estado !== "A GRABAR") ok = false;
+      document.getElementById("pz-" + p.id).hidden = !ok;
+      if (ok) vis++;
+    });
+    document.getElementById("vacio").hidden = vis > 0;
+  }
+  function pintarTodo() { D.piezas.forEach(function (p) { pintar(p.id); }); resumen(); aplicarFiltro(); }
+  function lockInputs() {
+    document.querySelectorAll(".pz input, .pz textarea, .estado button").forEach(function (x) { x.disabled = true; });
+  }
+  function abrir(id) {
+    filtro = "todas";
+    Array.prototype.forEach.call(chips.children, function (x) { x.setAttribute("aria-pressed", x.dataset.f === "todas" ? "true" : "false"); });
+    document.getElementById("ocultar").checked = false;
+    aplicarFiltro();
+    var d = document.getElementById("pz-" + id);
+    d.open = true;
+    d.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+  document.getElementById("ocultar").addEventListener("change", aplicarFiltro);
+
+  // copiar notas
+  document.getElementById("copiar").addEventListener("click", function () {
+    var out = [D.titulo + " · notas"];
+    D.piezas.forEach(function (p) {
+      var s = st(p.id);
+      var vals = (p.slots || []).filter(function (x) { return s.slots[x.k]; });
+      if (s.estado === "A GRABAR" && !vals.length && !s.nota) return;
+      out.push("");
+      out.push(p.n + " · " + p.titulo + " · " + s.estado);
+      vals.forEach(function (x) { out.push("- " + x.l + ": " + s.slots[x.k]); });
+      if (s.nota) out.push("- Nota: " + s.nota);
+    });
+    var txt = out.length > 1 ? out.join("\n") : "Todavía no hay notas cargadas.";
+    var toast = document.getElementById("toast"), ta = document.getElementById("copia");
+    function fallback() {
+      ta.value = txt; ta.classList.add("show"); ta.focus(); ta.select();
+      toast.textContent = "Seleccioná el texto y copialo.";
+    }
+    try {
+      navigator.clipboard.writeText(txt).then(function () {
+        ta.classList.remove("show"); toast.textContent = "Notas copiadas. Pegalas en WhatsApp.";
+      }, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  // ---------- arranque ----------
+  loadLocal();
+  pintarTodo();
+  setSync("Guardado en este celu");
+
+  if (window.claude && typeof window.claude.use === "function") {
+    Promise.all([window.claude.use("db"), window.claude.use("user")]).then(function (r) {
+      db = r[0];
+      var user = r[1];
+      if (!db) return;
+      if (user && typeof user.can === "function") {
+        return Promise.resolve(user.can("data.write")).then(function (c) {
+          if (c === false) { canWrite = false; lockInputs(); setSync("Solo lectura"); }
+          escuchar();
+        });
+      }
+      escuchar();
+    }).catch(function () {});
+  }
+  function escuchar() {
+    if (canWrite) setSync("Compartido con el equipo");
+    db.collection("piezas").onSnapshot(function (snap) {
+      snap.docs.forEach(function (doc) {
+        if (!byId[doc.id] || !doc.exists) return;
+        var x = doc.data() || {};
+        S[doc.id] = {
+          estado: ESTADOS.indexOf(x.estado) >= 0 ? x.estado : "A GRABAR",
+          slots: Object.assign({}, x.slots || {}),
+          prep: Object.assign({}, x.prep || {}),
+          nota: typeof x.nota === "string" ? x.nota : ""
+        };
+      });
+      saveLocal();
+      pintarTodo();
+    }, function () { setSync("Sin conexión · guardado en este celu"); });
+  }
+})();
+</script>

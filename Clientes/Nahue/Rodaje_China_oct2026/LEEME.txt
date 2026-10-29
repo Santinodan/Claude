@@ -1,0 +1,12 @@
+RODAJE CHINA - oct/nov 2026 (Nahue + filmmaker)
+===============================================
+rodaje_celular.html  -> hoja de rodaje para el celu. Publicada en https://claude.ai/artifact/BgsBN9XFLkJPGHBCcpUCxC
+                        Filtra por lugar, muestra gancho, guion, CTA, permisos y "ojo" de cada pieza,
+                        y deja anotar los numeros en el momento. Se guarda compartido (y en el celu si no hay conexion).
+                        "Copiar notas del dia" -> texto listo para WhatsApp.
+reels.json           -> los datos de las 23 piezas (fuente de la hoja). Si cambia algo, editar aca y rearmar.
+analisis.md          -> resumen: que hay que grabar, por lugar, plan por dia, riesgos y pendientes antes de publicar.
+fuente/              -> Excel original del cliente.
+
+Rearmar la hoja despues de editar reels.json (desde la raiz del repo):
+  python3 Plantillas/rodaje-celular/armar.py Clientes/Nahue/Rodaje_China_oct2026/reels.json

@@ -1,0 +1,612 @@
+<title>Rodaje China</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Hoja de rodaje de bolsillo: barra fija con filtros por lugar, lista de piezas que se abren
+   como fichas. El gancho va sobre "cinta gaffer" amarilla para encontrarlo de un vistazo. */
+:root {
+  --bg: #eef0ee;
+  --card: #ffffff;
+  --ink: #16191c;
+  --muted: #5b626a;
+  --line: #d6dad6;
+  --tape: #f5c62e;
+  --tape-ink: #1d1700;
+  --rec: #c8321f;
+  --ok: #1b7f45;
+  --off: #2b59a3;
+  --chip: #e2e5e2;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif-condensed, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1113; --card: #181b1f; --ink: #eceee9; --muted: #9aa1a8; --line: #2b3035;
+    --tape: #e8b923; --tape-ink: #1d1700; --rec: #ff6a55; --ok: #4fc27d; --off: #86a9ea; --chip: #23272c;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1113; --card: #181b1f; --ink: #eceee9; --muted: #9aa1a8; --line: #2b3035;
+  --tape: #e8b923; --tape-ink: #1d1700; --rec: #ff6a55; --ok: #4fc27d; --off: #86a9ea; --chip: #23272c;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--body);
+  font-size: 16px; line-height: 1.45; -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+.wrap {
+  max-width: 720px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+}
+button, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--off); outline-offset: 2px; }
+
+/* barra fija */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); padding-block: 12px 10px; border-bottom: 1px solid var(--line);
+  display: grid; gap: 10px;
+}
+.top-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+h1 {
+  font-family: var(--display); font-weight: 700; font-size: 28px; line-height: 1;
+  letter-spacing: .01em; margin: 0; text-transform: uppercase;
+}
+.count { font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+.count b { color: var(--ink); font-weight: 500; }
+.bar { height: 4px; background: var(--chip); border-radius: 2px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .3s; }
+.chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-inline: -4px; padding-inline: 4px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; border: 1px solid var(--line); background: var(--card); border-radius: 999px;
+  padding: 6px 12px; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip small { font-family: var(--mono); font-weight: 500; opacity: .7; margin-left: 4px; }
+.tools { display: flex; gap: 12px; align-items: center; justify-content: space-between; font-size: 14px; color: var(--muted); }
+.tools label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.sync { font-family: var(--mono); font-size: 12px; }
+
+.sub { color: var(--muted); font-size: 14px; margin: 12px 0 0; }
+
+/* bloques plegables de arriba */
+.info { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+.info > summary {
+  list-style: none; cursor: pointer; padding: 12px 14px; display: flex; justify-content: space-between; gap: 8px;
+  font-family: var(--display); font-weight: 600; font-size: 19px; text-transform: uppercase; letter-spacing: .02em;
+}
+.info > summary::-webkit-details-marker { display: none; }
+.info > summary::after { content: "+"; font-family: var(--mono); color: var(--muted); }
+.info[open] > summary::after { content: "–"; }
+.info .in { padding: 0 14px 14px; display: grid; gap: 10px; }
+.info ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.dia { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 4px; }
+.dia:first-child { border-top: 0; padding-top: 0; }
+.dia h3 { margin: 0; font-size: 15px; }
+.dia p { margin: 0; font-size: 14px; color: var(--muted); }
+.refs { display: flex; flex-wrap: wrap; gap: 6px; }
+.ref {
+  font-family: var(--mono); font-size: 13px; border: 1px solid var(--line); background: var(--bg);
+  border-radius: 6px; padding: 3px 8px; cursor: pointer;
+}
+.ref.done { text-decoration: line-through; color: var(--muted); }
+
+/* lista */
+.list { display: grid; gap: 10px; margin-top: 16px; }
+.pz { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.pz.st-GRABADA { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.pz.st-DESCARTADA { opacity: .55; }
+.pz > summary {
+  list-style: none; cursor: pointer; padding: 12px 14px; display: grid;
+  grid-template-columns: 44px 1fr auto; gap: 10px; align-items: start;
+}
+.pz > summary::-webkit-details-marker { display: none; }
+.num { font-family: var(--display); font-weight: 700; font-size: 30px; line-height: .95; font-variant-numeric: tabular-nums; }
+.num.ad { font-size: 18px; line-height: 1.1; }
+.ttl { min-width: 0; }
+.ttl h2 { margin: 0; font-size: 17px; line-height: 1.25; font-weight: 700; text-wrap: balance; }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 6px; font-size: 13px; color: var(--muted); }
+.meta .kw { font-family: var(--mono); font-weight: 500; color: var(--ink); background: var(--chip); padding: 0 6px; border-radius: 4px; }
+.meta .p1 { color: var(--rec); font-weight: 700; }
+.meta .nv { color: var(--off); font-weight: 700; }
+.dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--muted); margin-top: 6px; }
+.st-GRABADA .dot { background: var(--ok); border-color: var(--ok); }
+.st-DESCARTADA .dot { background: var(--muted); }
+
+.body { padding: 0 14px 16px; display: grid; gap: 16px; }
+.hook { background: var(--tape); color: var(--tape-ink); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; }
+.lab {
+  font-family: var(--display); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--muted); margin: 0;
+}
+.hook .lab { color: inherit; opacity: .75; }
+.hook .acc { font-size: 14px; margin: 0; }
+.hook .dice { font-size: 22px; line-height: 1.2; font-weight: 700; margin: 0; text-wrap: balance; }
+.hook .dice.off::before { content: "OFF · "; font-family: var(--mono); font-size: 13px; font-weight: 500; vertical-align: middle; }
+.hook .luego { font-size: 14px; margin: 0; }
+.sec { display: grid; gap: 8px; }
+.sec p { margin: 0; }
+.where { font-size: 15px; }
+
+.checks { display: grid; gap: 6px; }
+.checks label { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; font-size: 15px; cursor: pointer; }
+.checks input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--ok); }
+
+.beats { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 4px; }
+.beat { display: grid; grid-template-columns: 60px 1fr; gap: 8px; padding: 8px 0 8px 10px; position: relative; }
+.beat + .beat { border-top: 1px dashed var(--line); }
+.beat .t { font-family: var(--mono); font-size: 12px; color: var(--muted); padding-top: 3px; }
+.beat .who { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .04em; display: inline-block; margin-bottom: 2px; }
+.w-acc { color: var(--muted); }
+.w-nahue { color: var(--ink); }
+.w-off { color: var(--off); }
+.w-cta { color: var(--rec); }
+.beat .a { font-size: 14px; color: var(--muted); margin: 0; }
+.beat .d { font-size: 17px; font-weight: 600; margin: 2px 0 0; }
+.beat .d::before { content: "“"; } .beat .d::after { content: "”"; }
+
+.cta { border: 2px solid var(--ink); border-radius: 8px; padding: 10px 12px; display: grid; gap: 4px; }
+.cta .k { font-family: var(--mono); font-weight: 500; font-size: 22px; letter-spacing: .04em; }
+.cta p { font-size: 15px; }
+.cta .alt { font-size: 13px; color: var(--rec); }
+
+.plain { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 15px; }
+.ojo { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 15px; }
+.ojo li { padding-left: 18px; position: relative; }
+.ojo li::before { content: "!"; position: absolute; left: 2px; font-weight: 700; color: var(--rec); font-family: var(--mono); }
+
+.slots { display: grid; gap: 10px; }
+.slot { display: grid; gap: 4px; }
+.slot label { font-size: 14px; color: var(--muted); }
+.slot input, textarea {
+  width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: 8px;
+  padding: 10px 12px; font-size: 16px; min-width: 0;
+}
+textarea { min-height: 70px; resize: vertical; }
+.slot input:disabled, textarea:disabled { opacity: .6; }
+
+.join { font-size: 14px; background: var(--chip); border-radius: 8px; padding: 8px 10px; margin: 0; }
+.links { font-size: 14px; }
+.links a { color: var(--off); }
+
+.estado { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.estado button {
+  border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 10px 4px;
+  font-weight: 700; font-size: 14px; cursor: pointer;
+}
+.estado button[aria-pressed="true"][data-v="A GRABAR"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.estado button[aria-pressed="true"][data-v="GRABADA"] { background: var(--ok); color: #fff; border-color: var(--ok); }
+.estado button[aria-pressed="true"][data-v="DESCARTADA"] { background: var(--muted); color: var(--bg); border-color: var(--muted); }
+
+.empty { text-align: center; color: var(--muted); padding: 24px 0; }
+.foot { margin-top: 20px; display: grid; gap: 10px; }
+.big {
+  border: 0; background: var(--ink); color: var(--bg); border-radius: 10px; padding: 14px;
+  font-weight: 700; font-size: 16px; cursor: pointer;
+}
+.toast { font-size: 14px; color: var(--ok); text-align: center; min-height: 1.4em; margin: 0; }
+#copia { display: none; }
+#copia.show { display: block; min-height: 200px; font-family: var(--mono); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="top-row">
+      <h1 id="titulo">Rodaje</h1>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="bar"><i id="barra"></i></div>
+    <div class="chips" id="chips" role="toolbar" aria-label="Filtrar por lugar"></div>
+    <div class="tools">
+      <label><input type="checkbox" id="ocultar"> Ocultar grabadas</label>
+      <span class="sync" id="sync">Cargando…</span>
+    </div>
+  </header>
+
+  <p class="sub" id="subtitulo"></p>
+
+  <details class="info" id="info-reglas">
+    <summary>Reglas en set</summary>
+    <div class="in"><ul id="reglas"></ul><p class="sub" id="feria"></p></div>
+  </details>
+  <details class="info" id="info-plan">
+    <summary>Plan por día</summary>
+    <div class="in" id="plan"></div>
+  </details>
+  <details class="info" id="info-pend">
+    <summary>Antes de publicar</summary>
+    <div class="in" id="pend"></div>
+  </details>
+
+  <div class="list" id="lista"></div>
+  <p class="empty" id="vacio" hidden>No hay piezas para este filtro.</p>
+
+  <div class="foot">
+    <button class="big" id="copiar" type="button">Copiar notas del día</button>
+    <p class="toast" id="toast" role="status"></p>
+    <textarea id="copia" readonly aria-label="Notas para copiar"></textarea>
+  </div>
+</div>
+
+<script id="datos" type="application/json">{"id": "rodaje-china-oct2026", "titulo": "Rodaje China", "subtitulo": "Nahue + filmmaker · formatos rápidos 20-45 s · 26-oct al 4-nov 2026", "fuente": "fuente/Rodaje_China_formatos_rapidos_26oct-1nov_2026.xlsx", "lugares": {"fabrica": "Fábrica proveedor", "deposito": "Depósito agente", "pool": "Depósito pool Shenzhen", "puerto": "Puerto / camión", "mercado": "Mercado mayorista", "feria": "Feria F3", "noche": "Salida de noche", "ads": "Ads de pauta"}, "reglas": ["Primer segundo con algo en la mano o una pregunta concreta. Sin saludo ni presentación.", "La frase del lead va escrita en pantalla y se lee como cita. Nunca de memoria.", "La pregunta en off la hace el filmmaker, en primera persona. Nunca \"me escribió uno que…\".", "Todo número se anota en el momento y queda en [SLOT] hasta que Nahue lo confirme.", "Permiso antes de filmar la cara de un vendedor o proveedor. Marcas, carteles y tarjetas tapados si no autorizan.", "Precio de fábrica no es costo puesto en Argentina. No se promete ganancia ni margen.", "El producto se muestra como proceso, nunca como equipo. No pitchear el acompañamiento.", "6 meses al mismo precio, nunca \"vence\". CTA al final y también en el caption.", "Nada actuado: si la escena real no aparece (falla, negociación, respuesta), no se graba o se prueba en otro lado."], "feria": "Fase 2 (hogar, bazar, cocina, deco) cerró el 27-oct. Fase 3 va del 31-oct al 4-nov: ropa, bolsos, oficina, deporte, mascotas, juguetes, cuidado personal. Electrónica e iluminación solo en mercados de Guangzhou o Shenzhen.", "plan": [{"cuando": "29 y 30-oct · sin feria", "donde": "Fábricas, depósitos, mercados", "piezas": ["p05", "p08", "p14", "p13", "p17", "p10", "p09", "p15", "p03", "p02"], "nota": "Una fábrica de Casa Perfecta resuelve 5 + 8 (+ la parada de fábrica de 10). El depósito del agente resuelve 9 + la parada de depósito de 10. La visita al proveedor que negocia resuelve 13 + 17. El pool solo en el depósito del trader en Shenzhen."}, {"cuando": "31-oct al 4-nov · feria fase 3", "donde": "Pabellones de bolsos, oficina, deporte, mascotas", "piezas": ["p01", "p04", "p06", "p07", "p11", "p12", "p16", "p18", "p19"], "nota": "Arrancar por 1, 4 y 11 (prioridad 1). La 1 conviene grabarla con 3 productos el mismo día. La 19 va a la salida, al cierre (18 h)."}, {"cuando": "Cualquier día", "donde": "Pasillo de feria o fábrica", "piezas": ["ad1", "ad2", "ad3", "ad4"], "nota": "Son anuncios a cámara, más guionados. El AD 1 lleva dos tomas del cierre: con cupo y sin cupo."}], "pendientes": [{"txt": "GUIA está en cuarentena desde el 29-sep. Si Tincho no la levanta, el CTA de 1, 2 y 3 pasa a COSTOS.", "piezas": ["p01", "p02", "p03"]}, {"txt": "Confirmar que el flow COSTOS está activo y que Nahue confirmó los porcentajes de la auditoría.", "piezas": ["p04", "p06", "p16"]}, {"txt": "Confirmar que LISTA entrega la lista nueva de 50 productos y no la guía vieja de unos 20.", "piezas": ["p11", "p19"]}, {"txt": "OK de Tincho para decir contenedores por mes. Sin OK va sin número.", "piezas": ["p05", "p13"]}, {"txt": "Frases de leads que siguen en seguimiento: pedir OK o esperar al cierre antes de publicar.", "piezas": ["p02", "p03", "p04", "p05", "p09", "p18", "p19"]}, {"txt": "Etiqueta de ManyChat propia para los ángulos nuevos.", "piezas": ["p07", "p16", "p17", "p18"]}, {"txt": "Los CTA de YO dicen \"te cuento\": el setter abre con una pregunta, sin precio ni vencimiento.", "piezas": []}], "semanas": ["1, 2 y 3 (calculadora del vendedor) van en semanas distintas.", "4 y 6 (misma firma y mismo COSTOS) en semanas distintas.", "5 y 8 se graban el mismo día si es la misma fábrica, se publican separadas.", "7 y 8 (mismo miedo, otro formato) se publican separadas.", "13 y 17 se graban en la misma visita, se publican separadas.", "2 no va la misma semana que otro \"Dejá de\"."], "piezas": [{"id": "p01", "n": "1", "titulo": "El precio en el stand contra Mercado Libre", "angulo": "La cuenta", "formato": "Regateo en el puesto", "familia": "Interrupción", "prio": 1, "dur": "20-25 s", "para": "Los dos", "nuevo": false, "lugares": ["feria", "mercado"], "lugar": "Stand de feria (fase 3: bolsos, oficina, deporte, mascotas) o puesto de mercado mayorista. Electrónica e iluminación: mercado de Shenzhen o Guangzhou.", "cta": {"kw": "GUIA", "txt": "Si querés la cuenta hecha de un producto así puesto en Argentina, comentá GUIA.", "alt": "Si GUIA sigue en cuarentena: COSTOS."}, "hook": {"accion": "Producto ya en la mano, sin saludo, al vendedor:", "dice": "How much is this one?", "luego": "Y a cámara, con el número: «Gente, este mismo en Mercado Libre está a [precio] pesos.»"}, "prep": ["Producto que hoy se vende en Mercado Libre, el mismo o uno igual (chequeado antes)", "Permiso del vendedor para grabarle la cara", "Grabar la mecánica con 3 productos el mismo día"], "guion": [{"t": "0-3", "q": "acc", "a": "Producto en la mano, sin saludo. Le pregunta el precio al vendedor."}, {"t": "3-8", "q": "acc", "a": "El vendedor lo dice o lo marca en la calculadora. La cámara lo toma."}, {"t": "8-14", "q": "nahue", "a": "Repite el número en castellano.", "d": "Gente, este mismo en Mercado Libre está a tanto."}, {"t": "14-21", "q": "nahue", "d": "Súper barato, pero pará, antes de hacernos los vivos: a esto le falta ponerlo en Argentina. El flete, los impuestos y lo que te cobra Mercado Libre, que es bastante caro."}, {"t": "21-25", "q": "cta", "a": "Keyword a cámara."}], "pantalla": ["Seg 0: captura de Mercado Libre del mismo producto con precio y vendidos (la saca el editor el día que publica)", "Cuando contesta el vendedor: acá [precio] dólares", "Antes del cierre: falta flete, impuestos y comisión"], "slots": [{"k": "producto", "l": "Producto"}, {"k": "precio", "l": "Precio en el stand (lo dice el vendedor)"}, {"k": "unidad", "l": "¿Por unidad o por caja?"}], "ojo": ["Nahue dice que el precio de fábrica todavía no es el costo puesto en Argentina. No dice cuánto se gana.", "Sin tarjeta acá: esa mecánica es de la 4.", "No usar «si supieras lo barato» ni «te enojás» (son de Nico y ya decayeron).", "Variante para otra semana: abrir con «Gente, miren este producto que acabamos de encontrar acá»."], "juntas": "", "refe": "https://www.instagram.com/p/Dey72V_o5se/"}, {"id": "p02", "n": "2", "titulo": "Dejá de multiplicar por cuatro", "angulo": "La cuenta", "formato": "Reto al hábito", "familia": "Interrupción", "prio": 1, "dur": "30-35 s", "para": "Sin negocio", "nuevo": false, "lugares": ["mercado", "feria"], "lugar": "Puesto de mercado mayorista (Yiwu si está en el recorrido, si no Guangzhou) o stand de feria. Producto chico con un igual en Mercado Libre y la calculadora del vendedor.", "cta": {"kw": "GUIA", "txt": "Si querés hacer la cuenta de verdad con tu producto, comentá GUIA.", "alt": "Si GUIA sigue en cuarentena: COSTOS."}, "hook": {"accion": "Producto y calculadora del vendedor en la mano, en el puesto:", "dice": "Dejá de multiplicar por cuatro el precio de China."}, "prep": ["Producto donde la cuenta completa dé distinto que multiplicar por 4 (si da parecido, cambiar de producto; si da que no conviene, se dice igual)", "Nahue con el costo puesto en Argentina ya calculado (flete + impuestos + comisión ML)", "Precio del mismo producto en Mercado Libre"], "guion": [{"t": "0-3", "q": "acc", "a": "Nahue a cámara con el producto y la calculadora. Frase del lead en pantalla."}, {"t": "3-10", "q": "acc", "a": "Le pregunta el precio. El vendedor lo marca y gira la calculadora a cámara."}, {"t": "10-20", "q": "nahue", "d": "Con la regla del cuatro lo tendrías que vender a tanto. En Mercado Libre está más barato… y entonces no lo traés nunca."}, {"t": "20-22", "q": "off", "d": "Che Nahue, ¿y entonces cómo la hago?"}, {"t": "22-32", "q": "nahue", "d": "Flete, impuestos y lo que te cobra Mercado Libre, y queda en tanto. Volvemos a lo mismo: la cuenta se hace producto por producto.", "a": "Keyword al final."}], "pantalla": ["«el precio de allá multiplicarlo por 4 o por 5» (alguien que todavía no importó)", "Por 4 · [resultado con la regla]", "Cuenta completa · [costo puesto en Argentina]", "Máximo 2 números en pantalla. El precio de Mercado Libre solo dicho."], "slots": [{"k": "producto", "l": "Producto"}, {"k": "precio", "l": "Precio en el puesto (lo marca el vendedor)"}, {"k": "x4", "l": "Resultado con la regla del 4"}, {"k": "puesto", "l": "Costo puesto en Argentina (confirma Nahue)"}, {"k": "ml", "l": "Precio en Mercado Libre"}], "ojo": ["No nombrar ningún curso ni a quien enseña la regla.", "Nada de cuenta larga en pantalla (en Nico hizo 0,35x)."], "juntas": "", "refe": "https://www.instagram.com/p/Da8v8vmKUkf/"}, {"id": "p03", "n": "3", "titulo": "Lo compraba a 18 y ahora a 30", "angulo": "La cuenta", "formato": "Precio contra precio", "familia": "Pregunta directa", "prio": 2, "dur": "20-30 s", "para": "Ya vende", "nuevo": false, "lugares": ["mercado"], "lugar": "Pasillo de bazar, limpieza o cocina de un mercado mayorista (Yiwu o Guangzhou), con productos de reposición apilados. Bazar ya no está en la feria.", "cta": {"kw": "GUIA", "txt": "Comentá GUIA y te paso la cuenta completa para que veas cuánto te quedaría trayéndolo vos.", "alt": "Si GUIA sigue en cuarentena: COSTOS."}, "hook": {"accion": "Frase en pantalla desde el seg 0. Nahue con un producto de bazar en la mano, sin celular, la señala y la lee como cita:", "dice": "Yo lo compraba a 18.000 pesos y lo vendía en 38… y ahora sale uno similar, me sale 30.000 pesos."}, "prep": ["Producto de bazar en la mano", "Sin celular en cuadro (la frase salió de una llamada, no de un DM)"], "guion": [{"t": "0-3", "q": "acc", "a": "Nahue en el pasillo con el producto. La frase entra en pantalla, como frase, sin maquetar un chat."}, {"t": "3-8", "q": "nahue", "a": "La señala y la lee tal cual, como cita."}, {"t": "8-14", "q": "nahue", "a": "Le pregunta al vendedor el precio de uno parecido. Calculadora a cámara. Aclara que no es el mismo producto."}, {"t": "14-24", "q": "nahue", "d": "¿Y vos a cuánto lo pagás? Cada vez que el que te vende sube, el margen lo ponés vos, porque el precio de venta no lo podés subir. Al fin de cuentas tu margen lo decide él.", "a": "Keyword al final."}], "pantalla": ["Seg 0: la frase (alguien que le compra al importador)", "Cuando marca el vendedor: acá, uno parecido [precio]", "Antes del cierre: ¿y vos a cuánto lo pagás?"], "slots": [{"k": "producto", "l": "Producto parecido"}, {"k": "precio", "l": "Precio por unidad (lo marca el vendedor)"}, {"k": "puesto", "l": "Cuánto queda puesto en Argentina (solo si Nahue lo calcula)"}], "ojo": ["No poner los 30.000 contra el precio del vendedor como si fuera el mismo producto.", "No prometer margen."], "juntas": "", "refe": "https://www.instagram.com/p/DdXUUEvqlzx/"}, {"id": "p04", "n": "4", "titulo": "La tarjeta que tu mayorista no te pasa", "angulo": "Proveedor", "formato": "Regateo en el puesto", "familia": "Interrupción", "prio": 1, "dur": "15-25 s", "para": "Ya vende", "nuevo": false, "lugares": ["feria", "mercado"], "lugar": "Stand de feria (fase 3: bolsos, oficina o deporte) con un producto que en Argentina se le compra al mayorista. Lámparas o accesorios de celular: mercado de Guangzhou o Shenzhen.", "cta": {"kw": "COSTOS", "txt": "Comentá COSTOS y te paso la auditoría de costos para que veas cuánto le dejás por mes al que te vende."}, "hook": {"accion": "Producto ya en la mano, sin saludo, al vendedor (subtitulado):", "dice": "How much is this one?"}, "prep": ["Producto que el que ya vende le compra hoy al mayorista (lo elige Nahue)", "Permiso del vendedor para la cara y para mostrar la tarjeta"], "guion": [{"t": "0-3", "q": "acc", "a": "La cámara entra con Nahue ya en el stand. Pregunta el precio en inglés."}, {"t": "3-8", "q": "acc", "a": "El vendedor lo dice o lo marca en la calculadora. La cámara enfoca."}, {"t": "8-11", "q": "nahue", "d": "Can I have your card?", "a": "Pone la tarjeta delante de la cámara."}, {"t": "11-20", "q": "nahue", "d": "Esta tarjeta tu mayorista no te la va a mostrar nunca. Comprando en el mercado local, lo único que estás haciendo es ser el último en la cadena, y cada uno en el medio le pone su margen."}, {"t": "20-24", "q": "cta", "a": "Keyword al final, sin vueltas."}], "pantalla": ["Seg 0: «llegar al mayorista es como casi el último eslabón de la cadena» (alguien que le compra al mayorista)", "[producto] · cuando contesta: [precio] por unidad", "Con la tarjeta en la mano: el primer eslabón"], "slots": [{"k": "producto", "l": "Producto"}, {"k": "precio", "l": "Precio por unidad (se subtitula tal cual)"}], "ojo": ["Una sola pregunta al vendedor y después la tarjeta. Precio y tarjeta en 10 s, una toma.", "No decir que ese vendedor es el proveedor del mayorista de nadie.", "Decir «mayorista o importador», como hablan los leads.", "Que no se lea el teléfono ni el nombre de la empresa en la tarjeta si no autoriza.", "La keyword también va en el caption (este formato trae pocos comentarios)."], "juntas": "", "refe": "https://www.instagram.com/p/Dewt8y-oW4w/"}, {"id": "p05", "n": "5", "titulo": "Nadie te lo reserva", "angulo": "Proveedor", "formato": "La pregunta del que quiere empezar", "familia": "Pregunta directa", "prio": 1, "dur": "25-35 s", "para": "Ya vende", "nuevo": false, "lugares": ["fabrica", "deposito"], "lugar": "Fábrica de un proveedor de Casa Perfecta con la línea produciendo un pedido propio, o el depósito con esas cajas listas para cargar.", "cta": {"kw": "YO", "txt": "Si tu producto estrella depende del stock de otro, comentá YO y te cuento cómo es la consultora de 6 meses."}, "hook": {"accion": "Pregunta en off. Nahue ya al lado de la línea o entre las cajas, agarra una unidad terminada.", "dice": "Cuando mi importador se queda sin stock, nadie me lo reserva. ¿Qué hago?", "off": true}, "prep": ["Línea o cajas de un pedido propio de Casa Perfecta de esta semana", "Tapar marcas, códigos y datos del proveedor"], "guion": [{"t": "0-3", "q": "off", "d": "Cuando mi importador se queda sin stock, nadie me lo reserva. ¿Qué hago?"}, {"t": "3-7", "q": "acc", "a": "Nahue al lado de la línea o entre las cajas, agarra una unidad terminada."}, {"t": "7-12", "q": "nahue", "d": "Esto no me lo reserva nadie. Lo pido yo y sé cuándo sale."}, {"t": "12-16", "q": "nahue", "a": "Opcional, al proveedor:", "d": "When is the next batch ready?"}, {"t": "16-26", "q": "nahue", "d": "Si tu producto estrella lo trae otro y a él se le acaba, se te acaba a vos. Y encima le estás dando lugar a la competencia que se posicione ahí mientras vos no tenés stock."}, {"t": "26-32", "q": "nahue", "d": "Al fin de cuentas vos no estás manejando tu negocio, te lo está manejando el proveedor.", "a": "Keyword al final."}], "pantalla": ["Seg 0: «nadie te lo reserva, por más de que seas cliente desde hace tiempo» (alguien que vende iluminación)", "Cuando toca las cajas: esto lo pido yo", "Días hasta la próxima tanda, solo si Nahue los quiere mostrar"], "slots": [{"k": "pedido", "l": "¿Pedido de Casa Perfecta de esta semana? (confirma Nahue)"}, {"k": "dias", "l": "Días hasta la próxima tanda (opcional)"}], "ojo": ["No prometer que con la consultora nunca se quiebra stock.", "No decir contenedores por mes sin OK de Tincho."], "juntas": "Misma fábrica que la 8: se graban el mismo día.", "refe": "https://www.instagram.com/p/DeW98IIosuT/"}, {"id": "p06", "n": "6", "titulo": "A quién le vende esta fábrica", "angulo": "Proveedor", "formato": "Abordaje al desconocido", "familia": "Pregunta directa", "prio": 2, "dur": "20-30 s", "para": "Ya vende", "nuevo": false, "lugares": ["feria"], "lugar": "Stand de fábrica en la feria (fase 3: bolsos, oficina o deporte) con una categoría que en Argentina se compra en mayorista.", "cta": {"kw": "COSTOS", "txt": "Si ya vendés, comentá COSTOS y te paso la auditoría para ver cuánto le dejás por mes al que te vende."}, "hook": {"accion": "Al vendedor, con el producto en la mano:", "dice": "Who buys this from you in Argentina?"}, "prep": ["Permiso para filmar. Marca del stand tapada si no quieren salir"], "guion": [{"t": "", "q": "acc", "a": "Producto en la mano, frente al vendedor. Arranca con la pregunta."}, {"t": "", "q": "nahue", "d": "Who buys this from you in Argentina?", "a": "La respuesta va subtitulada."}, {"t": "", "q": "nahue", "a": "Si dice importadores, señala al vendedor:", "d": "Ese importador le vende a tu mayorista y tu mayorista a vos. Acá empieza la cadena."}, {"t": "", "q": "nahue", "d": "Comprando en el mercado local, lo único que estás haciendo es ser el último en la cadena."}, {"t": "", "q": "cta", "a": "Cierre con la keyword."}], "pantalla": ["le pregunto a la fábrica quién le compra en Argentina", "Al final: fábrica → importador → mayorista → vos"], "slots": [{"k": "respuesta", "l": "Qué respondió el vendedor"}], "ojo": ["Si no vende a Argentina o no quiere contestar, se prueba en otro stand. No se actúa ni se fuerza.", "Si nombra un cliente o una marca argentina, se silencia y se pixela.", "Decir «importador o mayorista»."], "juntas": "", "refe": "https://www.instagram.com/p/Desik9goAuu/"}, {"id": "p07", "n": "7", "titulo": "Y si le giro la plata y desaparece", "angulo": "Proveedor", "formato": "La pregunta del que quiere empezar", "familia": "Pregunta directa", "prio": 2, "dur": "25-35 s", "para": "Sin negocio", "nuevo": true, "lugares": ["feria", "fabrica"], "lugar": "Stand de un proveedor nuevo en la feria (fase 3) o una fábrica funcionando con la línea de fondo.", "cta": {"kw": "YO", "txt": "Comentá YO y te cuento cómo elegimos proveedor con los clientes de la consultora."}, "hook": {"accion": "Pregunta en off. Después Nahue, al vendedor, con el producto en la mano: «Can you send me one sample first? How much?»", "dice": "¿Y si le giro la plata al proveedor y desaparece?", "off": true}, "prep": ["Permiso para filmar al vendedor"], "guion": [{"t": "0-3", "q": "off", "d": "¿Y si le giro la plata al proveedor y desaparece?"}, {"t": "3-10", "q": "nahue", "a": "Al vendedor. Precio y días van en pantalla.", "d": "Can you send me one sample first? How much?"}, {"t": "10-20", "q": "nahue", "a": "En sus palabras, qué le pide él a un proveedor nuevo antes de girarle la primera plata (lo que hace de verdad). Ya lo dijo así:", "d": "Pedir muestras, porque la muestra te va a salvar en un pedido grande."}, {"t": "20-27", "q": "nahue", "d": "Cuando un proveedor, un fabricante, te falta respeto y no te da pelota o no te quiere vender, es un proveedor totalmente descartado."}, {"t": "27-32", "q": "cta", "a": "Keyword."}], "pantalla": ["¿y si le giro la plata al proveedor y desaparece?", "Después: [precio] dólares · [días] días"], "slots": [{"k": "precio", "l": "Precio de la muestra"}, {"k": "dias", "l": "Días de envío"}], "ojo": ["No prometer que nunca te van a estafar.", "Lo que diga Nahue tiene que ser lo que él hace de verdad."], "juntas": "", "refe": "https://www.instagram.com/p/DeuYIBKotRp/"}, {"id": "p08", "n": "8", "titulo": "Así se ve un proveedor que existe", "angulo": "Proveedor", "formato": "Pará, escuchame", "familia": "Interrupción", "prio": 3, "dur": "20-30 s", "para": "Sin negocio", "nuevo": true, "lugares": ["fabrica"], "lugar": "Fábrica funcionando de un proveedor de Casa Perfecta, con la línea andando y el dueño de fondo.", "cta": {"kw": "YO", "txt": "Si lo que te frena es que te estafen en la primera compra, comentá YO y te cuento cómo es la consultora de 6 meses."}, "hook": {"accion": "En la línea, al filmmaker. Saca una pieza de la línea:", "dice": "Pará. Filmá esto. Lo terminaron recién."}, "prep": ["Permiso del dueño para filmar la línea y su cara", "Nombre de la fábrica y carteles tapados. Que no se vean productos de otras marcas"], "guion": [{"t": "0-3", "q": "acc", "a": "Nahue frena al filmmaker, saca una pieza de la línea y la muestra a cámara."}, {"t": "3-6", "q": "off", "d": "Che Nahue, ¿y cómo sé yo que el proveedor existe de verdad?"}, {"t": "6-18", "q": "nahue", "d": "Así se ve uno que existe, con la línea andando y el dueño acá. Por chat te contesta cualquiera. Yo a mis proveedores los conozco acá, parado en la fábrica."}, {"t": "18-22", "q": "acc", "a": "El dueño de fondo, trabajando o saludando. Sin entrevista."}, {"t": "22-26", "q": "cta", "a": "Keyword."}], "pantalla": ["Fábrica de un proveedor de Casa Perfecta · [ciudad]"], "slots": [{"k": "ciudad", "l": "Ciudad de la fábrica"}, {"k": "permiso", "l": "¿Permiso del dueño para línea y cara?"}], "ojo": ["La más floja del set: si no hay tiempo, se saltea.", "La pregunta en off es si el proveedor existe, no la de girar la plata (esa es la 7).", "No prometer que la consultora visita fábricas por el cliente.", "No decir cuánto hace que trabajan juntos (eso es la 18)."], "juntas": "Misma fábrica que la 5: se graban el mismo día.", "refe": "https://www.instagram.com/p/DdFdRiMAPIy/"}, {"id": "p09", "n": "9", "titulo": "Quién mira tu mercadería antes de que salga", "angulo": "China", "formato": "Pará, escuchame", "familia": "Interrupción", "prio": 1, "dur": "25-30 s", "para": "Sin negocio", "nuevo": false, "lugares": ["deposito"], "lugar": "Depósito del agente o del proveedor. La persona que controla la mercadería de Casa Perfecta abre una caja y revisa una unidad (costura, golpe, color o cantidad).", "cta": {"kw": "YO", "txt": "Si es tu primera importación y no conocés a nadie en China, comentá YO y te cuento cómo es la consultora de 6 meses."}, "hook": {"accion": "En el depósito, a la persona que abre una caja de Casa Perfecta (subtitulado):", "dice": "Pará, pará. Wait. What are you checking?"}, "prep": ["Permiso de quien sale en cámara. Sin su nombre", "Que revise de verdad mercadería de Casa Perfecta"], "guion": [{"t": "0-3", "q": "acc", "a": "Ella abre una caja, Nahue entra a cuadro y la frena. Frase del lead en pantalla desde el seg 0.", "d": "Pará, pará. Wait. What are you checking?"}, {"t": "3-12", "q": "acc", "a": "Ella saca una unidad y muestra qué revisa. Si aparece una falla de verdad, primer plano."}, {"t": "12-15", "q": "off", "d": "Che Nahue, ¿y si yo no conozco a nadie acá?"}, {"t": "15-25", "q": "nahue", "d": "Esto lo mira alguien acá antes de que suba al contenedor. Si no conocés a nadie en China, lo revisa el mismo que te lo vende y te enterás cuando abrís la caja en Argentina.", "a": "Keyword."}], "pantalla": ["Seg 0: «no tengo contactos, menos de afuera» (alguien que todavía no importó)", "Depósito en [ciudad] · control antes de cargar"], "slots": [{"k": "ciudad", "l": "Ciudad del depósito"}, {"k": "rol", "l": "Rol de la persona / ¿sale con cara?"}, {"k": "clientes", "l": "¿Los clientes de la consultora llegan a este control? (si no, el cierre habla de cómo lo hace Nahue)"}], "ojo": ["La pregunta a ella va en inglés. En castellano solo si lo habla.", "No presentarla como equipo de la consultora ni prometer que revisa la mercadería del que mira.", "Si la falla es actuada, no va."], "juntas": "Mismo día que la parada de depósito de la 10.", "refe": "https://www.instagram.com/p/DbjceGMhAR5/"}, {"id": "p10", "n": "10", "titulo": "Los pasos del medio", "angulo": "China", "formato": "La pregunta del que quiere empezar", "familia": "Pregunta directa", "prio": 2, "dur": "30-40 s", "para": "Sin negocio", "nuevo": false, "lugares": ["fabrica", "deposito", "puerto"], "lugar": "Tres paradas de 8 a 10 s, en días distintos si hace falta: fábrica con el producto saliendo de la línea, depósito del agente con cajas de varios proveedores, y puerto o camión con el contenedor (el puerto casi siempre desde afuera). Nahue en cuadro en las tres.", "cta": {"kw": "YO", "txt": "Si te faltan los pasos del medio, comentá YO y te cuento cómo es la consultora de 6 meses."}, "hook": {"accion": "Pregunta en off. Nahue en la fábrica, con una caja cerrada en la mano: «Vení que te muestro.»", "dice": "Sé lo que sale allá y lo que sale acá, pero no sé los pasos del medio.", "off": true}, "prep": ["Permiso en fábrica, depósito y puerto", "Marcas y números de contenedor tapados"], "guion": [{"t": "0-3", "q": "off", "d": "Sé lo que sale allá y lo que sale acá, pero no sé los pasos del medio."}, {"t": "3-5", "q": "nahue", "d": "Vení que te muestro.", "a": "Arranca a caminar."}, {"t": "5-13", "q": "nahue", "a": "Parada fábrica.", "d": "Acá se fabrica y se revisa antes de que salga."}, {"t": "13-21", "q": "nahue", "a": "Parada depósito del agente.", "d": "Acá llega la mercadería de varios proveedores, se junta y se arma la carga."}, {"t": "21-30", "q": "nahue", "a": "Parada puerto o camión.", "d": "De acá sale el contenedor, y del otro lado te esperan el despachante y la aduana."}, {"t": "30-36", "q": "nahue", "a": "Cierre caminando.", "d": "El medio es donde uno se clava cuando lo hace solo."}], "pantalla": ["Seg 0: «pero no sé los pasos en el medio» (alguien que arranca de cero)", "Una palabra por parada: fábrica · depósito · puerto"], "slots": [{"k": "fabrica", "l": "Parada fábrica: ¿grabada? dónde"}, {"k": "deposito", "l": "Parada depósito: ¿grabada? dónde"}, {"k": "puerto", "l": "Parada puerto o camión: ¿grabada? dónde"}], "ojo": ["Ninguna parada se numera, ni en voz ni en pantalla. Nada de «los 3 pasos».", "Si no se llega al puerto, la tercera es el camión saliendo del depósito. Si falta una, se graba con dos y se ajusta el cierre.", "Nada de documentos ni pantallas. La aduana argentina no se explica acá.", "No decir que la mercadería del que mira pasa por ese depósito. Si el contenedor es propio, no se dice de quién ni se muestra el número."], "juntas": "La parada de depósito sale el mismo día que la 9. La de fábrica, con la 5 y la 8.", "refe": "https://www.instagram.com/p/DeW98IIosuT/"}, {"id": "p11", "n": "11", "titulo": "El más vendido no", "angulo": "Qué producto", "formato": "Abordaje al desconocido", "familia": "Pregunta directa", "prio": 1, "dur": "20-30 s", "para": "Sin negocio", "nuevo": false, "lugares": ["feria", "mercado"], "lugar": "Stand con estantes llenos donde el vendedor pueda señalar su más vendido. Fase 3: bolsos, oficina, deporte o accesorios de mascota. Si no, mercado mayorista de Guangzhou o Yiwu.", "cta": {"kw": "LISTA", "txt": "Comentá LISTA y te paso 50 productos que pasan ese filtro."}, "hook": {"accion": "Al vendedor, frente al estante:", "dice": "What do your clients from Argentina buy the most?"}, "prep": ["Permiso para filmar al vendedor", "El «sí» tiene que pasar el filtro: sin enchufe, batería, comida, piel, juguete, bebé ni talles"], "guion": [{"t": "", "q": "acc", "a": "Nahue frente al estante, arranca con la pregunta."}, {"t": "", "q": "nahue", "d": "What do your clients from Argentina buy the most?", "a": "El vendedor se lo alcanza."}, {"t": "", "q": "nahue", "d": "Ese no. ¿Por qué motivo? Porque si es lo que más compran, ya lo tienen todos, compiten por precio y te terminás clavando con el stock."}, {"t": "", "q": "acc", "a": "Agarra otro del mismo estante. «Este sí», con un solo motivo (no se enchufa, no tiene talles, se le puede poner marca)."}, {"t": "", "q": "cta", "a": "Cierre con la keyword."}], "pantalla": ["le pregunto qué es lo que más le compran los argentinos", "Después: este no · este sí"], "slots": [{"k": "no", "l": "El que señaló el vendedor (el «no»)"}, {"k": "si", "l": "El que eligió Nahue (el «sí») y su motivo"}, {"k": "precio", "l": "Precio del «sí» (solo si lo marca el vendedor)"}], "ojo": ["Sin ganancia prometida ni «producto ganador».", "Si el vendedor no sabe qué compran los argentinos, vale «Latin America»."], "juntas": "", "refe": "https://www.instagram.com/p/DeZe4b3RKuO/"}, {"id": "p12", "n": "12", "titulo": "Buscalo en Mercado Libre", "angulo": "Producto", "formato": "La pregunta del que quiere empezar", "familia": "Pregunta directa", "prio": 2, "dur": "20-30 s", "para": "Ya vende", "nuevo": false, "lugares": ["feria"], "lugar": "Stand de la feria (fase 3: deporte u ocio) con un producto de esta temporada que no se enchufe. Nahue con el producto en una mano y el celu en la otra.", "cta": {"kw": "YO", "txt": "Comentá YO y te cuento cómo buscamos producto con los clientes de la consultora."}, "hook": {"accion": "Pregunta en off. Nahue levanta un producto de la feria: «Buscalo vos.»", "dice": "Todo lo que encuentro ya está en Mercado Libre. ¿Hay algo que no esté?", "off": true}, "prep": ["Llevar 3 candidatos y quedarse con el que no aparece o aparece poco", "Que no sea un producto intervenido (alimentos, piel o eléctrico con certificación)"], "guion": [{"t": "", "q": "off", "d": "Todo lo que encuentro ya está en Mercado Libre. ¿Hay algo que no esté?"}, {"t": "", "q": "acc", "a": "Nahue levanta el producto y lo busca en Mercado Libre en el celu (el celu es solo el gesto, el editor pega la captura)."}, {"t": "", "q": "nahue", "a": "Dice en voz alta cuántas publicaciones aparecen."}, {"t": "", "q": "nahue", "d": "El que trae lo mismo que todos compite por precio. Y cuando te lo copien, ya vas a estar lanzando el siguiente."}, {"t": "", "q": "cta", "a": "Cierre con la keyword."}], "pantalla": ["todo lo que encuentro ya está en Mercado Libre", "Después: [n] publicaciones en Mercado Libre"], "slots": [{"k": "producto", "l": "Producto"}, {"k": "pubs", "l": "Cuántas publicaciones aparecen en Mercado Libre"}], "ojo": ["Solo si se verifica en el momento. Se dice cuántas publicaciones hay, nunca «nadie lo vende».", "El editor la vuelve a chequear el día que publica."], "juntas": "", "refe": "https://www.instagram.com/p/DeuYIBKotRp/"}, {"id": "p13", "n": "13", "titulo": "Negociando el próximo pedido de Casa Perfecta", "angulo": "Casos", "formato": "Regateo en el puesto", "familia": "Interrupción", "prio": 1, "dur": "25-35 s", "para": "Los dos", "nuevo": false, "lugares": ["fabrica"], "lugar": "Stand o showroom de un proveedor de Casa Perfecta, con la muestra sobre la mesa y la calculadora del proveedor. Nombre del stand y carteles tapados.", "cta": {"kw": "YO", "txt": "Si querés traer tu propio producto de China, comentá YO y te cuento cómo es la consultora de 6 meses."}, "hook": {"accion": "Muestra en la mano, al proveedor. Y a cámara, bajito: «Gente, estoy negociando el próximo pedido de Casa Perfecta.»", "dice": "Best price for [cantidad] pieces?"}, "prep": ["Negociación real de Casa Perfecta, nada actuado", "Permiso del proveedor para salir en cámara", "Nombre del stand y carteles tapados (Nico y otras cuentas están en China esta semana)"], "guion": [{"t": "0-3", "q": "acc", "a": "Le pregunta el precio por la cantidad del pedido. El proveedor lo teclea y gira la calculadora a cámara."}, {"t": "3-12", "q": "nahue", "a": "A cámara, bajo, mientras el otro calcula.", "d": "Esto va para el próximo contenedor de Casa Perfecta y me pidió tanto."}, {"t": "12-22", "q": "acc", "a": "Contraoferta con un número y la respuesta del proveedor. Uno o dos cortes."}, {"t": "22-30", "q": "nahue", "a": "Cómo quedó, en una frase. Contenedores por mes solo con OK de Tincho.", "d": "Esto lo hacemos todos los meses para Casa Perfecta."}, {"t": "", "q": "cta", "a": "Keyword."}], "pantalla": ["Seg 0: pedido de Casa Perfecta · [producto] · [cantidad] unidades"], "slots": [{"k": "producto", "l": "Producto"}, {"k": "cantidad", "l": "Cantidad del pedido"}, {"k": "pidio", "l": "Precio que pidió"}, {"k": "oferta", "l": "Contraoferta"}, {"k": "quedo", "l": "Cómo quedó"}, {"k": "tapar", "l": "¿Se ven los números o se tapan? (decide Nahue)"}], "ojo": ["Si el número es sensible se tapa en edición y Nahue dice «me pidió tanto, le ofrecí tanto».", "Sin fecha de llegada ni urgencia.", "Decir «operación armada en China».", "La frase de «poner la jeta» no va acá (es de la 18)."], "juntas": "Si es el mismo proveedor que la 17, se graban en la misma visita.", "refe": "https://www.instagram.com/p/Dewt8y-oW4w/"}, {"id": "p14", "n": "14", "titulo": "Cuántas para ponerle mi logo", "angulo": "Marca", "formato": "La pregunta del que quiere empezar", "familia": "Pregunta directa", "prio": 1, "dur": "20-30 s", "para": "Los dos", "nuevo": false, "lugares": ["fabrica"], "lugar": "Fábrica o stand que graba o estampa logos (láser, tampografía o serigrafía) sobre el producto o la caja, con la máquina trabajando en primer plano.", "cta": {"kw": "YO", "txt": "Comentá YO y te cuento cómo arrancan su marca los clientes de la consultora."}, "hook": {"accion": "Primer plano de la máquina grabando un logo, con el ruido. Pregunta en off. Después Nahue a la fábrica: «What's the minimum order with my logo?»", "dice": "Quiero vender esto con mi marca. ¿Cuántas tengo que comprar para que le pongan mi logo?", "off": true}, "prep": ["Logo de Casa Perfecta o uno de prueba (nunca de una marca ajena ni de clientes sin permiso)", "Permiso para filmar la línea"], "guion": [{"t": "0-4", "q": "acc", "a": "Primer plano de la máquina grabando el logo, con el ruido. De 4 a 6 s, no más."}, {"t": "0-4", "q": "off", "d": "Quiero vender esto con mi marca. ¿Cuántas tengo que comprar para que le pongan mi logo?"}, {"t": "4-10", "q": "nahue", "a": "A la fábrica. El mínimo va en pantalla.", "d": "What's the minimum order with my logo?"}, {"t": "10-15", "q": "acc", "a": "Nahue saca la pieza recién grabada y la gira a cámara."}, {"t": "15-21", "q": "nahue", "a": "Una sola frase.", "d": "Con tu logo dejás de ser uno más de los que venden lo mismo."}, {"t": "21-25", "q": "cta", "a": "Keyword."}], "pantalla": ["cuántas tengo que comprar para que le pongan mi logo?", "Después: mínimo [n] unidades"], "slots": [{"k": "minimo", "l": "Mínimo de unidades con logo"}, {"k": "logo", "l": "Qué logo se grabó (Casa Perfecta o prueba)"}, {"k": "costo", "l": "Costo del grabado por unidad (solo si lo dice)"}], "ojo": ["Marca mostrada, nunca explicada. Si Nahue arranca a definir qué es una marca, se corta.", "Si el logo es de Casa Perfecta, que se lea."], "juntas": "", "refe": "https://www.instagram.com/p/DeW98IIosuT/"}, {"id": "p15", "n": "15", "titulo": "Tengo 3.000 dólares, me alcanza", "angulo": "Pool", "formato": "La pregunta del que quiere empezar", "familia": "Pregunta directa", "prio": 1, "dur": "30-40 s", "para": "Los dos", "nuevo": false, "lugares": ["pool"], "lugar": "Depósito del trader en Shenzhen donde se consolida el pool, con pilas de cajas de distintos dueños marcadas por separado y, si se puede, un contenedor abierto cargándose. Si ese depósito no está en el recorrido, la pieza no se graba en otro lugar.", "cta": {"kw": "YO", "txt": "Si tenés poca plata y querés arrancar, comentá YO y te cuento cómo es la consultora de 6 meses."}, "hook": {"accion": "Pregunta en off. Nahue ya camina entre las cajas.", "dice": "Tengo 3.000 dólares. ¿Me alcanza para importar o tengo que llenar un contenedor?", "off": true}, "prep": ["Tapar nombres y marcas en las cajas", "Confirmar con cuánto entra un producto (cifra pública: desde 1.000 dólares)"], "guion": [{"t": "0-3", "q": "off", "d": "Tengo 3.000 dólares. ¿Me alcanza para importar o tengo que llenar un contenedor?"}, {"t": "3-8", "q": "acc", "a": "Nahue caminando entre pilas de cajas de distintos dueños, señala dos o tres."}, {"t": "8-16", "q": "nahue", "d": "Mirá esto: acá cada uno pone lo suyo y nadie llena un contenedor solo."}, {"t": "16-26", "q": "nahue", "d": "Todo el mundo piensa que para importar necesitás un montonazo de capital, y nada más alejado de la realidad.", "a": "Y con cuánto entra un producto [slot]."}, {"t": "26-34", "q": "nahue", "d": "Al fin de cuentas lo que define es elegir bien el producto y hacer la cuenta antes.", "a": "«Y así lo traen los clientes que arrancan con poca plata» solo si se confirma. Keyword al final."}], "pantalla": ["Seg 0: tengo 3.000 dólares, me alcanza o tengo que llenar un contenedor?", "Cuando señala las pilas: cada pila es de un dueño distinto"], "slots": [{"k": "minimo", "l": "Con cuánto entra un producto (confirma Nahue)"}, {"k": "clientes", "l": "¿Hay cajas de clientes de la consultora? (si no: «distintos dueños» y sale la última frase)"}, {"k": "cifra", "l": "Si 3.000 no encaja con el mínimo real, cifra que sí"}], "ojo": ["La palabra «pool» no va en el hook ni se vende como servicio de logística.", "«Todo el mundo piensa» va al medio, nunca de apertura.", "Sin precio por metro cúbico en cámara.", "No prometer ganancia ni que 3.000 alcanzan para cualquier producto.", "La pregunta arranca con la cifra, sin nombre («Nahue, …» rinde menos)."], "juntas": "", "refe": "https://www.instagram.com/p/DeW98IIosuT/"}, {"id": "p16", "n": "16", "titulo": "Diez iguales en la mesa", "angulo": "Mercado Libre", "formato": "Escena cruda con pregunta al feed", "familia": "Interrupción", "prio": 2, "dur": "25-30 s", "para": "Ya vende", "nuevo": true, "lugares": ["feria", "fabrica"], "lugar": "Mesa de un stand o de la fábrica con diez unidades del mismo producto sin marca (muestras del proveedor). Si hay una versión con marca y caja propia, se usa al final.", "cta": {"kw": "COSTOS", "txt": "Si vendés en Mercado Libre y querés saber cuánto te queda de verdad, comentá COSTOS."}, "hook": {"accion": "Nueve unidades iguales sin marca ya en fila sobre la mesa. Nahue apoya la décima sin hablar. En pantalla:", "dice": "¿Cuál es el tuyo?"}, "prep": ["10 unidades del mismo producto sin marca", "Producto con muchas publicaciones iguales en Mercado Libre (chequeado ese día)", "Versión con marca y caja propia, si la fábrica la tiene"], "guion": [{"t": "0-3", "q": "acc", "a": "Nueve en fila, Nahue apoya la décima sin hablar."}, {"t": "3-12", "q": "nahue", "a": "Entra la captura de la búsqueda con las publicaciones iguales.", "d": "Así ve tu cliente la búsqueda en Mercado Libre. Están todos compitiendo entre sí por precio y nadie gana plata así."}, {"t": "12-18", "q": "acc", "a": "Saca una de la fila y pone la misma con marca y caja propia. Si no hay, le pide al proveedor en cámara un cambio concreto (color, caja o accesorio) y se graba la respuesta."}, {"t": "18-26", "q": "nahue", "d": "Si te bajaron las ventas y no cambiaste nada, fijate cuántos iguales aparecieron.", "a": "Keyword."}], "pantalla": ["¿Cuál es el tuyo?", "[n] publicaciones iguales en Mercado Libre (captura del editor, pixelar vendedores y marcas)"], "slots": [{"k": "producto", "l": "Producto"}, {"k": "marca", "l": "¿Había versión con marca? Si no, qué cambio se pidió y qué respondió"}], "ojo": ["No afirmar que todas las publicaciones salen del mismo proveedor. Se dice lo que se ve en la mesa."], "juntas": "", "refe": "https://www.instagram.com/p/De0aPF8IhRc/"}, {"id": "p17", "n": "17", "titulo": "Esto no viene en ningún PDF", "angulo": "Anti-humo", "formato": "Pará, escuchame", "familia": "Interrupción", "prio": 2, "dur": "25-35 s", "para": "Sin negocio", "nuevo": true, "lugares": ["fabrica"], "lugar": "Mesa de muestras de una fábrica o de un proveedor de Casa Perfecta, con la muestra de algo que Nahue está comprando esta semana y el proveedor a cuadro anotando la cotización.", "cta": {"kw": "YO", "txt": "Si ya pagaste un curso y no arrancaste, comentá YO y te cuento cómo es la consultora de 6 meses."}, "hook": {"accion": "Nahue frena al proveedor que está anotando la cotización o cerrando la caja de la muestra, y agarra la muestra:", "dice": "Pará, pará. Wait."}, "prep": ["Muestra de una compra real de esta semana. Si ese día no hay muestra ni negociación real, no se graba", "Permiso en la fábrica. Marca del proveedor tapada"], "guion": [{"t": "0-3", "q": "acc", "a": "El proveedor anota la cotización o cierra la caja. Nahue entra a cuadro y lo frena."}, {"t": "3-12", "q": "nahue", "d": "Pará, pará, wait.", "a": "Agarra la muestra y muestra el detalle que está negociando ese día (una pieza que se compra aparte, el empaque, el material o el mínimo)."}, {"t": "12-22", "q": "nahue", "d": "Esto se resuelve comprando, en la mesa con el proveedor, y cada detalle de estos te mueve el margen."}, {"t": "22-30", "q": "nahue", "d": "Si ya pagaste un curso y todavía no compraste nada, esto es lo que se aprende recién cuando comprás.", "a": "Keyword al final."}], "pantalla": ["Seg 0: esto no viene en ningún PDF", "Cuando señala el detalle: el detalle en dos o tres palabras", "Antes del cierre: si ya pagaste un curso y todavía no compraste nada"], "slots": [{"k": "detalle", "l": "Detalle que se negoció (lo elige Nahue)"}, {"k": "compra", "l": "¿Compra real de esta semana? Qué producto"}], "ojo": ["Sin nombrar a ningún competidor ni curso. Nada de cursos contra consultora.", "«Pará, pará» va para la audiencia; al proveedor le llega el «wait»."], "juntas": "Si es el mismo proveedor que la 13, se graban en la misma visita.", "refe": "https://www.instagram.com/p/DbjceGMhAR5/"}, {"id": "p18", "n": "18", "titulo": "Desde cuándo trabajamos juntos", "angulo": "Anti-humo", "formato": "La pregunta del que quiere empezar", "familia": "Pregunta directa", "prio": 3, "dur": "25-35 s", "para": "Los dos", "nuevo": true, "lugares": ["feria", "fabrica"], "lugar": "Stand o showroom de un proveedor con el que Casa Perfecta trabaja hace años, en la feria o en su fábrica. La prueba de que es hoy: el cartel de la fase de la feria o Nahue diciendo la fecha.", "cta": {"kw": "YO", "txt": "Comentá YO y te cuento cómo es la consultora de 6 meses."}, "hook": {"accion": "Frase en pantalla. Nahue la señala y la lee como cita, llegando al stand. Después: «Vení.» y al proveedor: «How long have we been working together?»", "dice": "Para realmente dar el paso, me hace falta esa confianza."}, "prep": ["Proveedor a cámara solo con permiso. Nombre del stand tapado si no quiere salir", "Que se vea o se diga la fecha de hoy (nada de material de la feria 2025)"], "guion": [{"t": "", "q": "acc", "a": "La frase en pantalla. Nahue la lee como cita llegando al stand.", "d": "Vení."}, {"t": "", "q": "nahue", "a": "Al proveedor. La respuesta va subtitulada.", "d": "How long have we been working together?"}, {"t": "", "q": "nahue", "a": "Qué le está comprando hoy y qué le pide cambiar, con la fecha del día dicha o a cuadro."}, {"t": "", "q": "nahue", "a": "Solo si ese proveedor hoy le da crédito:", "d": "Para conseguir crédito no queda otra que ir y poner la jeta delante del proveedor."}, {"t": "", "q": "cta", "a": "Cierre con la keyword."}], "pantalla": ["«para realmente dar el paso, me hace falta esa confianza» (alguien que le compra al mayorista)", "Después: [fecha de hoy] · feria de Cantón o la fábrica"], "slots": [{"k": "desde", "l": "Desde cuándo trabajan juntos (lo dice el proveedor)"}, {"k": "fecha", "l": "Fecha de hoy (dicha o en el cartel)"}, {"k": "credito", "l": "¿Le da crédito hoy? ¿A cuántos días? (si no, la frase de la jeta no va)"}], "ojo": ["Sin nombrar a nadie del rubro ni decir «yo no vendo humo».", "Nahue lee la frase como cita para que no parezca que el que desconfía es él."], "juntas": "", "refe": "https://www.instagram.com/p/DeuYIBKotRp/"}, {"id": "p19", "n": "19", "titulo": "Otro año dando vueltas", "angulo": "Mentalidad", "formato": "Reto al hábito", "familia": "Interrupción", "prio": 3, "dur": "25-30 s", "para": "Sin negocio", "nuevo": true, "lugares": ["noche", "feria"], "lugar": "Salida de la feria al cierre (18 h, ya oscurece) con la caja o bolsa de muestras que eligió ese día. Si no, la calle del mercado o del hotel de noche con la misma caja.", "cta": {"kw": "LISTA", "txt": "Si hace rato que das vueltas con qué producto arrancar, comentá LISTA."}, "hook": {"accion": "Saliendo de la feria al cierre, con la caja de muestras del día:", "dice": "Lo peor que podés hacer es pasarte otro año dando vueltas."}, "prep": ["Caja o bolsa con las muestras reales del día"], "guion": [{"t": "0-3", "q": "acc", "a": "Nahue caminando, frena y gira a cámara con la caja. Frase del lead en pantalla."}, {"t": "3-12", "q": "nahue", "a": "Su escalera, en sus palabras:", "d": "Empezamos con un pequeño envío por avión, después un cuarto de container, después medio, después uno entero."}, {"t": "12-18", "q": "acc", "a": "Abre la caja y saca una muestra. Dice por qué en una frase.", "d": "Esto lo elegí hoy para el próximo contenedor de Casa Perfecta."}, {"t": "18-26", "q": "nahue", "d": "Hay que salir un poquitito de la silla, mover un poquitito el orto, arriesgarse.", "a": "Keyword."}], "pantalla": ["«hace un año que andamos a las vueltas» (alguien que todavía no importó)", "[ciudad] · muestras del día"], "slots": [{"k": "muestra", "l": "Qué muestra eligió y para qué producto de Casa Perfecta"}, {"k": "ciudad", "l": "Ciudad"}, {"k": "escalera", "l": "¿La escalera avión → ¼ → ½ → entero sigue vigente? (confirma Nahue)"}], "ojo": ["Nunca como consejo parado: siempre con la salida, la caja y una muestra real.", "Se reta al dar vueltas, no a la persona. Sin plazos ni urgencia de oferta.", "Nada de «tener a quién preguntarle»: pitchear el acompañamiento está vetado."], "juntas": "", "refe": "https://www.instagram.com/p/DaygQtGqTod/"}, {"id": "ad1", "n": "AD 1", "titulo": "Oferta directa · 2 meses extra de regalo", "angulo": "Oferta (cupo)", "formato": "Anuncio a cámara", "familia": "Ad de pauta", "prio": 1, "dur": "30-35 s", "para": "Los dos", "nuevo": false, "ad": true, "lugares": ["ads"], "lugar": "Pasillo de la feria o una fábrica, de frente.", "cta": {"kw": "YO", "txt": "Si lo venías pensando, mandame YO por privado y te contamos cómo funciona."}, "hook": {"accion": "Dedo para arriba en el primer segundo + caja en pantalla «2 meses extra de regalo».", "dice": "Gente, a los próximos 10 que entren a la consultoría les regalamos 2 meses extra."}, "prep": ["Grabar 2 tomas del cierre: con cupo y sin cupo"], "guion": [{"t": "", "q": "nahue", "d": "Gente, a los próximos 10 que entren a la consultoría les regalamos 2 meses extra."}, {"t": "", "q": "nahue", "a": "Solo si Tincho confirma el motivo:", "d": "Son 2 meses más de laburo del equipo con cada uno."}, {"t": "", "q": "nahue", "d": "Si lo venías pensando, mandame YO por privado y te contamos cómo funciona."}], "pantalla": ["2 meses extra de regalo", "para los próximos 10 que entren a la consultoría", "mandame YO por privado"], "slots": [{"k": "tomas", "l": "¿Toma con cupo y toma sin cupo grabadas?"}], "ojo": ["No decir fecha, precio, «no es plata» ni «desde la 11 son 4»."], "juntas": "", "refe": ""}, {"id": "ad2", "n": "AD 2", "titulo": "No sé si me conviene importar ahora", "angulo": "Objeción · el momento", "formato": "Anuncio a cámara", "familia": "Ad de pauta", "prio": 2, "dur": "35-40 s", "para": "Los dos", "nuevo": true, "ad": true, "lugares": ["ads"], "lugar": "Entre puestos de la feria o en una fábrica.", "cta": {"kw": "YO", "txt": "Mandame YO por privado y te contamos cómo funciona."}, "hook": {"accion": "Lee el DM a cámara + caja con la frase del lead:", "dice": "Gente, miren la pregunta que me hacen acá."}, "prep": [], "guion": [{"t": "", "q": "nahue", "d": "Gente, miren la pregunta que me hacen acá. «Nahue, no sé si me conviene importar ahora.» Y acá, como siempre, yo les digo que sí."}, {"t": "", "q": "nahue", "d": "Si estás haciendo negocios a largo plazo, te conviene importar directamente. Vas a tener mejor margen, mejor calidad de los productos, no te quedás sin stock y podés personalizar los productos."}, {"t": "", "q": "nahue", "d": "Si mañana arranco de cero, elijo un solo producto con datos y hago un envío chico por avión. Nada de containers y nada de héroes."}, {"t": "", "q": "acc", "a": "Clip de Gonzalo (lo mete Mateo en edición)."}, {"t": "", "q": "cta", "d": "Mandame YO por privado y te contamos cómo funciona."}], "pantalla": ["«nahue, no sé si me conviene importar ahora»", "Sobre el clip: gonzalo · arrancó de cero", "mandame YO por privado"], "slots": [], "ojo": ["Sin el «40% abajo» del reel.", "«Si mañana arranco de cero» en primera persona. Sin cupo."], "juntas": "", "refe": ""}, {"id": "ad3", "n": "AD 3", "titulo": "Importar es solo bajar costos", "angulo": "Objeción · marca", "formato": "Anuncio a cámara", "familia": "Ad de pauta", "prio": 2, "dur": "35-45 s", "para": "Los dos", "nuevo": true, "ad": true, "lugares": ["ads"], "lugar": "Frente a un stand con producto de marca, o con un producto con marca en la mano.", "cta": {"kw": "YO", "txt": "Mandame YO por privado y te contamos cómo funciona."}, "hook": {"accion": "Caja en pantalla con la frase del lead: «importar es para bajar costos y listo».", "dice": "Si vos realmente pensás que importar es únicamente para mejorar costos, dejame decirte que estás viendo solamente el 20% del negocio."}, "prep": [], "guion": [{"t": "", "q": "nahue", "d": "Si vos realmente pensás que importar es únicamente para mejorar costos, dejame decirte que estás viendo solamente el 20% del negocio. El costo es solamente la puerta de entrada."}, {"t": "", "q": "nahue", "d": "Si arranco de cero, desde el segundo pedido ya meto marca propia, porque el genérico únicamente compite por precio y yo ya perdí esa guerra una vez."}, {"t": "", "q": "nahue", "d": "Tenés que crear marca y vas a generar una curva como esta."}, {"t": "", "q": "acc", "a": "Clip de Fede + captura de la mopa (los mete Mateo)."}, {"t": "", "q": "cta", "d": "Mandame YO por privado y te contamos cómo funciona."}], "pantalla": ["«importar es para bajar costos y listo»", "Dos curvas sin números: el genérico sube y se cae, la marca se sostiene (las dibuja Mateo)", "fede · su marca TAPES", "casa perfecta · una mopa en el puesto 15 de todo mercado libre en octubre", "mandame YO por privado"], "slots": [], "ojo": ["Sin cupo."], "juntas": "", "refe": ""}, {"id": "ad4", "n": "AD 4", "titulo": "Ustedes te ayudan a importar y nada más", "angulo": "Objeción · alcance", "formato": "Anuncio a cámara", "familia": "Ad de pauta", "prio": 3, "dur": "40-45 s", "para": "Los dos", "nuevo": true, "ad": true, "lugares": ["ads"], "lugar": "Recorriendo una fábrica o la feria.", "cta": {"kw": "YO", "txt": "Mandame YO por privado y te contamos cómo funciona."}, "hook": {"accion": "Lee el DM a cámara + caja con la frase del lead:", "dice": "Miren, acá me dicen: «Ustedes te ayudan a importar y nada más.»"}, "prep": [], "guion": [{"t": "", "q": "nahue", "d": "Miren, acá me dicen. «Ustedes te ayudan a importar y nada más.»"}, {"t": "", "q": "nahue", "d": "No solamente es aprender a importar, sino implementar con los mismos contactos que nosotros usamos en nuestra empresa. Y también el sistema de ventas que nosotros tenemos. Y encima los ayudamos a validar si los productos realmente se van a vender."}, {"t": "", "q": "acc", "a": "5 cajas en pantalla + clip de Noelia (los mete Mateo)."}, {"t": "", "q": "cta", "d": "Mandame YO por privado y te contamos cómo funciona."}], "pantalla": ["«ustedes te ayudan a importar y nada más»", "elegís el producto con datos / validás que se venda / le ponés tu marca / lo importás con nuestros contactos / lo salís a vender", "noelia · su primera importación", "mandame YO por privado"], "slots": [], "ojo": ["No presentar al equipo (nada de «tenemos despachantes y licenciados»). Sin cupo."], "juntas": "", "refe": ""}]}</script>
+<script>
+(function () {
+  "use strict";
+  var D = JSON.parse(document.getElementById("datos").textContent);
+  var KEY = "rodaje:" + (D.id || "sin-id");
+  var ESTADOS = ["A GRABAR", "GRABADA", "DESCARTADA"];
+  var QUIEN = { acc: "ACCIÓN", nahue: "NAHUE", off: "OFF", cta: "CTA" };
+  var byId = {};
+  D.piezas.forEach(function (p) { byId[p.id] = p; });
+
+  // Estado: {id: {estado, slots:{}, prep:{}, nota}}
+  var S = {};
+  var db = null, canWrite = true, filtro = "todas";
+
+  function st(id) {
+    if (!S[id]) S[id] = { estado: "A GRABAR", slots: {}, prep: {}, nota: "" };
+    return S[id];
+  }
+  function el(tag, cls, txt) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  function loadLocal() {
+    try { var r = localStorage.getItem(KEY); if (r) S = JSON.parse(r) || {}; } catch (e) {}
+  }
+  function saveLocal() {
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  }
+
+  // ---------- guardado (compartido si hay db, si no en este celu) ----------
+  var timers = {}, chains = {};
+  function persist(id, now) {
+    saveLocal();
+    if (!db || !canWrite) return;
+    clearTimeout(timers[id]);
+    timers[id] = setTimeout(function () {
+      var body = JSON.parse(JSON.stringify(st(id)));
+      body.updatedAt = new Date().toISOString();
+      chains[id] = (chains[id] || Promise.resolve()).then(function () {
+        return db.doc("piezas/" + id).set(body);
+      }).then(function () {
+        setSync("Compartido con el equipo");
+      }).catch(function (e) {
+        if (e && e.code === "invalid_argument") { canWrite = false; lockInputs(); setSync("Solo lectura"); }
+        else setSync("Sin conexión · guardado en este celu");
+      });
+    }, now ? 0 : 700);
+  }
+  function setSync(t) { document.getElementById("sync").textContent = t; }
+
+  // ---------- armado ----------
+  document.getElementById("titulo").textContent = D.titulo || "Rodaje";
+  document.getElementById("subtitulo").textContent = D.subtitulo || "";
+  document.getElementById("feria").textContent = D.feria || "";
+  (D.reglas || []).forEach(function (r) { document.getElementById("reglas").appendChild(el("li", null, r)); });
+
+  function refBtn(id) {
+    var p = byId[id];
+    var b = el("button", "ref", p.n);
+    b.type = "button"; b.dataset.ref = id; b.title = p.titulo;
+    b.addEventListener("click", function () { abrir(id); });
+    return b;
+  }
+  (D.plan || []).forEach(function (d) {
+    var box = el("div", "dia");
+    box.appendChild(el("h3", null, d.cuando + " · " + d.donde));
+    var refs = el("div", "refs");
+    d.piezas.forEach(function (id) { refs.appendChild(refBtn(id)); });
+    box.appendChild(refs);
+    if (d.nota) box.appendChild(el("p", null, d.nota));
+    document.getElementById("plan").appendChild(box);
+  });
+  var pend = document.getElementById("pend");
+  var ulp = el("ul");
+  (D.pendientes || []).forEach(function (x) {
+    var li = el("li");
+    li.appendChild(el("span", null, x.txt + " "));
+    if (x.piezas.length) {
+      var refs = el("span", "refs"); refs.style.display = "inline-flex"; refs.style.marginTop = "4px";
+      x.piezas.forEach(function (id) { refs.appendChild(refBtn(id)); });
+      li.appendChild(refs);
+    }
+    ulp.appendChild(li);
+  });
+  pend.appendChild(ulp);
+  if (D.semanas && D.semanas.length) {
+    pend.appendChild(el("p", "lab", "Calendario de publicación"));
+    var uls = el("ul");
+    D.semanas.forEach(function (s) { uls.appendChild(el("li", null, s)); });
+    pend.appendChild(uls);
+  }
+
+  // chips de lugar
+  var chips = document.getElementById("chips");
+  function chip(key, label, n) {
+    var c = el("button", "chip", label);
+    c.type = "button"; c.dataset.f = key;
+    c.setAttribute("aria-pressed", key === filtro ? "true" : "false");
+    c.appendChild(el("small", null, String(n)));
+    c.addEventListener("click", function () {
+      filtro = key;
+      try { sessionStorage.setItem(KEY + ":f", key); } catch (e) {}
+      Array.prototype.forEach.call(chips.children, function (x) { x.setAttribute("aria-pressed", x.dataset.f === key ? "true" : "false"); });
+      aplicarFiltro();
+    });
+    chips.appendChild(c);
+  }
+  try { filtro = sessionStorage.getItem(KEY + ":f") || "todas"; } catch (e) {}
+  chip("todas", "Todas", D.piezas.length);
+  chip("p1", "Prioridad 1", D.piezas.filter(function (p) { return p.prio === 1; }).length);
+  Object.keys(D.lugares).forEach(function (k) {
+    var n = D.piezas.filter(function (p) { return p.lugares.indexOf(k) >= 0; }).length;
+    if (n) chip(k, D.lugares[k], n);
+  });
+
+  // fichas
+  var lista = document.getElementById("lista");
+  D.piezas.forEach(function (p) {
+    var d = el("details", "pz"); d.id = "pz-" + p.id;
+    var sm = el("summary");
+    sm.appendChild(el("span", "num" + (p.ad ? " ad" : ""), p.n));
+    var ttl = el("div", "ttl");
+    ttl.appendChild(el("h2", null, p.titulo));
+    var meta = el("div", "meta");
+    meta.appendChild(el("span", null, p.lugares.map(function (k) { return D.lugares[k]; }).join(" · ")));
+    meta.appendChild(el("span", null, p.dur));
+    meta.appendChild(el("span", p.prio === 1 ? "p1" : null, "P" + p.prio));
+    meta.appendChild(el("span", "kw", p.cta.kw));
+    if (p.nuevo) meta.appendChild(el("span", "nv", "NUEVO"));
+    ttl.appendChild(meta);
+    sm.appendChild(ttl);
+    sm.appendChild(el("span", "dot"));
+    d.appendChild(sm);
+
+    var b = el("div", "body");
+
+    var h = el("div", "hook");
+    h.appendChild(el("p", "lab", "Primer segundo"));
+    if (p.hook.accion) h.appendChild(el("p", "acc", p.hook.accion));
+    h.appendChild(el("p", "dice" + (p.hook.off ? " off" : ""), p.hook.dice));
+    if (p.hook.luego) h.appendChild(el("p", "luego", p.hook.luego));
+    b.appendChild(h);
+
+    var w = el("div", "sec");
+    w.appendChild(el("p", "lab", "Dónde · " + p.formato + " · " + p.para));
+    w.appendChild(el("p", "where", p.lugar));
+    b.appendChild(w);
+
+    if (p.prep && p.prep.length) {
+      var pr = el("div", "sec");
+      pr.appendChild(el("p", "lab", "Antes de grabar"));
+      var cks = el("div", "checks");
+      p.prep.forEach(function (txt, i) {
+        var lb = el("label");
+        var cb = el("input"); cb.type = "checkbox"; cb.id = "c-" + p.id + "-" + i; cb.dataset.pid = p.id; cb.dataset.i = i;
+        cb.addEventListener("change", function () { st(p.id).prep[i] = cb.checked; persist(p.id); });
+        lb.appendChild(cb); lb.appendChild(el("span", null, txt));
+        cks.appendChild(lb);
+      });
+      pr.appendChild(cks);
+      b.appendChild(pr);
+    }
+
+    var g = el("div", "sec");
+    g.appendChild(el("p", "lab", "Guion · " + p.dur + " · guía, no se memoriza"));
+    var beats = el("div", "beats");
+    p.guion.forEach(function (x) {
+      var r = el("div", "beat");
+      r.appendChild(el("span", "t", x.t ? x.t + " s" : "·"));
+      var c = el("div");
+      c.appendChild(el("span", "who w-" + x.q, QUIEN[x.q] || x.q.toUpperCase()));
+      if (x.a) c.appendChild(el("p", "a", x.a));
+      var dice = x.d || (x.q === "cta" ? p.cta.txt : "");
+      if (dice) c.appendChild(el("p", "d", dice));
+      r.appendChild(c);
+      beats.appendChild(r);
+    });
+    g.appendChild(beats);
+    b.appendChild(g);
+
+    var ct = el("div", "cta");
+    ct.appendChild(el("span", "lab", "CTA · keyword"));
+    ct.appendChild(el("span", "k", p.cta.kw));
+    ct.appendChild(el("p", null, p.cta.txt));
+    if (p.cta.alt) ct.appendChild(el("p", "alt", p.cta.alt));
+    b.appendChild(ct);
+
+    if (p.slots && p.slots.length) {
+      var sl = el("div", "sec");
+      sl.appendChild(el("p", "lab", "Anotá en el momento"));
+      var ss = el("div", "slots");
+      p.slots.forEach(function (s) {
+        var box = el("div", "slot");
+        var id = "s-" + p.id + "-" + s.k;
+        var lb = el("label", null, s.l); lb.htmlFor = id;
+        var inp = el("input"); inp.id = id; inp.type = "text"; inp.autocomplete = "off";
+        inp.dataset.pid = p.id; inp.dataset.k = s.k;
+        inp.addEventListener("input", function () { st(p.id).slots[s.k] = inp.value; persist(p.id); });
+        box.appendChild(lb); box.appendChild(inp);
+        ss.appendChild(box);
+      });
+      sl.appendChild(ss);
+      b.appendChild(sl);
+    }
+
+    if (p.ojo && p.ojo.length) {
+      var oj = el("div", "sec");
+      oj.appendChild(el("p", "lab", "Ojo"));
+      var ul = el("ul", "ojo");
+      p.ojo.forEach(function (t) { ul.appendChild(el("li", null, t)); });
+      oj.appendChild(ul);
+      b.appendChild(oj);
+    }
+
+    if (p.juntas) b.appendChild(el("p", "join", "Se graba con: " + p.juntas));
+
+    if (p.pantalla && p.pantalla.length) {
+      var pa = el("div", "sec");
+      pa.appendChild(el("p", "lab", "En pantalla (para edición)"));
+      var ul2 = el("ul", "plain");
+      p.pantalla.forEach(function (t) { ul2.appendChild(el("li", null, t)); });
+      pa.appendChild(ul2);
+      b.appendChild(pa);
+    }
+
+    var nt = el("div", "sec");
+    var nid = "n-" + p.id;
+    var nl = el("label", "lab", "Nota de la toma"); nl.htmlFor = nid;
+    var ta = el("textarea"); ta.id = nid; ta.dataset.pid = p.id; ta.placeholder = "Número de toma, archivo, qué salió bien…";
+    ta.addEventListener("input", function () { st(p.id).nota = ta.value; persist(p.id); });
+    nt.appendChild(nl); nt.appendChild(ta);
+    b.appendChild(nt);
+
+    if (p.refe) {
+      var lk = el("p", "links");
+      lk.appendChild(document.createTextNode("Refe: "));
+      var a = el("a", null, "ver reel de referencia"); a.href = p.refe; a.target = "_blank"; a.rel = "noopener";
+      lk.appendChild(a);
+      b.appendChild(lk);
+    }
+
+    var es = el("div", "estado"); es.setAttribute("role", "group"); es.setAttribute("aria-label", "Estado");
+    ESTADOS.forEach(function (v) {
+      var bt = el("button", null, v === "A GRABAR" ? "A grabar" : v === "GRABADA" ? "Grabada" : "Descartada");
+      bt.type = "button"; bt.dataset.v = v; bt.dataset.pid = p.id;
+      bt.addEventListener("click", function () { st(p.id).estado = v; persist(p.id, true); pintar(p.id); resumen(); aplicarFiltro(); });
+      es.appendChild(bt);
+    });
+    b.appendChild(es);
+
+    d.appendChild(b);
+    lista.appendChild(d);
+  });
+
+  function pintar(id) {
+    var s = st(id), d = document.getElementById("pz-" + id);
+    d.className = "pz st-" + s.estado.replace(" ", "_");
+    d.querySelectorAll(".estado button").forEach(function (bt) { bt.setAttribute("aria-pressed", bt.dataset.v === s.estado ? "true" : "false"); });
+    d.querySelectorAll("input[data-k]").forEach(function (inp) {
+      if (document.activeElement !== inp) inp.value = s.slots[inp.dataset.k] || "";
+    });
+    d.querySelectorAll("input[type=checkbox]").forEach(function (cb) { cb.checked = !!s.prep[cb.dataset.i]; });
+    var ta = d.querySelector("textarea");
+    if (ta && document.activeElement !== ta) ta.value = s.nota || "";
+    document.querySelectorAll('.ref[data-ref="' + id + '"]').forEach(function (r) {
+      r.classList.toggle("done", s.estado !== "A GRABAR");
+    });
+  }
+  function resumen() {
+    var total = D.piezas.length, hechas = 0;
+    D.piezas.forEach(function (p) { if (st(p.id).estado !== "A GRABAR") hechas++; });
+    var c = document.getElementById("count");
+    c.textContent = "";
+    var bb = el("b", null, String(hechas)); c.appendChild(bb);
+    c.appendChild(document.createTextNode(" / " + total + " resueltas"));
+    document.getElementById("barra").style.width = (total ? hechas / total * 100 : 0) + "%";
+  }
+  function aplicarFiltro() {
+    var ocultar = document.getElementById("ocultar").checked, vis = 0;
+    D.piezas.forEach(function (p) {
+      var ok = filtro === "todas" || (filtro === "p1" ? p.prio === 1 : p.lugares.indexOf(filtro) >= 0);
+      if (ocultar && st(p.id).estado !== "A GRABAR") ok = false;
+      document.getElementById("pz-" + p.id).hidden = !ok;
+      if (ok) vis++;
+    });
+    document.getElementById("vacio").hidden = vis > 0;
+  }
+  function pintarTodo() { D.piezas.forEach(function (p) { pintar(p.id); }); resumen(); aplicarFiltro(); }
+  function lockInputs() {
+    document.querySelectorAll(".pz input, .pz textarea, .estado button").forEach(function (x) { x.disabled = true; });
+  }
+  function abrir(id) {
+    filtro = "todas";
+    Array.prototype.forEach.call(chips.children, function (x) { x.setAttribute("aria-pressed", x.dataset.f === "todas" ? "true" : "false"); });
+    document.getElementById("ocultar").checked = false;
+    aplicarFiltro();
+    var d = document.getElementById("pz-" + id);
+    d.open = true;
+    d.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+  document.getElementById("ocultar").addEventListener("change", aplicarFiltro);
+
+  // copiar notas
+  document.getElementById("copiar").addEventListener("click", function () {
+    var out = [D.titulo + " · notas"];
+    D.piezas.forEach(function (p) {
+      var s = st(p.id);
+      var vals = (p.slots || []).filter(function (x) { return s.slots[x.k]; });
+      if (s.estado === "A GRABAR" && !vals.length && !s.nota) return;
+      out.push("");
+      out.push(p.n + " · " + p.titulo + " · " + s.estado);
+      vals.forEach(function (x) { out.push("- " + x.l + ": " + s.slots[x.k]); });
+      if (s.nota) out.push("- Nota: " + s.nota);
+    });
+    var txt = out.length > 1 ? out.join("\n") : "Todavía no hay notas cargadas.";
+    var toast = document.getElementById("toast"), ta = document.getElementById("copia");
+    function fallback() {
+      ta.value = txt; ta.classList.add("show"); ta.focus(); ta.select();
+      toast.textContent = "Seleccioná el texto y copialo.";
+    }
+    try {
+      navigator.clipboard.writeText(txt).then(function () {
+        ta.classList.remove("show"); toast.textContent = "Notas copiadas. Pegalas en WhatsApp.";
+      }, fallback);
+    } catch (e) { fallback(); }
+  });
+
+  // ---------- arranque ----------
+  loadLocal();
+  pintarTodo();
+  setSync("Guardado en este celu");
+
+  if (window.claude && typeof window.claude.use === "function") {
+    Promise.all([window.claude.use("db"), window.claude.use("user")]).then(function (r) {
+      db = r[0];
+      var user = r[1];
+      if (!db) return;
+      if (user && typeof user.can === "function") {
+        return Promise.resolve(user.can("data.write")).then(function (c) {
+          if (c === false) { canWrite = false; lockInputs(); setSync("Solo lectura"); }
+          escuchar();
+        });
+      }
+      escuchar();
+    }).catch(function () {});
+  }
+  function escuchar() {
+    if (canWrite) setSync("Compartido con el equipo");
+    db.collection("piezas").onSnapshot(function (snap) {
+      snap.docs.forEach(function (doc) {
+        if (!byId[doc.id] || !doc.exists) return;
+        var x = doc.data() || {};
+        S[doc.id] = {
+          estado: ESTADOS.indexOf(x.estado) >= 0 ? x.estado : "A GRABAR",
+          slots: Object.assign({}, x.slots || {}),
+          prep: Object.assign({}, x.prep || {}),
+          nota: typeof x.nota === "string" ? x.nota : ""
+        };
+      });
+      saveLocal();
+      pintarTodo();
+    }, function () { setSync("Sin conexión · guardado en este celu"); });
+  }
+})();
+</script>

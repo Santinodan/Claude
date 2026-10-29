@@ -1,0 +1,16 @@
+PLANTILLA: HOJA DE RODAJE PARA CELULAR
+======================================
+Sirve para cualquier rodaje de reels: una pagina para el celu con todas las piezas, filtradas por lugar.
+
+plantilla.html -> diseno y logica (no tocar para un rodaje nuevo).
+armar.py       -> mete un reels.json adentro de la plantilla y genera rodaje_celular.html al lado del json.
+
+Rodaje nuevo:
+  1. Copiar Clientes/Nahue/Rodaje_China_oct2026/reels.json como ejemplo a Clientes/<cliente>/<rodaje>/reels.json
+  2. Cambiar "id" (unico por rodaje), lugares, reglas, plan y piezas.
+  3. python3 Plantillas/rodaje-celular/armar.py Clientes/<cliente>/<rodaje>/reels.json
+  4. Publicarla como artifact (Claude lo hace) para abrirla desde el celu.
+
+Campos de cada pieza: id, n, titulo, angulo, formato, familia, prio (1-3), dur, para, nuevo, lugares[],
+lugar, cta{kw,txt,alt}, hook{accion,dice,luego,off}, prep[], guion[{t,q(acc|nahue|off|cta),a,d}],
+pantalla[], slots[{k,l}], ojo[], juntas, refe. Para ads: "ad": true.

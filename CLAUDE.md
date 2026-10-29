@@ -26,6 +26,8 @@
 |---|---|
 | `Powergrade/` | LUTs "MA Vivo" para clips LOG de la **DJI Osmo Pocket 4P** (D-Log / D-Log 2, Día / Noche), ejemplos y fuentes. Ver `Powergrade/LEEME.txt`. |
 | `Powergrade/High Ticket/` | LUT **High Ticket** (D-Log / D-Log 2 / Rec709): look cine premium sacado de referencias. Sin probar. |
+| `Clientes/Nahue/` | Cliente Nahue (Casa Perfecta). `Rodaje_China_oct2026/`: 19 reels + 4 ads, hoja de rodaje para celular, análisis y Excel fuente. |
+| `Plantillas/rodaje-celular/` | Plantilla de **hoja de rodaje para celular**: de un `reels.json` arma una página con gancho, guion, CTA y notas en el set. |
 | `.claude/skills/creador-de-luts/` | Skill **Creador de LUTs**: receta del look que funcionó, scripts para generar, retocar y comparar LUTs. |
 
 ## Áreas de trabajo
@@ -41,6 +43,7 @@
 ## Herramientas útiles disponibles
 
 - Skills del repo: `creador-de-luts`.
+- Plantillas del repo: `Plantillas/rodaje-celular/` (hoja de rodaje para celular desde un Excel/JSON de reels).
 - Otras skills que pueden servir: `vsl-mastering` (guiones de VSL/YouTube), `ebook-higgsfield`
   (infoproductos), `anthropic-skills:xlsx` / `docx` / `pdf` / `pptx` (presupuestos, propuestas, informes).
 - `ffmpeg` y Python (numpy, Pillow, colour-science) en el entorno.
