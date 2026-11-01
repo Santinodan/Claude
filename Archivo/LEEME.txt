@@ -1,0 +1,9 @@
+ARCHIVO
+=======
+Proyectos que dejamos de usar. No se borran: quedan aca por si se quieren retomar.
+
+editor-de-vlogs/        Skill + app "Editor de Vlogs" (edicion de vlogs con Claude Code, linea de tiempo,
+                        exportar a Premiere). Archivado el 2026-11-01 al pasar a Lutario.
+Editor de Vlogs.app     Lanzador de esa app para Mac.
+Perfiles/               Perfiles y looks que usaba esa app.
+Para reactivar la skill: moverla de nuevo a .claude/skills/editor-de-vlogs

@@ -1,0 +1,16 @@
+LUTARIO - repositorio de LUTs
+=============================
+Biblioteca de LUTs con la paleta verde: grilla con cada LUT (antes/despues sobre una foto de ejemplo),
+para que formato de video es cada una (D-Log / D-Log 2 / Rec709), descargar el .cube, cargar LUTs
+nuevas y como aplicarlas en Premiere, DaVinci, Final Cut y CapCut.
+
+Abrir:
+  - Mac: dist/Lutario.app (o descomprimir dist/Lutario.zip). Abre la biblioteca en el navegador.
+    La primera vez: clic derecho -> Abrir -> Abrir (macOS avisa porque no es de la App Store).
+  - Cualquier navegador: dist/index.html
+Las LUTs que cargas desde la app quedan guardadas en ese navegador.
+
+Archivos:
+  app.html     la app (plantilla)          build.py   arma dist/ (index.html, Lutario.app, Lutario.zip)
+  logo.svg     logo (arco + lente)          muestras/  foto de ejemplo en D-Log, D-Log 2 y Rec709 (CC0)
+Para sumar una LUT de base: agregala en LOOKS dentro de build.py y corre  python3 Lutario/build.py

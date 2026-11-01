@@ -1,0 +1,3 @@
+#!/bin/bash
+# Abre la biblioteca de LUTs en el navegador predeterminado.
+open "$(cd "$(dirname "$0")/../Resources" && pwd)/index.html"
