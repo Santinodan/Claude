@@ -55,18 +55,16 @@ def armar_html():
             "muestras": {k: data_uri(os.path.join(AQUI, "muestras", f"muestra_{k}.jpg"), "image/jpeg")
                          for k in ("dlog", "dlog2", "rec709")}}
     html = open(os.path.join(AQUI, "app.html"), encoding="utf-8").read()
-    html = html.replace("__LOGO__", data_uri(os.path.join(AQUI, "logo.svg"), "image/svg+xml"))
+    html = html.replace("__LOGO__", data_uri(os.path.join(AQUI, "logo_128.png"), "image/png"))
     html = html.replace("const DATA=__DATA__;", "const DATA=" + json.dumps(data, ensure_ascii=False) + ";")
     return html
 
 
 def icono_icns(destino):
     """Icono de la app: el logo sobre un cuadrado redondeado verde menta."""
-    import cairosvg
     from PIL import Image, ImageDraw
     S = 1024
-    png = cairosvg.svg2png(url=os.path.join(AQUI, "logo.svg"), output_width=640, output_height=640)
-    logo = Image.open(io.BytesIO(png)).convert("RGBA")
+    logo = Image.open(os.path.join(AQUI, "logo.png")).convert("RGBA").resize((640, 640), Image.LANCZOS)
     base = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     d = ImageDraw.Draw(base)
     d.rounded_rectangle([64, 64, S - 64, S - 64], radius=210, fill=(232, 245, 233, 255), outline=(197, 225, 165, 255), width=8)

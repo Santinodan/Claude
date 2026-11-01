@@ -12,5 +12,5 @@ Las LUTs que cargas desde la app quedan guardadas en ese navegador.
 
 Archivos:
   app.html     la app (plantilla)          build.py   arma dist/ (index.html, Lutario.app, Lutario.zip)
-  logo.svg     logo (arco + lente)          muestras/  foto de ejemplo en D-Log, D-Log 2 y Rec709 (CC0)
+  logo.png     logo (y logo_128.png)        muestras/  foto de ejemplo por defecto (CC0); se puede cambiar desde la app
 Para sumar una LUT de base: agregala en LOOKS dentro de build.py y corre  python3 Lutario/build.py
