@@ -85,6 +85,42 @@ svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke
 .card.add .plus{display:grid;justify-items:center;gap:10px;color:var(--ink-2);font-weight:600;text-align:center;padding:24px}
 .card.add .plus i{width:52px;height:52px;border-radius:50%;background:var(--pistachio);display:grid;place-items:center;color:var(--forest);font:400 30px/1 var(--f-body);font-style:normal}
 
+/* busqueda, orden y vista */
+.toolbar{gap:10px 12px}
+.search.big{order:-1;flex:1 1 100%;max-width:none;margin:0;padding:0 16px;border-radius:14px;background:#fff;border-width:2px}
+.search.big input{padding:13px 0;font-size:16px}
+.search.big:focus-within{border-color:var(--sage);box-shadow:0 0 0 4px rgba(139,195,74,.18)}
+.search input[type=search]::-webkit-search-cancel-button{cursor:pointer}
+kbd{font:500 11.5px var(--f-mono);color:var(--ink-2);border:1px solid var(--line);border-radius:6px;padding:2px 6px;background:var(--mint)}
+.count{font-size:13.5px;color:var(--ink-2);font-weight:600}
+.sortsel{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-2);font-weight:600}
+.sortsel select{border:1.5px solid var(--line);border-radius:999px;background:var(--paper);padding:6px 10px}
+.viewsw{display:flex;background:var(--paper);border:1.5px solid var(--line);border-radius:999px;padding:3px}
+.viewsw button{border:0;background:transparent;border-radius:999px;width:36px;height:30px;display:grid;place-items:center;color:var(--ink-2)}
+.viewsw button[aria-pressed=true]{background:var(--forest);color:#fff}
+mark{background:var(--pistachio);color:inherit;border-radius:3px;padding:0 1px}
+.vacio{display:grid;gap:8px;justify-items:center;text-align:center;padding:50px 20px 70px;color:var(--ink-2)}
+.vacio b{color:var(--ink);font:500 22px var(--f-display)}
+.acts{display:inline-flex;gap:6px;align-items:center}
+.ibtn{border:0;background:transparent;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--ink-2)}
+.ibtn:hover{background:var(--mint);color:var(--forest)}
+input.rename{font:inherit;width:100%;min-width:120px;border:2px solid var(--sage);border-radius:8px;padding:2px 8px;background:#fff;outline:none}
+.list{display:grid;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:60px}
+.lrow{display:grid;grid-template-columns:96px minmax(180px,1.4fr) minmax(180px,1.2fr) minmax(120px,.8fr) 110px 44px;gap:14px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);cursor:pointer}
+.lrow:hover{background:#eef7ea}
+.lrow.lhead{border-top:0;cursor:default;background:var(--mint);padding-top:8px;padding-bottom:8px}
+.lrow.lhead:hover{background:var(--mint)}
+.th{border:0;background:transparent;padding:0;text-align:left;font:700 12px var(--f-body);letter-spacing:.04em;text-transform:uppercase;color:var(--olive)}
+button.th{cursor:pointer}.th.on{color:var(--forest)}
+.lthumb{aspect-ratio:3/2;border-radius:8px;width:96px}
+.lname{display:grid;gap:2px;min-width:0}
+.lname b{font:500 18px/1.2 var(--f-display)}
+.lname small{color:var(--ink-2);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lfiles{display:grid;gap:3px;min-width:0}
+.file{border:0;background:transparent;padding:2px 0;display:flex;gap:6px;align-items:center;font:500 12px var(--f-mono);color:var(--forest);text-align:left;min-width:0}
+.file span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file svg.i{width:15px;height:15px;flex:none}
+@media (max-width:860px){.lrow{grid-template-columns:80px minmax(0,1fr) 40px}.lrow .lfiles,.lrow>.fmts,.lrow>span:nth-child(5),.lrow.lhead>*:nth-child(n+3):not(:last-child){display:none}.lthumb{width:80px}.sortsel{margin-left:0}}
 /* vista de una LUT */
 .detail{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:24px;padding:24px 0 60px;align-items:start}
 @media (max-width:920px){.detail{grid-template-columns:minmax(0,1fr)}}
@@ -183,14 +219,17 @@ const HOWTO={
  capcut:{n:"CapCut",pasos:{log:["Seleccioná el clip → Ajustar → LUT → Importar LUT.","Elegí el .cube y dejalo al 100%."],rec709:["Seleccioná el clip → Ajustar → LUT → Importar LUT.","Elegí el .cube y bajá la intensidad a gusto."]}}};
 
 /* ---------- almacenamiento de LUTs cargadas (este navegador) ---------- */
-const DB={p:null,open(){return this.p??=new Promise((res,rej)=>{const r=indexedDB.open("lutario",2);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("luts"))d.createObjectStore("luts",{keyPath:"id"});if(!d.objectStoreNames.contains("fotos"))d.createObjectStore("fotos")};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
+const DB={p:null,open(){return this.p??=new Promise((res,rej)=>{const r=indexedDB.open("lutario",3);r.onupgradeneeded=()=>{const d=r.result;for(const n of ["fotos","nombres"])if(!d.objectStoreNames.contains(n))d.createObjectStore(n);if(!d.objectStoreNames.contains("luts"))d.createObjectStore("luts",{keyPath:"id"})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
  async all(){try{const db=await this.open();return await new Promise(res=>{const q=db.transaction("luts").objectStore("luts").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])})}catch(e){return []}},
  async put(x){const db=await this.open();return new Promise((res,rej)=>{const t=db.transaction("luts","readwrite");t.objectStore("luts").put(x);t.oncomplete=res;t.onerror=()=>rej(t.error)})},
+ async kv(store){try{const db=await this.open();return await new Promise(res=>{const out={};const q=db.transaction(store).objectStore(store).openCursor();q.onsuccess=()=>{const c=q.result;if(c){out[c.key]=c.value;c.continue()}else res(out)};q.onerror=()=>res({})})}catch(e){return {}}},
+ async setKv(store,k,v){const db=await this.open();return new Promise((res,rej)=>{const t=db.transaction(store,"readwrite");v==null?t.objectStore(store).delete(k):t.objectStore(store).put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error)})},
  async getFotos(){try{const db=await this.open();return await new Promise(res=>{const st=db.transaction("fotos").objectStore("fotos");const out={};const q=st.openCursor();q.onsuccess=()=>{const c=q.result;if(c){out[c.key]=c.value;c.continue()}else res(out)};q.onerror=()=>res({})})}catch(e){return {}}},
  async setFoto(k,v){const db=await this.open();return new Promise((res,rej)=>{const t=db.transaction("fotos","readwrite");v?t.objectStore("fotos").put(v,k):t.objectStore("fotos").delete(k);t.oncomplete=res;t.onerror=()=>rej(t.error)})},
  async del(id){const db=await this.open();return new Promise(res=>{const t=db.transaction("luts","readwrite");t.objectStore("luts").delete(id);t.oncomplete=res})}};
 let LOOKS=[...DATA.looks];
-async function cargarPropias(){const mias=await DB.all();LOOKS=[...DATA.looks,...mias.map(m=>({id:m.id,nombre:m.nombre,descripcion:"LUT que cargaste vos.",estado:"tuya",variantes:[{formato:m.formato,archivo:m.archivo,texto:m.texto}]}))]}
+let NOMBRES={};
+async function cargarPropias(){NOMBRES=await DB.kv("nombres");const mias=await DB.all();LOOKS=[...DATA.looks.map(l=>({...l,original:l.nombre,nombre:NOMBRES[l.id]||l.nombre})),...mias.map(m=>({id:m.id,nombre:m.nombre,descripcion:"LUT que cargaste vos.",estado:"tuya",variantes:[{formato:m.formato,archivo:m.archivo,texto:m.texto}]}))]}
 
 /* ---------- LUT .cube ---------- */
 const cubeTxt={};
@@ -267,6 +306,16 @@ function modalFoto(){let im=null,modo="normal",res=null;const m=document.createE
   if($("freset"))$("freset").onclick=async()=>{for(const k of ORDEN)await DB.setFoto(k,null).catch(()=>{});await cargarFotos();close();toast("Volviste a la foto original");vista()};
   exp()}
 
+/* ---------- renombrar ---------- */
+async function renombrar(id,nuevo){nuevo=(nuevo||"").trim();const l=LOOKS.find(x=>x.id===id);if(!l||!nuevo||nuevo===l.nombre)return false;
+  try{if(l.estado==="tuya"){const mias=await DB.all();const m=mias.find(x=>x.id===id);if(m){m.nombre=nuevo;await DB.put(m)}}
+      else await DB.setKv("nombres",id,nuevo===l.original?null:nuevo)}catch(e){}
+  l.nombre=nuevo;if(l.estado!=="tuya")NOMBRES[id]=nuevo;toast("Renombrada: "+nuevo);return true}
+function editarNombre(el,id,alTerminar){if(el.querySelector("input"))return;const l=LOOKS.find(x=>x.id===id);const viejo=el.innerHTML;
+  el.innerHTML=`<input class="rename" type="text" value="${esc(l.nombre)}" aria-label="Nuevo nombre" maxlength="60">`;const i=el.querySelector("input");i.focus();i.select();
+  let fin=false;const cerrar=async ok=>{if(fin)return;fin=true;if(ok)await renombrar(id,i.value);alTerminar?alTerminar():(el.innerHTML=viejo)};
+  i.onkeydown=e=>{e.stopPropagation();if(e.key==="Enter"){e.preventDefault();cerrar(true)}if(e.key==="Escape")cerrar(false)};i.onclick=e=>e.stopPropagation();i.onblur=()=>cerrar(true)}
+
 /* ---------- descargar ---------- */
 let DOWNLOADS=null;
 async function descargar(v,nombre){const texto=await textoDe(v);const filename=(v.archivo||nombre).split("/").pop().replace(/[^\w.\- ]+/g,"_")||"lut.cube";
@@ -282,29 +331,59 @@ function vista(){const h=location.hash.slice(1)||"biblioteca";document.querySele
   stopStage();if(h==="formatos")return vFormatos();if(h.startsWith("lut-")){const l=LOOKS.find(x=>"lut-"+x.id===h);if(l)return vDetalle(l)}vBiblioteca();window.scrollTo(0,0)}
 addEventListener("hashchange",()=>{vista();window.scrollTo(0,0)});
 
-function vBiblioteca(){const lista=LOOKS.filter(l=>(FILTRO==="todos"||l.variantes.some(v=>v.formato===FILTRO))&&(!BUSCA||l.nombre.toLowerCase().includes(BUSCA)));
+let VISTA=(()=>{try{return localStorage.getItem("lutario_vista")||"grilla"}catch(e){return "grilla"}})(),ORDENAR="nombre",ASC=true;
+const icv={grid:'<svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
+ list:'<svg class="i" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="5" cy="6" r="1.2"/><circle cx="5" cy="12" r="1.2"/><circle cx="5" cy="18" r="1.2"/></svg>',
+ pen:'<svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg>'};
+const norm=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function marcar(texto,q){texto=String(texto||"");if(!q)return esc(texto);const n=norm(texto);const i=n.indexOf(q);if(i<0)return esc(texto);return esc(texto.slice(0,i))+"<mark>"+esc(texto.slice(i,i+q.length))+"</mark>"+esc(texto.slice(i+q.length))}
+function coincide(l,q){if(!q)return true;const campos=[l.nombre,l.descripcion,l.estado==="tuya"?"tuya mia propia":l.estado,...l.variantes.flatMap(v=>[v.archivo,FORMATOS[v.formato].nombre,FORMATOS[v.formato].largo])];return q.split(/\s+/).every(t=>campos.some(c=>norm(c).includes(t)))}
+const ESTADO_ORD={aprobada:0,"sin probar":1,tuya:2};
+function ordenar(a,b){let r=0;if(ORDENAR==="nombre")r=norm(a.nombre).localeCompare(norm(b.nombre));else if(ORDENAR==="formato")r=ORDEN.indexOf(a.variantes[0].formato)-ORDEN.indexOf(b.variantes[0].formato)||norm(a.nombre).localeCompare(norm(b.nombre));
+  else if(ORDENAR==="estado")r=(ESTADO_ORD[a.estado]??3)-(ESTADO_ORD[b.estado]??3);else if(ORDENAR==="archivos")r=a.variantes.length-b.variantes.length;return ASC?r:-r}
+function vBiblioteca(){const q=norm(BUSCA.trim());const lista=LOOKS.filter(l=>(FILTRO==="todos"||l.variantes.some(v=>v.formato===FILTRO))&&coincide(l,q)).sort(ordenar);
   $("main").innerHTML=`<div class="wrap"><section class="hero"><div><h1>Tus LUTs, <em>listas para aplicar</em></h1><p>Cada LUT está hecha para un formato de video. Elegí la que va con cómo grabaste, mirá el antes y después sobre una foto de ejemplo y descargala en .cube.</p></div>
    <div style="display:grid;gap:10px"><div class="fmtstrip">${ORDEN.map(k=>`<figure><img src="${fotoDe(k)}" alt="Foto de ejemplo en ${FORMATOS[k].nombre}"><figcaption>${FORMATOS[k].nombre}${PROPIAS[k]?" · tuya":""}</figcaption></figure>`).join("")}</div><button type="button" class="btn soft" id="camFoto" style="justify-self:start">Cambiar foto de ejemplo</button></div></section>
-   <div class="toolbar"><div class="chips" role="group" aria-label="Filtrar por formato">${[["todos","Todas"],...ORDEN.map(k=>[k,FORMATOS[k].nombre])].map(([k,n])=>`<button type="button" class="chip" data-f="${k}" aria-pressed="${FILTRO===k}">${n}</button>`).join("")}</div>
-    <label class="search">${icon.search}<input id="busca" type="text" placeholder="Buscar LUT" value="${esc(BUSCA)}" aria-label="Buscar LUT"></label></div>
-   <div class="grid">${lista.map(tarjeta).join("")}<button type="button" class="card add" id="addCard"><span class="plus"><i>+</i>Cargar una LUT<br><span style="font-weight:400;font-size:13px">Arrastrá un archivo .cube</span></span></button></div></div>`;
+   <div class="toolbar">
+    <label class="search big">${icon.search}<input id="busca" type="search" placeholder="Buscar por nombre, archivo .cube o formato" value="${esc(BUSCA)}" aria-label="Buscar LUTs" autocomplete="off"><kbd>⌘F</kbd></label>
+    <div class="chips" role="group" aria-label="Filtrar por formato">${[["todos","Todas"],...ORDEN.map(k=>[k,FORMATOS[k].nombre])].map(([k,n])=>`<button type="button" class="chip" data-f="${k}" aria-pressed="${FILTRO===k}">${n}</button>`).join("")}</div>
+    <span class="count">${lista.length} ${lista.length===1?"LUT":"LUTs"}${q?` para “${esc(BUSCA.trim())}”`:""}</span>
+    <label class="sortsel">Ordenar <select id="orden" aria-label="Ordenar">${[["nombre","Nombre"],["formato","Formato"],["estado","Estado"],["archivos","Cantidad de archivos"]].map(([k,n])=>`<option value="${k}" ${ORDENAR===k?"selected":""}>${n}</option>`).join("")}</select></label>
+    <div class="viewsw" role="group" aria-label="Vista"><button type="button" data-v="grilla" aria-pressed="${VISTA==="grilla"}" title="Ver en grilla">${icv.grid}</button><button type="button" data-v="lista" aria-pressed="${VISTA==="lista"}" title="Ver en lista">${icv.list}</button></div></div>
+   ${lista.length?(VISTA==="lista"?listaHTML(lista,q):`<div class="grid">${lista.map(l=>tarjeta(l,q)).join("")}${q?"":addCard()}</div>`)
+     :`<div class="vacio"><b>No encontré LUTs para “${esc(BUSCA.trim())}”</b><span>Probá con otra palabra, el nombre del archivo (.cube) o un formato como “D-Log 2”.</span><button class="btn soft" type="button" id="limpiar">Borrar búsqueda</button></div>`}</div>`;
   document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{FILTRO=b.dataset.f;vBiblioteca()});
-  $("busca").oninput=e=>{BUSCA=e.target.value.toLowerCase();const p=e.target.selectionStart;vBiblioteca();$("busca").focus();$("busca").setSelectionRange(p,p)};
-  $("addCard").onclick=modalCarga;$("camFoto").onclick=modalFoto;
-  document.querySelectorAll("[data-open]").forEach(c=>c.onclick=e=>{if(e.target.closest("[data-dl]"))return;location.hash="lut-"+c.dataset.open});
-  document.querySelectorAll("[data-dl]").forEach(b=>b.onclick=e=>{e.stopPropagation();const l=LOOKS.find(x=>x.id===b.dataset.dl);const v=l.variantes.find(x=>x.formato===(FILTRO!=="todos"?FILTRO:l.variantes[0].formato))||l.variantes[0];descargar(v,l.nombre)});
-  lista.forEach(async l=>{const v=l.variantes.find(x=>x.formato===FILTRO)||l.variantes[0];const src=await miniatura(v);const el=document.querySelector(`[data-thumb="${CSS.escape(l.id)}"] .after`);if(el)el.src=src})}
-function tarjeta(l){const v=l.variantes.find(x=>x.formato===FILTRO)||l.variantes[0];
+  document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{VISTA=b.dataset.v;try{localStorage.setItem("lutario_vista",VISTA)}catch(e){}vBiblioteca()});
+  $("orden").onchange=e=>{ORDENAR=e.target.value;ASC=true;vBiblioteca()};
+  document.querySelectorAll("[data-sort]").forEach(h=>h.onclick=()=>{if(ORDENAR===h.dataset.sort)ASC=!ASC;else{ORDENAR=h.dataset.sort;ASC=true}vBiblioteca()});
+  $("busca").oninput=e=>{BUSCA=e.target.value;const p=e.target.selectionStart;vBiblioteca();$("busca").focus();$("busca").setSelectionRange(p,p)};
+  $("busca").onkeydown=e=>{if(e.key==="Escape"&&BUSCA){BUSCA="";vBiblioteca();$("busca").focus()}if(e.key==="Enter"&&lista.length===1)location.hash="lut-"+lista[0].id};
+  $("limpiar")&&($("limpiar").onclick=()=>{BUSCA="";vBiblioteca();$("busca").focus()});
+  $("addCard")&&($("addCard").onclick=modalCarga);$("camFoto").onclick=modalFoto;
+  document.querySelectorAll("[data-open]").forEach(c=>{c.onclick=e=>{if(e.target.closest("[data-dl],[data-ren],input"))return;location.hash="lut-"+c.dataset.open};c.onkeydown=e=>{if(e.key==="Enter"&&!e.target.closest("input"))location.hash="lut-"+c.dataset.open}});
+  document.querySelectorAll("[data-dl]").forEach(b=>b.onclick=e=>{e.stopPropagation();const l=LOOKS.find(x=>x.id===b.dataset.dl);const v=l.variantes.find(x=>x.formato===(b.dataset.fmt||(FILTRO!=="todos"?FILTRO:l.variantes[0].formato)))||l.variantes[0];descargar(v,l.nombre)});
+  document.querySelectorAll("[data-ren]").forEach(b=>b.onclick=e=>{e.stopPropagation();const el=document.querySelector(`[data-name="${CSS.escape(b.dataset.ren)}"]`);editarNombre(el,b.dataset.ren,()=>vBiblioteca())});
+  document.querySelectorAll("[data-name]").forEach(el=>el.ondblclick=e=>{e.stopPropagation();editarNombre(el,el.dataset.name,()=>vBiblioteca())});
+  lista.forEach(async l=>{const v=l.variantes.find(x=>x.formato===FILTRO)||l.variantes[0];const src=await miniatura(v);document.querySelectorAll(`[data-thumb="${CSS.escape(l.id)}"] .after`).forEach(el=>el.src=src)})}
+function addCard(){return `<button type="button" class="card add" id="addCard"><span class="plus"><i>+</i>Cargar una LUT<br><span style="font-weight:400;font-size:13px">Arrastrá un archivo .cube</span></span></button>`}
+function tarjeta(l,q){const v=l.variantes.find(x=>x.formato===FILTRO)||l.variantes[0];
   return `<div class="card" role="link" tabindex="0" data-open="${esc(l.id)}"><div class="thumb" data-thumb="${esc(l.id)}"><img src="${fotoDe(v.formato)}" alt=""><img class="after" src="${fotoDe(v.formato)}" alt=""><span class="seam"></span><span class="lbl l">Antes</span><span class="lbl r">Después</span></div>
-   <div class="body"><div class="row"><h3>${esc(l.nombre)}</h3>${tagEstado(l)}</div><p>${esc(l.descripcion)}</p>
-   <div class="row"><div class="fmts">${l.variantes.map(x=>`<span class="fmt">${FORMATOS[x.formato].nombre}</span>`).join("")}</div><button type="button" class="dl" data-dl="${esc(l.id)}">${icon.dl} .cube</button></div></div></div>`}
-
+   <div class="body"><div class="row"><h3 data-name="${esc(l.id)}" title="Doble clic para renombrar">${marcar(l.nombre,q)}</h3>${tagEstado(l)}</div><p>${marcar(l.descripcion,q)}</p>
+   <div class="row"><div class="fmts">${l.variantes.map(x=>`<span class="fmt">${marcar(FORMATOS[x.formato].nombre,q)}</span>`).join("")}</div><span class="acts"><button type="button" class="dl" data-ren="${esc(l.id)}" title="Renombrar" aria-label="Renombrar">${icv.pen}</button><button type="button" class="dl" data-dl="${esc(l.id)}">${icon.dl} .cube</button></span></div></div></div>`}
+function listaHTML(lista,q){const th=(k,n)=>`<button type="button" class="th ${ORDENAR===k?"on":""}" data-sort="${k}">${n}${ORDENAR===k?(ASC?" ↑":" ↓"):""}</button>`;
+  return `<div class="list" role="table" aria-label="LUTs"><div class="lrow lhead" role="row"><span></span>${th("nombre","Nombre")}<span class="th">Archivos .cube</span>${th("formato","Formato")}${th("estado","Estado")}<span></span></div>
+   ${lista.map(l=>`<div class="lrow" role="row" tabindex="0" data-open="${esc(l.id)}"><span class="lthumb thumb" data-thumb="${esc(l.id)}"><img src="${fotoDe(l.variantes[0].formato)}" alt=""><img class="after" src="${fotoDe(l.variantes[0].formato)}" alt=""><span class="seam"></span></span>
+    <span class="lname"><b data-name="${esc(l.id)}" title="Doble clic para renombrar">${marcar(l.nombre,q)}</b><small>${marcar(l.descripcion,q)}</small></span>
+    <span class="lfiles">${l.variantes.map(v=>`<button type="button" class="file" data-dl="${esc(l.id)}" data-fmt="${v.formato}" title="Descargar ${esc(v.archivo)}">${icon.dl}<span>${marcar(v.archivo,q)}</span></button>`).join("")}</span>
+    <span class="fmts">${l.variantes.map(x=>`<span class="fmt">${marcar(FORMATOS[x.formato].nombre,q)}</span>`).join("")}</span>
+    <span>${tagEstado(l)}</span>
+    <span class="acts"><button type="button" class="ibtn" data-ren="${esc(l.id)}" title="Renombrar" aria-label="Renombrar ${esc(l.nombre)}">${icv.pen}</button></span></div>`).join("")}</div>`}
 let STAGE=null;function stopStage(){STAGE=null}
 function vDetalle(l){let fi=l.variantes[0].formato,amt=100,split=.5,app="premiere";const me={};STAGE=me;
   const v=()=>l.variantes.find(x=>x.formato===fi);
   $("main").innerHTML=`<div class="wrap"><a class="back" href="#biblioteca">${icon.back} Biblioteca</a><div class="detail">
    <div><div class="stage" id="stage"><canvas id="cv"></canvas><div class="split" id="split"></div><span class="lbl l" id="lblA">Antes</span><span class="lbl r">Después</span></div><p class="hint">Arrastrá la línea para comparar. La foto de la izquierda es cómo se ve tu clip sin la LUT.</p></div>
-   <aside class="panel"><div><div class="row" style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h1>${esc(l.nombre)}</h1>${tagEstado(l)}</div><p class="desc">${esc(l.descripcion)}</p></div>
+   <aside class="panel"><div><div class="row" style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h1 data-name="${esc(l.id)}" title="Doble clic para renombrar">${esc(l.nombre)}</h1><span style="display:flex;gap:6px;align-items:center">${tagEstado(l)}<button type="button" class="ibtn" id="ren" title="Renombrar" aria-label="Renombrar">${icv.pen}</button></span></div><p class="desc">${esc(l.descripcion)}</p></div>
     <div><div class="lab">Formato del clip</div><div class="seg" id="fseg"></div></div>
     <div class="need" id="need"></div>
     <div class="slider"><div class="t"><span>Intensidad de la vista previa</span><b id="pct">100%</b></div><input id="amt" type="range" min="0" max="100" value="100" aria-label="Intensidad"></div>
@@ -326,6 +405,7 @@ function vDetalle(l){let fi=l.variantes[0].formato,amt=100,split=.5,app="premier
     $("pasos").innerHTML=HOWTO[app].pasos[fi==="rec709"?"rec709":"log"].map(p=>`<li>${esc(p)}</li>`).join("")}
   $("amt").oninput=e=>{amt=+e.target.value;$("pct").textContent=amt+"%";draw()};
   $("dl").onclick=()=>descargar(v(),l.nombre);
+  const h1=document.querySelector(".panel h1");const ren=()=>editarNombre(h1,l.id,()=>{h1.textContent=l.nombre});$("ren").onclick=ren;h1.ondblclick=ren;
   if($("del")){let ok=false;$("del").onclick=async()=>{if(!ok){ok=true;$("del").textContent="¿Seguro? Tocá de nuevo para quitarla";return}await DB.del(l.id);await cargarPropias();toast("LUT quitada");location.hash="biblioteca"}}
   const st=$("stage");const mv=e=>{const r=st.getBoundingClientRect();split=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));draw()};
   st.onpointerdown=e=>{st.setPointerCapture(e.pointerId);mv(e)};st.onpointermove=e=>{if(e.buttons)mv(e)};
@@ -356,6 +436,8 @@ function modalCarga(){let texto=null,archivo="";let fmt="dlog";const m=document.
     try{await DB.put({id,nombre,formato:fmt,archivo,texto,creado:Date.now()})}catch(e){toast("No se pudo guardar en este navegador: queda solo hasta que cierres la página");DATA.looks.push({id,nombre,descripcion:"LUT que cargaste vos.",estado:"tuya",variantes:[{formato:fmt,archivo,texto}]})}
     await cargarPropias();if(!LOOKS.find(x=>x.id===id))LOOKS.push({id,nombre,descripcion:"LUT que cargaste vos.",estado:"tuya",variantes:[{formato:fmt,archivo,texto}]});close();toast("LUT agregada");location.hash="lut-"+id;vista()}}
 $("btnCargar").onclick=modalCarga;
+document.addEventListener("keydown",e=>{const f=(e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="f";const slash=e.key==="/"&&!e.target.closest("input,textarea");
+  if((f||slash)&&!document.querySelector(".modal")){e.preventDefault();if(!$("busca")){location.hash="biblioteca";setTimeout(()=>$("busca")?.focus(),30)}else{$("busca").focus();$("busca").select()}}});
 document.addEventListener("dragover",e=>e.preventDefault());
 document.addEventListener("drop",e=>{e.preventDefault();if(!document.querySelector(".modal")&&[...(e.dataTransfer?.files||[])].some(f=>/\.cube$/i.test(f.name))){modalCarga();setTimeout(()=>{const f=[...e.dataTransfer.files].find(f=>/\.cube$/i.test(f.name));if(f)$("drop").ondrop({preventDefault(){},dataTransfer:{files:[f]}})},50)}});
 
