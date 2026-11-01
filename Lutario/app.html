@@ -121,6 +121,20 @@ button.th{cursor:pointer}.th.on{color:var(--forest)}
 .file span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .file svg.i{width:15px;height:15px;flex:none}
 @media (max-width:860px){.lrow{grid-template-columns:80px minmax(0,1fr) 40px}.lrow .lfiles,.lrow>.fmts,.lrow>span:nth-child(5),.lrow.lhead>*:nth-child(n+3):not(:last-child){display:none}.lthumb{width:80px}.sortsel{margin-left:0}}
+.files{display:grid;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:60px}
+.frow2{display:grid;grid-template-columns:44px minmax(150px,1.2fr) minmax(170px,1.4fr) 92px 96px 72px 76px;gap:12px;align-items:center;padding:6px 12px;border-top:1px solid var(--line);cursor:pointer;min-height:46px}
+.frow2:nth-child(even):not(.fhead){background:#f2f9ef}
+.frow2:hover:not(.fhead){background:#e3f2dd}
+.frow2:focus-visible{outline-offset:-2px}
+.frow2.fhead{border-top:0;cursor:default;background:var(--mint);min-height:34px}
+.ficon{width:44px;height:30px;border-radius:5px;aspect-ratio:auto}
+.ficon .after{clip-path:none}
+.fname{min-width:0}.fname b{font:600 14.5px var(--f-body);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ffile{font:500 12.5px var(--f-mono);color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.fsize{font:500 12.5px var(--f-mono);color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums}
+.frow2 .acts{justify-content:flex-end}
+.frow2 .ibtn{width:30px;height:30px}
+@media (max-width:860px){.frow2{grid-template-columns:40px minmax(0,1fr) 68px}.frow2>:nth-child(3),.frow2>:nth-child(4),.frow2>:nth-child(5),.frow2>:nth-child(6){display:none}.frow2 .fname b{white-space:normal}}
 /* vista de una LUT */
 .detail{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:24px;padding:24px 0 60px;align-items:start}
 @media (max-width:920px){.detail{grid-template-columns:minmax(0,1fr)}}
@@ -331,7 +345,7 @@ function vista(){const h=location.hash.slice(1)||"biblioteca";document.querySele
   stopStage();if(h==="formatos")return vFormatos();if(h.startsWith("lut-")){const l=LOOKS.find(x=>"lut-"+x.id===h);if(l)return vDetalle(l)}vBiblioteca();window.scrollTo(0,0)}
 addEventListener("hashchange",()=>{vista();window.scrollTo(0,0)});
 
-let VISTA=(()=>{try{return localStorage.getItem("lutario_vista")||"grilla"}catch(e){return "grilla"}})(),ORDENAR="nombre",ASC=true;
+let VISTA=(()=>{try{return localStorage.getItem("lutario_vista2")||"lista"}catch(e){return "lista"}})(),ORDENAR="nombre",ASC=true;
 const icv={grid:'<svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>',
  list:'<svg class="i" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="5" cy="6" r="1.2"/><circle cx="5" cy="12" r="1.2"/><circle cx="5" cy="18" r="1.2"/></svg>',
  pen:'<svg class="i" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/></svg>'};
@@ -347,39 +361,51 @@ function vBiblioteca(){const q=norm(BUSCA.trim());const lista=LOOKS.filter(l=>(F
    <div class="toolbar">
     <label class="search big">${icon.search}<input id="busca" type="search" placeholder="Buscar por nombre, archivo .cube o formato" value="${esc(BUSCA)}" aria-label="Buscar LUTs" autocomplete="off"><kbd>⌘F</kbd></label>
     <div class="chips" role="group" aria-label="Filtrar por formato">${[["todos","Todas"],...ORDEN.map(k=>[k,FORMATOS[k].nombre])].map(([k,n])=>`<button type="button" class="chip" data-f="${k}" aria-pressed="${FILTRO===k}">${n}</button>`).join("")}</div>
-    <span class="count">${lista.length} ${lista.length===1?"LUT":"LUTs"}${q?` para “${esc(BUSCA.trim())}”`:""}</span>
-    <label class="sortsel">Ordenar <select id="orden" aria-label="Ordenar">${[["nombre","Nombre"],["formato","Formato"],["estado","Estado"],["archivos","Cantidad de archivos"]].map(([k,n])=>`<option value="${k}" ${ORDENAR===k?"selected":""}>${n}</option>`).join("")}</select></label>
+    <span class="count">${VISTA==="lista"?(()=>{const n=archivos(lista,q).length;return n+" archivo"+(n===1?"":"s")})():lista.length+" "+(lista.length===1?"LUT":"LUTs")}${q?` para “${esc(BUSCA.trim())}”`:""}</span>
+    <label class="sortsel">Ordenar <select id="orden" aria-label="Ordenar">${[["nombre","Nombre"],["formato","Formato"],["estado","Estado"],["tam","Tamaño"]].map(([k,n])=>`<option value="${k}" ${ORDENAR===k?"selected":""}>${n}</option>`).join("")}</select></label>
     <div class="viewsw" role="group" aria-label="Vista"><button type="button" data-v="grilla" aria-pressed="${VISTA==="grilla"}" title="Ver en grilla">${icv.grid}</button><button type="button" data-v="lista" aria-pressed="${VISTA==="lista"}" title="Ver en lista">${icv.list}</button></div></div>
    ${lista.length?(VISTA==="lista"?listaHTML(lista,q):`<div class="grid">${lista.map(l=>tarjeta(l,q)).join("")}${q?"":addCard()}</div>`)
      :`<div class="vacio"><b>No encontré LUTs para “${esc(BUSCA.trim())}”</b><span>Probá con otra palabra, el nombre del archivo (.cube) o un formato como “D-Log 2”.</span><button class="btn soft" type="button" id="limpiar">Borrar búsqueda</button></div>`}</div>`;
   document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{FILTRO=b.dataset.f;vBiblioteca()});
-  document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{VISTA=b.dataset.v;try{localStorage.setItem("lutario_vista",VISTA)}catch(e){}vBiblioteca()});
+  document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{VISTA=b.dataset.v;try{localStorage.setItem("lutario_vista2",VISTA)}catch(e){}vBiblioteca()});
   $("orden").onchange=e=>{ORDENAR=e.target.value;ASC=true;vBiblioteca()};
   document.querySelectorAll("[data-sort]").forEach(h=>h.onclick=()=>{if(ORDENAR===h.dataset.sort)ASC=!ASC;else{ORDENAR=h.dataset.sort;ASC=true}vBiblioteca()});
   $("busca").oninput=e=>{BUSCA=e.target.value;const p=e.target.selectionStart;vBiblioteca();$("busca").focus();$("busca").setSelectionRange(p,p)};
   $("busca").onkeydown=e=>{if(e.key==="Escape"&&BUSCA){BUSCA="";vBiblioteca();$("busca").focus()}if(e.key==="Enter"&&lista.length===1)location.hash="lut-"+lista[0].id};
   $("limpiar")&&($("limpiar").onclick=()=>{BUSCA="";vBiblioteca();$("busca").focus()});
   $("addCard")&&($("addCard").onclick=modalCarga);$("camFoto").onclick=modalFoto;
-  document.querySelectorAll("[data-open]").forEach(c=>{c.onclick=e=>{if(e.target.closest("[data-dl],[data-ren],input"))return;location.hash="lut-"+c.dataset.open};c.onkeydown=e=>{if(e.key==="Enter"&&!e.target.closest("input"))location.hash="lut-"+c.dataset.open}});
+  document.querySelectorAll("[data-open]").forEach(c=>{c.onclick=e=>{if(e.target.closest("[data-dl],[data-ren],input"))return;PREFMT=c.dataset.fmt||null;location.hash="lut-"+c.dataset.open};c.onkeydown=e=>{if(e.key==="Enter"&&!e.target.closest("input"))location.hash="lut-"+c.dataset.open}});
   document.querySelectorAll("[data-dl]").forEach(b=>b.onclick=e=>{e.stopPropagation();const l=LOOKS.find(x=>x.id===b.dataset.dl);const v=l.variantes.find(x=>x.formato===(b.dataset.fmt||(FILTRO!=="todos"?FILTRO:l.variantes[0].formato)))||l.variantes[0];descargar(v,l.nombre)});
-  document.querySelectorAll("[data-ren]").forEach(b=>b.onclick=e=>{e.stopPropagation();const el=document.querySelector(`[data-name="${CSS.escape(b.dataset.ren)}"]`);editarNombre(el,b.dataset.ren,()=>vBiblioteca())});
+  document.querySelectorAll("[data-ren]").forEach(b=>b.onclick=e=>{e.stopPropagation();const el=(b.closest("[data-open]")||document).querySelector(`[data-name="${CSS.escape(b.dataset.ren)}"]`);editarNombre(el,b.dataset.ren,()=>vBiblioteca())});
   document.querySelectorAll("[data-name]").forEach(el=>el.ondblclick=e=>{e.stopPropagation();editarNombre(el,el.dataset.name,()=>vBiblioteca())});
-  lista.forEach(async l=>{const v=l.variantes.find(x=>x.formato===FILTRO)||l.variantes[0];const src=await miniatura(v);document.querySelectorAll(`[data-thumb="${CSS.escape(l.id)}"] .after`).forEach(el=>el.src=src)})}
+  document.querySelectorAll("[data-thumb]").forEach(async el=>{const l=LOOKS.find(x=>x.id===el.dataset.thumb);if(!l)return;const v=l.variantes.find(x=>x.formato===(el.dataset.tfmt||FILTRO))||l.variantes[0];const src=await miniatura(v);const im=el.querySelector(".after");if(im)im.src=src})}
 function addCard(){return `<button type="button" class="card add" id="addCard"><span class="plus"><i>+</i>Cargar una LUT<br><span style="font-weight:400;font-size:13px">Arrastrá un archivo .cube</span></span></button>`}
 function tarjeta(l,q){const v=l.variantes.find(x=>x.formato===FILTRO)||l.variantes[0];
   return `<div class="card" role="link" tabindex="0" data-open="${esc(l.id)}"><div class="thumb" data-thumb="${esc(l.id)}"><img src="${fotoDe(v.formato)}" alt=""><img class="after" src="${fotoDe(v.formato)}" alt=""><span class="seam"></span><span class="lbl l">Antes</span><span class="lbl r">Después</span></div>
    <div class="body"><div class="row"><h3 data-name="${esc(l.id)}" title="Doble clic para renombrar">${marcar(l.nombre,q)}</h3>${tagEstado(l)}</div><p>${marcar(l.descripcion,q)}</p>
    <div class="row"><div class="fmts">${l.variantes.map(x=>`<span class="fmt">${marcar(FORMATOS[x.formato].nombre,q)}</span>`).join("")}</div><span class="acts"><button type="button" class="dl" data-ren="${esc(l.id)}" title="Renombrar" aria-label="Renombrar">${icv.pen}</button><button type="button" class="dl" data-dl="${esc(l.id)}">${icon.dl} .cube</button></span></div></div></div>`}
+const kb=n=>n?(n>=1e6?(n/1e6).toFixed(1)+" MB":Math.round(n/1e3)+" KB"):"–";
+function archivos(lista,q){const out=[];for(const l of lista)for(const v of l.variantes){if(FILTRO!=="todos"&&v.formato!==FILTRO)continue;
+    if(q&&!q.split(/\s+/).every(t=>[l.nombre,l.descripcion,v.archivo,FORMATOS[v.formato].nombre,FORMATOS[v.formato].largo,l.estado==="tuya"?"tuya mia propia":l.estado].some(c=>norm(c).includes(t))))continue;
+    out.push({l,v,bytes:v.bytes||(v.texto||"").length})}
+  const r=(a,b)=>{let x=0;if(ORDENAR==="formato")x=ORDEN.indexOf(a.v.formato)-ORDEN.indexOf(b.v.formato)||norm(a.l.nombre).localeCompare(norm(b.l.nombre));
+    else if(ORDENAR==="estado")x=(ESTADO_ORD[a.l.estado]??3)-(ESTADO_ORD[b.l.estado]??3)||norm(a.l.nombre).localeCompare(norm(b.l.nombre));
+    else if(ORDENAR==="tam")x=a.bytes-b.bytes;else x=norm(a.l.nombre).localeCompare(norm(b.l.nombre))||ORDEN.indexOf(a.v.formato)-ORDEN.indexOf(b.v.formato);return ASC?x:-x};
+  return out.sort(r)}
 function listaHTML(lista,q){const th=(k,n)=>`<button type="button" class="th ${ORDENAR===k?"on":""}" data-sort="${k}">${n}${ORDENAR===k?(ASC?" ↑":" ↓"):""}</button>`;
-  return `<div class="list" role="table" aria-label="LUTs"><div class="lrow lhead" role="row"><span></span>${th("nombre","Nombre")}<span class="th">Archivos .cube</span>${th("formato","Formato")}${th("estado","Estado")}<span></span></div>
-   ${lista.map(l=>`<div class="lrow" role="row" tabindex="0" data-open="${esc(l.id)}"><span class="lthumb thumb" data-thumb="${esc(l.id)}"><img src="${fotoDe(l.variantes[0].formato)}" alt=""><img class="after" src="${fotoDe(l.variantes[0].formato)}" alt=""><span class="seam"></span></span>
-    <span class="lname"><b data-name="${esc(l.id)}" title="Doble clic para renombrar">${marcar(l.nombre,q)}</b><small>${marcar(l.descripcion,q)}</small></span>
-    <span class="lfiles">${l.variantes.map(v=>`<button type="button" class="file" data-dl="${esc(l.id)}" data-fmt="${v.formato}" title="Descargar ${esc(v.archivo)}">${icon.dl}<span>${marcar(v.archivo,q)}</span></button>`).join("")}</span>
-    <span class="fmts">${l.variantes.map(x=>`<span class="fmt">${marcar(FORMATOS[x.formato].nombre,q)}</span>`).join("")}</span>
+  const fs=archivos(lista,q);
+  return `<div class="files" role="table" aria-label="Archivos de LUT"><div class="frow2 fhead" role="row"><span></span>${th("nombre","Nombre")}<span class="th">Archivo</span>${th("formato","Formato")}${th("estado","Estado")}${th("tam","Tamaño")}<span></span></div>
+   ${fs.map(({l,v,bytes})=>`<div class="frow2" role="row" tabindex="0" data-open="${esc(l.id)}" data-fmt="${v.formato}">
+    <span class="ficon thumb" data-thumb="${esc(l.id)}" data-tfmt="${v.formato}"><img class="after" src="${fotoDe(v.formato)}" alt=""></span>
+    <span class="fname"><b data-name="${esc(l.id)}" title="Doble clic para renombrar">${marcar(l.nombre,q)}</b></span>
+    <span class="ffile" title="${esc(v.archivo)}">${marcar(v.archivo,q)}</span>
+    <span><span class="fmt">${marcar(FORMATOS[v.formato].nombre,q)}</span></span>
     <span>${tagEstado(l)}</span>
-    <span class="acts"><button type="button" class="ibtn" data-ren="${esc(l.id)}" title="Renombrar" aria-label="Renombrar ${esc(l.nombre)}">${icv.pen}</button></span></div>`).join("")}</div>`}
+    <span class="fsize">${kb(bytes)}</span>
+    <span class="acts"><button type="button" class="ibtn" data-dl="${esc(l.id)}" data-fmt="${v.formato}" title="Descargar ${esc(v.archivo)}" aria-label="Descargar ${esc(v.archivo)}">${icon.dl}</button><button type="button" class="ibtn" data-ren="${esc(l.id)}" title="Renombrar" aria-label="Renombrar ${esc(l.nombre)}">${icv.pen}</button></span></div>`).join("")}</div>`}
 let STAGE=null;function stopStage(){STAGE=null}
-function vDetalle(l){let fi=l.variantes[0].formato,amt=100,split=.5,app="premiere";const me={};STAGE=me;
+let PREFMT=null;
+function vDetalle(l){let fi=(PREFMT&&l.variantes.some(x=>x.formato===PREFMT))?PREFMT:l.variantes[0].formato;PREFMT=null;let amt=100,split=.5,app="premiere";const me={};STAGE=me;
   const v=()=>l.variantes.find(x=>x.formato===fi);
   $("main").innerHTML=`<div class="wrap"><a class="back" href="#biblioteca">${icon.back} Biblioteca</a><div class="detail">
    <div><div class="stage" id="stage"><canvas id="cv"></canvas><div class="split" id="split"></div><span class="lbl l" id="lblA">Antes</span><span class="lbl r">Después</span></div><p class="hint">Arrastrá la línea para comparar. La foto de la izquierda es cómo se ve tu clip sin la LUT.</p></div>

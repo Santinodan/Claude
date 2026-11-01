@@ -49,7 +49,7 @@ def armar_html():
         for fmt, ruta in l["variantes"]:
             with open(os.path.join(REPO, ruta), "rb") as f:
                 crudo = f.read()
-            vs.append({"formato": fmt, "archivo": os.path.basename(ruta), "gz": b64(gzip.compress(crudo, 9, mtime=0))})
+            vs.append({"formato": fmt, "archivo": os.path.basename(ruta), "bytes": len(crudo), "gz": b64(gzip.compress(crudo, 9, mtime=0))})
         looks.append({**{k: v for k, v in l.items() if k != "variantes"}, "variantes": vs})
     data = {"looks": looks,
             "muestras": {k: data_uri(os.path.join(AQUI, "muestras", f"muestra_{k}.jpg"), "image/jpeg")
