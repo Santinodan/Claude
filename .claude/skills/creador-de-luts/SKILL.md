@@ -51,7 +51,7 @@ Instalar una vez: `pip install -r .claude/skills/creador-de-luts/scripts/require
   en segundo plano). Asi se hizo High Ticket.
 - `grade_manual.py` – colorear a mano SIN LUT una foto/fotograma Rec709 (curva, piel, verdes, split toning,
   mascara radial sobre el sujeto, vineta, grano). Cuando Snati pide "coloreamelo vos". Preset de ejemplo:
-  `looks/manual_cine_calido.json` (gimnasio, calido y con contraste, aprobado como direccion).
+  `looks/manual_cine_calido.json` (foto de gimnasio, calido y con contraste; sin aprobar).
 - `lutlib.py` – libreria: curvas D-Log / D-Log2, matrices de gamut, tonemap, grade OKLab, leer/escribir/aplicar `.cube`.
 
 ## Como se construyo el look (pipeline)
