@@ -17,6 +17,7 @@ Usala para crear LUTs nuevas, retocar las aprobadas o regenerarlas.
 | `D-Log 2 (sin probar)/MA_Vivo_DLog2_NOCHE.cube` | Sin probar | Clips D-Log 2 de noche |
 | `D-Log 2 (sin probar)/MA_Vivo_DLog2_DIA.cube` | Sin probar | Clips D-Log 2 de dia |
 | `High Ticket/High_Ticket_DLog.cube` / `_DLog2` / `_Rec709` | Sin probar | Look cine premium (desaturado, piel protegida, negros mate, altas doradas). Rec709 = clips sin LOG |
+| `High Ticket/High_Ticket_Rec709_Flat.cube` | Probada en 1 foto, sin aprobar | High Ticket para material sin LOG que viene lavado/plano: +contraste, +sat, piel mas calida |
 | `Ejemplos/*.jpg/png` | Referencia | Comparativas clip vs reel (lo que se buscaba) |
 | `_Fuente/` | Original | Scripts originales (tienen rutas rotas de otra sesion; usar los de esta skill) |
 

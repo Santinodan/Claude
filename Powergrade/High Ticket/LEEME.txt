@@ -7,6 +7,8 @@ Archivos (elegir segun COMO se grabo el clip):
   High_Ticket_DLog.cube    -> clips en D-Log (DJI Osmo Pocket 4P u otra DJI)
   High_Ticket_DLog2.cube   -> clips en D-Log 2 (DJI Osmo Pocket 4P)
   High_Ticket_Rec709.cube  -> clips normales, sin LOG (celular, camara de clientes, perfil normal)
+  High_Ticket_Rec709_Flat.cube -> clips sin LOG pero que vienen LAVADOS/planos (poco contraste, negros
+                              grises). Mas contraste, piel mas calida. Probada en 1 foto de gimnasio, sin aprobar.
 
 Que hace el look:
   - Saturacion baja (~60%) pero la PIEL conserva su color -> la persona resalta sobre fondos apagados
@@ -19,5 +21,9 @@ Uso: UNA LUT por clip, al 100%, directo sobre el clip original (sin otro filtro 
      Exponer bien el clip: si queda oscuro, subir exposicion ANTES de la LUT.
 
 _Fuente/: analisis de color de las referencias y parametros del look (para regenerar o ajustar).
+Flat = High_Ticket_Rec709.cube + retoque:
+  python3 .claude/skills/creador-de-luts/scripts/ajustar_cube.py "Powergrade/High Ticket/High_Ticket_Rec709.cube" \
+    "Powergrade/High Ticket/High_Ticket_Rec709_Flat.cube" --titulo "High Ticket Rec709 - flat v2" \
+    --contraste 1.42 --sat 1.25 --piel 1.3 --sombras-teal 0.012 --temp 0.004
 Regenerar: python3 .claude/skills/creador-de-luts/scripts/generar_look.py \
            .claude/skills/creador-de-luts/looks/high_ticket.json --out "Powergrade/High Ticket"
