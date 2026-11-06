@@ -49,9 +49,16 @@ Instalar una vez: `pip install -r .claude/skills/creador-de-luts/scripts/require
 - `ajustar_look_a_referencias.py` – crea el JSON de un look nuevo a partir de una carpeta de capturas:
   mide las referencias, las "neutraliza" y busca los parametros que reproducen sus metricas (~15 min, correr
   en segundo plano). Asi se hizo High Ticket.
-- `grade_manual.py` – colorear a mano SIN LUT una foto/fotograma Rec709 (curva, piel, verdes, split toning,
-  mascara radial sobre el sujeto, vineta, grano). Cuando Snati pide "coloreamelo vos". Preset de ejemplo:
-  `looks/manual_cine_calido.json` (foto de gimnasio, calido y con contraste; sin aprobar).
+- `grade_manual.py` – colorear a mano SIN LUT una foto/fotograma Rec709 (curva tipo Lightroom `curve`, piel,
+  verdes, split toning, mascara radial sobre el sujeto, vineta, grano). Cuando Snati pide "coloreamelo vos".
+  Presets: `looks/manual_pegada.json` (contraste y color con fuerza) y `looks/manual_limpia.json` (mas suave).
+  Ambos sacados de una foto de gimnasio, sin aprobar todavia.
+  **Lecciones (una version anterior le parecio muy mala a Snati):**
+  - No oscurecer los medios: la mediana de luminancia tiene que quedar igual o un poco ARRIBA de la original.
+    Dar contraste con una curva con puntos fijos (`curve`), no con potencias que hunden todo.
+  - No aplastar sombras a negro puro (que la piel en sombra conserve detalle) y blancos NEUTROS, no crema.
+  - Sin grano en material blando/movido: lo ensucia. Viñeta sutil (<= 0.2).
+  - Medir antes de mostrar (mediana, p2/p98, color de blancos, ruido) contra la original, no solo mirar.
 - `lutlib.py` – libreria: curvas D-Log / D-Log2, matrices de gamut, tonemap, grade OKLab, leer/escribir/aplicar `.cube`.
 
 ## Como se construyo el look (pipeline)

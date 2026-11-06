@@ -1,5 +1,5 @@
 # Grade manual (sin LUT) para fotos/fotogramas Rec709: curva, color por zonas, mascara sobre el sujeto, vineta y grano.
-# Uso: python3 grade_manual.py foto.jpg ../looks/manual_cine_calido.json salida.jpg
+# Uso: python3 grade_manual.py foto.jpg ../looks/manual_pegada.json salida.jpg
 # Parametros: ver el JSON de ejemplo. "subj" = [centro x, centro y, radio x, radio y] en proporcion del cuadro.
 import sys, json, numpy as np
 from PIL import Image
@@ -16,6 +16,14 @@ def smooth(x,a,b): t=np.clip((x-a)/(b-a),0,1); return t*t*(3-2*t)
 def hue_w(h, c, width):  # peso gaussiano por tono (grados)
     d=np.angle(np.exp(1j*np.radians(h-c)),deg=True); return np.exp(-(d/width)**2)
 
+def pchip(xs, ys, x):
+    h=np.diff(xs); d=np.diff(ys)/h; n=len(xs); m=np.zeros(n)
+    m[0],m[-1]=d[0],d[-1]
+    for i in range(1,n-1):
+        m[i]=0 if d[i-1]*d[i]<=0 else 3*(h[i-1]+h[i])/((2*h[i]+h[i-1])/d[i-1]+(h[i]+2*h[i-1])/d[i])
+    i=np.clip(np.searchsorted(xs,x)-1,0,n-2); t=(x-xs[i])/h[i]
+    return (ys[i]*(2*t**3-3*t**2+1)+h[i]*m[i]*(t**3-2*t**2+t)+ys[i+1]*(-2*t**3+3*t**2)+h[i]*m[i+1]*(t**3-t**2))
+
 def grade(img, p):
     H,W,_=img.shape
     lin=s2l(img)
@@ -23,12 +31,18 @@ def grade(img, p):
     lin=lin*np.array(p.get('wb',[1,1,1]))*2**p.get('expo',0)
     lab=to_ok(lin); L,a,b=lab[...,0],lab[...,1],lab[...,2]
     C=np.hypot(a,b); h=np.degrees(np.arctan2(b,a))%360
+    if 'curve' in p:  # curva tipo Lightroom en valores de gris sRGB (entrada->salida), monotona
+        pts=np.array(p['curve'],float); xs,ys=pts[:,0],pts[:,1]
+        v=l2s(np.clip(L,0,1)**3); v2=pchip(xs,ys,v); L2=np.cbrt(s2l(np.clip(v2,0,1)))
+    else:
+        L2=None
     # curva de luminancia: negros, S, techo
     bp,wp=p.get('in_black',0.08),p.get('in_white',0.97)
     x=np.clip((L-bp)/(wp-bp),0,1.2)
     k=p.get('s',1.6); piv=p.get('pivot',0.45)
     x=np.where(x<piv, piv*(x/piv)**k, 1-(1-piv)*((1-np.minimum(x,1))/(1-piv))**(k*0.8))
-    L2=p.get('out_black',0.03)+x*(p.get('out_white',0.97)-p.get('out_black',0.03))
+    if L2 is None: L2=p.get('out_black',0.03)+x*(p.get('out_white',0.97)-p.get('out_black',0.03))
+    C=C*(1+p.get('sat_follow',0)*(L2/np.maximum(L,1e-3)-1))  # croma acompana el cambio de luz (evita sombras sucias)
     # mascaras de zona
     sh=1-smooth(L2,0.1,0.5); hi=smooth(L2,0.55,0.95)
     # saturacion general + piel + verdes + magenta
