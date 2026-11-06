@@ -26,6 +26,7 @@ Estructura
     Recursos/Assets.xcassets  Ícono (1024x1024) y color de acento.
   FrutillaFinanzasTests/      Tests de formato de montos, saldos y reglas de borrado.
   Herramientas/generar_icono.py  Regenera el ícono (python3 + Pillow).
+  TRASPASO.md                 Contexto completo para seguir el proyecto en otra sesión de Claude.
 
 Marca
   Frutilla #E32B4A · Rosa #FF7A8A · Verde hoja #2FA85A (ingresos).
