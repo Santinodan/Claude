@@ -49,6 +49,9 @@ Instalar una vez: `pip install -r .claude/skills/creador-de-luts/scripts/require
 - `ajustar_look_a_referencias.py` – crea el JSON de un look nuevo a partir de una carpeta de capturas:
   mide las referencias, las "neutraliza" y busca los parametros que reproducen sus metricas (~15 min, correr
   en segundo plano). Asi se hizo High Ticket.
+- `grade_manual.py` – colorear a mano SIN LUT una foto/fotograma Rec709 (curva, piel, verdes, split toning,
+  mascara radial sobre el sujeto, vineta, grano). Cuando Snati pide "coloreamelo vos". Preset de ejemplo:
+  `looks/manual_cine_calido.json` (gimnasio, calido y con contraste, aprobado como direccion).
 - `lutlib.py` – libreria: curvas D-Log / D-Log2, matrices de gamut, tonemap, grade OKLab, leer/escribir/aplicar `.cube`.
 
 ## Como se construyo el look (pipeline)
