@@ -1,0 +1,41 @@
+FRUTILLA FINANZAS - app de iOS para registrar gastos personales
+================================================================
+
+Qué es
+  App nativa (SwiftUI + SwiftData, iOS 17+, solo iPhone). Sin servidor, sin login,
+  sin dependencias externas: todo queda en el teléfono.
+  Bundle ID: com.soul.frutillafinanzas
+
+Cómo abrirla en la Mac
+  1. ./generar_proyecto.sh --abrir
+     (instala XcodeGen con brew si falta y genera FrutillaFinanzas.xcodeproj desde project.yml)
+  2. En Xcode: target FrutillaFinanzas > Signing & Capabilities > elegí tu Team.
+  3. Elegí un iPhone (simulador o real) y Run (Cmd+R). Tests: Cmd+U.
+  El .xcodeproj se genera: no lo edites a mano. Los cambios de configuración van en project.yml.
+
+Estructura
+  project.yml                 Definición del proyecto para XcodeGen.
+  generar_proyecto.sh         Genera el .xcodeproj.
+  FrutillaFinanzas/
+    App/                      Entrada de la app y TabView (4 pestañas + botón flotante +).
+    Modelos/                  SwiftData: Cuenta, Movimiento, Categoria, Cuota, Suscripcion.
+    Servicios/                Formato de montos es_AR, fechas, datos iniciales, acciones
+                              (pagar cuota, registrar cobro), recordatorios y CSV.
+    Diseno/                   Colores de marca, tarjetas (22pt) y componentes.
+    Vistas/                   Inicio, Movimientos, Cuentas, Cuotas, Ajustes.
+    Recursos/Assets.xcassets  Ícono (1024x1024) y color de acento.
+  FrutillaFinanzasTests/      Tests de formato de montos, saldos y reglas de borrado.
+  Herramientas/generar_icono.py  Regenera el ícono (python3 + Pillow).
+
+Marca
+  Frutilla #E32B4A · Rosa #FF7A8A · Verde hoja #2FA85A (ingresos).
+  Textos en español rioplatense. Montos "$ 12.500" / "$ 12.500,50".
+
+Reglas de datos
+  - Borrar una cuenta borra sus movimientos (incluidas las transferencias que recibió).
+  - Borrar una categoría, cuota o suscripción deja los movimientos.
+  - Anular el pago de una cuota (o borrar ese movimiento) descuenta la cuota pagada.
+
+CI
+  .github/workflows/frutilla-ios.yml compila y corre los tests en un simulador de macOS
+  cada vez que cambia algo en Apps/FrutillaFinanzas.

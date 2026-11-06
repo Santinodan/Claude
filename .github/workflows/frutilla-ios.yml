@@ -1,0 +1,47 @@
+name: Frutilla Finanzas (iOS)
+
+on:
+  push:
+    paths:
+      - "Apps/FrutillaFinanzas/**"
+      - ".github/workflows/frutilla-ios.yml"
+  workflow_dispatch:
+
+jobs:
+  compilar-y-testear:
+    runs-on: macos-15
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: Apps/FrutillaFinanzas
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Versión de Xcode
+        run: xcodebuild -version
+
+      - name: Generar proyecto con XcodeGen
+        run: |
+          command -v xcodegen >/dev/null || brew install xcodegen
+          xcodegen generate
+
+      - name: Compilar y correr tests en simulador
+        run: |
+          DEST=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)['devices']
+          print(next(x['udid'] for k, v in sorted(d.items(), reverse=True) if 'iOS' in k for x in v if x['name'].startswith('iPhone')))
+          ")
+          echo "Simulador: $DEST"
+          if ! xcodebuild test \
+              -project FrutillaFinanzas.xcodeproj \
+              -scheme FrutillaFinanzas \
+              -destination "id=$DEST" \
+              CODE_SIGNING_ALLOWED=NO > build.log 2>&1; then
+            echo "::group::Errores"
+            grep -E "error:|warning: .*isolat|Test Case .* failed|XCTAssert" build.log | sort -u | head -150 || true
+            echo "::endgroup::"
+            tail -60 build.log
+            exit 1
+          fi
+          grep -E "Test Suite|Executed|TEST SUCCEEDED" build.log | tail -20

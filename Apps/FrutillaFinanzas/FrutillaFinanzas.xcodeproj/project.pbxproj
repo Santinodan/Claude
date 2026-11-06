@@ -1,0 +1,646 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		056936DA668B565854141942 /* Acciones.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85EADD3F72D17E0D2B92B9E1 /* Acciones.swift */; };
+		05D089EE1E93AE0478BC950B /* MovimientosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 241C4A56DC02A29B7142F240 /* MovimientosView.swift */; };
+		05F3BD41CC1E9F83BBB7C8DF /* MovimientoFila.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92513538694E9CB707624F16 /* MovimientoFila.swift */; };
+		126049E6BBEE8FC8FF54D52E /* CuotaDetalleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A82CC3F0E1F4A5C10FB141E5 /* CuotaDetalleView.swift */; };
+		152B23B51138E2335E1BB17E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D171CCCCD15D6A26DBC5305E /* Assets.xcassets */; };
+		1D3296084F0F520E8EB53F8E /* CuentaDetalleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB97C985D87765463A1E5C4C /* CuentaDetalleView.swift */; };
+		222C11CB7E9CDAF173378F2B /* Componentes.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCFA7EBF83D81E1A27F08B46 /* Componentes.swift */; };
+		2749D8DE0DC3FDAC413AA214 /* DatosIniciales.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0C08EC35B7BB04BF26BB32 /* DatosIniciales.swift */; };
+		389AA9AD6A805350D212A3EA /* CuentaFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38B6A9127E6045EDA253FFB /* CuentaFormView.swift */; };
+		3989B16650B8F6A97F30DE5A /* ResumenMesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843A0298CBFF28F7804848B2 /* ResumenMesView.swift */; };
+		3BA8F0E667A88BBD60A2173F /* CuotaFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99AD6946E609225BA57F558 /* CuotaFormView.swift */; };
+		401EE86676A46BB775C732AC /* Formato.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB44E3B1283F031DE43D568E /* Formato.swift */; };
+		4146F60A17A17E290E1C5C16 /* SuscripcionesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 198BCDC00FA5815720A7D197 /* SuscripcionesView.swift */; };
+		4C2419C837C658C368A7CE30 /* Cuota.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2F6B23E8E72FC63DFF317D /* Cuota.swift */; };
+		4D688C584737C6CFFDD88154 /* InicioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B84B84BB8EAD45FDE85EEDA /* InicioView.swift */; };
+		583EC079303C1AB1753AA88D /* Tipos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430D5CBB9202028F105E2E58 /* Tipos.swift */; };
+		5BE28C9CB487F524043F1F58 /* Recordatorios.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66FBA37C5BE8D115D7EA7D5 /* Recordatorios.swift */; };
+		62EBECCA08BE44B8DD243819 /* Categoria.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249FA7577EB39B0D1DEE366D /* Categoria.swift */; };
+		6C9A57985A5DBE39722E0494 /* ExportadorCSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF27795448E5B1636E92A7F /* ExportadorCSV.swift */; };
+		7A38FA8C5BCFCDA5AE99DF18 /* AjustesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFF233E8CF97255EFE4458D /* AjustesView.swift */; };
+		8EF6B9BB796D955CE6764899 /* CategoriasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7506DFE52EEBDDF1D701E79 /* CategoriasView.swift */; };
+		99B713884422897661F0663D /* CuentasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1116D7B04F51986FBD5A91 /* CuentasView.swift */; };
+		A26BEE1BA6E339FA97E8404A /* Movimiento.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A5D1B9B9D7B1213086A7D87 /* Movimiento.swift */; };
+		A6191D63666E92BAD329CDE7 /* MovimientoFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7EBC21882E6BE56DF3ECCC /* MovimientoFormView.swift */; };
+		A8F62DDD78E41C4B0F139246 /* CuotasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4757EF96C44A3B6EEFD29CC4 /* CuotasView.swift */; };
+		AD0928FFF1AAF770EC952F28 /* Cuenta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72723247C22E7F79E1F5C9C4 /* Cuenta.swift */; };
+		AD76B6E0D8CC72B71451684B /* RaizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6734C198756331ED51CB2BD3 /* RaizView.swift */; };
+		B15B1F27B4A2265322455699 /* FrutillaFinanzasApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BCAEB8F49E01766193BE73 /* FrutillaFinanzasApp.swift */; };
+		B2A1B0798951F9A6C0A8C44C /* Fechas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A939D95147DE09748428B9 /* Fechas.swift */; };
+		BB6A9B8264DA0C3AC8E5592F /* FormatoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D068CFDDE6870633EC5EB1B /* FormatoTests.swift */; };
+		C34CDC94132F191E33D48029 /* ModelosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F3428C3028B56247BF9C89 /* ModelosTests.swift */; };
+		CE4C9DA4D09E12F5630B8EEC /* Marca.swift in Sources */ = {isa = PBXBuildFile; fileRef = A381805EB526B498CD2F5084 /* Marca.swift */; };
+		DB3D55457B04B91A7B6204A5 /* Finanzas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 678B9D9FA2DF196479BC247A /* Finanzas.swift */; };
+		E82775060BB1D57906AD38D1 /* Suscripcion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E4CDFC5602915C474DB918D /* Suscripcion.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6CE6D07F9170A8BC2F974111 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D6F001C7AA738B900C24765B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 961DA4F84F5B0223D9D2D3C7;
+			remoteInfo = FrutillaFinanzas;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		08A939D95147DE09748428B9 /* Fechas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fechas.swift; sourceTree = "<group>"; };
+		0CFF233E8CF97255EFE4458D /* AjustesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AjustesView.swift; sourceTree = "<group>"; };
+		198BCDC00FA5815720A7D197 /* SuscripcionesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuscripcionesView.swift; sourceTree = "<group>"; };
+		1F2F6B23E8E72FC63DFF317D /* Cuota.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cuota.swift; sourceTree = "<group>"; };
+		241C4A56DC02A29B7142F240 /* MovimientosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovimientosView.swift; sourceTree = "<group>"; };
+		249FA7577EB39B0D1DEE366D /* Categoria.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Categoria.swift; sourceTree = "<group>"; };
+		2FFD195F598773A42D5E40DE /* FrutillaFinanzasTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FrutillaFinanzasTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		430D5CBB9202028F105E2E58 /* Tipos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tipos.swift; sourceTree = "<group>"; };
+		4757EF96C44A3B6EEFD29CC4 /* CuotasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuotasView.swift; sourceTree = "<group>"; };
+		4AF27795448E5B1636E92A7F /* ExportadorCSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportadorCSV.swift; sourceTree = "<group>"; };
+		4B84B84BB8EAD45FDE85EEDA /* InicioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InicioView.swift; sourceTree = "<group>"; };
+		4D068CFDDE6870633EC5EB1B /* FormatoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatoTests.swift; sourceTree = "<group>"; };
+		6734C198756331ED51CB2BD3 /* RaizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaizView.swift; sourceTree = "<group>"; };
+		678B9D9FA2DF196479BC247A /* Finanzas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Finanzas.swift; sourceTree = "<group>"; };
+		6A1116D7B04F51986FBD5A91 /* CuentasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuentasView.swift; sourceTree = "<group>"; };
+		6A5D1B9B9D7B1213086A7D87 /* Movimiento.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movimiento.swift; sourceTree = "<group>"; };
+		72723247C22E7F79E1F5C9C4 /* Cuenta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cuenta.swift; sourceTree = "<group>"; };
+		82BCAEB8F49E01766193BE73 /* FrutillaFinanzasApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrutillaFinanzasApp.swift; sourceTree = "<group>"; };
+		843A0298CBFF28F7804848B2 /* ResumenMesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumenMesView.swift; sourceTree = "<group>"; };
+		85EADD3F72D17E0D2B92B9E1 /* Acciones.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Acciones.swift; sourceTree = "<group>"; };
+		8E4CDFC5602915C474DB918D /* Suscripcion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Suscripcion.swift; sourceTree = "<group>"; };
+		92513538694E9CB707624F16 /* MovimientoFila.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovimientoFila.swift; sourceTree = "<group>"; };
+		A381805EB526B498CD2F5084 /* Marca.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Marca.swift; sourceTree = "<group>"; };
+		A38B6A9127E6045EDA253FFB /* CuentaFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuentaFormView.swift; sourceTree = "<group>"; };
+		A82CC3F0E1F4A5C10FB141E5 /* CuotaDetalleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuotaDetalleView.swift; sourceTree = "<group>"; };
+		AB44E3B1283F031DE43D568E /* Formato.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formato.swift; sourceTree = "<group>"; };
+		AE0C08EC35B7BB04BF26BB32 /* DatosIniciales.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatosIniciales.swift; sourceTree = "<group>"; };
+		B66FBA37C5BE8D115D7EA7D5 /* Recordatorios.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recordatorios.swift; sourceTree = "<group>"; };
+		CB97C985D87765463A1E5C4C /* CuentaDetalleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuentaDetalleView.swift; sourceTree = "<group>"; };
+		CCFA7EBF83D81E1A27F08B46 /* Componentes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Componentes.swift; sourceTree = "<group>"; };
+		D171CCCCD15D6A26DBC5305E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D7506DFE52EEBDDF1D701E79 /* CategoriasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriasView.swift; sourceTree = "<group>"; };
+		DF7EBC21882E6BE56DF3ECCC /* MovimientoFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovimientoFormView.swift; sourceTree = "<group>"; };
+		E6F3428C3028B56247BF9C89 /* ModelosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelosTests.swift; sourceTree = "<group>"; };
+		E99AD6946E609225BA57F558 /* CuotaFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuotaFormView.swift; sourceTree = "<group>"; };
+		F9246AA97BF5CF6537542AF6 /* FrutillaFinanzas.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FrutillaFinanzas.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1BFA2ECEE3FDDDC9155159E0 /* Ajustes */ = {
+			isa = PBXGroup;
+			children = (
+				0CFF233E8CF97255EFE4458D /* AjustesView.swift */,
+				D7506DFE52EEBDDF1D701E79 /* CategoriasView.swift */,
+			);
+			path = Ajustes;
+			sourceTree = "<group>";
+		};
+		1E36DD60C11882099213DE8B /* Inicio */ = {
+			isa = PBXGroup;
+			children = (
+				4B84B84BB8EAD45FDE85EEDA /* InicioView.swift */,
+				843A0298CBFF28F7804848B2 /* ResumenMesView.swift */,
+			);
+			path = Inicio;
+			sourceTree = "<group>";
+		};
+		1F6099F0C23081745056A207 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F9246AA97BF5CF6537542AF6 /* FrutillaFinanzas.app */,
+				2FFD195F598773A42D5E40DE /* FrutillaFinanzasTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		26F31F2658FA242FD35DB94A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				82BCAEB8F49E01766193BE73 /* FrutillaFinanzasApp.swift */,
+				6734C198756331ED51CB2BD3 /* RaizView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		2C6A6435C5A4CE63F24C08D8 /* Modelos */ = {
+			isa = PBXGroup;
+			children = (
+				249FA7577EB39B0D1DEE366D /* Categoria.swift */,
+				72723247C22E7F79E1F5C9C4 /* Cuenta.swift */,
+				1F2F6B23E8E72FC63DFF317D /* Cuota.swift */,
+				6A5D1B9B9D7B1213086A7D87 /* Movimiento.swift */,
+				8E4CDFC5602915C474DB918D /* Suscripcion.swift */,
+				430D5CBB9202028F105E2E58 /* Tipos.swift */,
+			);
+			path = Modelos;
+			sourceTree = "<group>";
+		};
+		3CFE85D3274035B3489219B7 /* Movimientos */ = {
+			isa = PBXGroup;
+			children = (
+				92513538694E9CB707624F16 /* MovimientoFila.swift */,
+				DF7EBC21882E6BE56DF3ECCC /* MovimientoFormView.swift */,
+				241C4A56DC02A29B7142F240 /* MovimientosView.swift */,
+			);
+			path = Movimientos;
+			sourceTree = "<group>";
+		};
+		3F0ABC2FB76D5E7B6F61927F /* Recursos */ = {
+			isa = PBXGroup;
+			children = (
+				D171CCCCD15D6A26DBC5305E /* Assets.xcassets */,
+			);
+			path = Recursos;
+			sourceTree = "<group>";
+		};
+		453F8AD3003F4B5C42DB0E26 /* Cuotas */ = {
+			isa = PBXGroup;
+			children = (
+				A82CC3F0E1F4A5C10FB141E5 /* CuotaDetalleView.swift */,
+				E99AD6946E609225BA57F558 /* CuotaFormView.swift */,
+				4757EF96C44A3B6EEFD29CC4 /* CuotasView.swift */,
+				198BCDC00FA5815720A7D197 /* SuscripcionesView.swift */,
+			);
+			path = Cuotas;
+			sourceTree = "<group>";
+		};
+		49D326DFF2032E999C9B6AAE /* FrutillaFinanzas */ = {
+			isa = PBXGroup;
+			children = (
+				26F31F2658FA242FD35DB94A /* App */,
+				8E065C8E69B71C5E5002F9C9 /* Diseno */,
+				2C6A6435C5A4CE63F24C08D8 /* Modelos */,
+				3F0ABC2FB76D5E7B6F61927F /* Recursos */,
+				6F4F95FCAF4D233B49743714 /* Servicios */,
+				6BAA813994C052A135C8D44E /* Vistas */,
+			);
+			path = FrutillaFinanzas;
+			sourceTree = "<group>";
+		};
+		6BAA813994C052A135C8D44E /* Vistas */ = {
+			isa = PBXGroup;
+			children = (
+				1BFA2ECEE3FDDDC9155159E0 /* Ajustes */,
+				A8570C726F883E8CD950E92F /* Cuentas */,
+				453F8AD3003F4B5C42DB0E26 /* Cuotas */,
+				1E36DD60C11882099213DE8B /* Inicio */,
+				3CFE85D3274035B3489219B7 /* Movimientos */,
+			);
+			path = Vistas;
+			sourceTree = "<group>";
+		};
+		6F4F95FCAF4D233B49743714 /* Servicios */ = {
+			isa = PBXGroup;
+			children = (
+				85EADD3F72D17E0D2B92B9E1 /* Acciones.swift */,
+				AE0C08EC35B7BB04BF26BB32 /* DatosIniciales.swift */,
+				4AF27795448E5B1636E92A7F /* ExportadorCSV.swift */,
+				08A939D95147DE09748428B9 /* Fechas.swift */,
+				678B9D9FA2DF196479BC247A /* Finanzas.swift */,
+				AB44E3B1283F031DE43D568E /* Formato.swift */,
+				B66FBA37C5BE8D115D7EA7D5 /* Recordatorios.swift */,
+			);
+			path = Servicios;
+			sourceTree = "<group>";
+		};
+		716BE1838C05EA2A6D21D20A /* FrutillaFinanzasTests */ = {
+			isa = PBXGroup;
+			children = (
+				4D068CFDDE6870633EC5EB1B /* FormatoTests.swift */,
+				E6F3428C3028B56247BF9C89 /* ModelosTests.swift */,
+			);
+			path = FrutillaFinanzasTests;
+			sourceTree = "<group>";
+		};
+		8E065C8E69B71C5E5002F9C9 /* Diseno */ = {
+			isa = PBXGroup;
+			children = (
+				CCFA7EBF83D81E1A27F08B46 /* Componentes.swift */,
+				A381805EB526B498CD2F5084 /* Marca.swift */,
+			);
+			path = Diseno;
+			sourceTree = "<group>";
+		};
+		A791D4224C4032ED53F4363E = {
+			isa = PBXGroup;
+			children = (
+				49D326DFF2032E999C9B6AAE /* FrutillaFinanzas */,
+				716BE1838C05EA2A6D21D20A /* FrutillaFinanzasTests */,
+				1F6099F0C23081745056A207 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A8570C726F883E8CD950E92F /* Cuentas */ = {
+			isa = PBXGroup;
+			children = (
+				CB97C985D87765463A1E5C4C /* CuentaDetalleView.swift */,
+				A38B6A9127E6045EDA253FFB /* CuentaFormView.swift */,
+				6A1116D7B04F51986FBD5A91 /* CuentasView.swift */,
+			);
+			path = Cuentas;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7F38C8B29CEB33ED6045C928 /* FrutillaFinanzasTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBC3CF9803239BB1F5DCDAF1 /* Build configuration list for PBXNativeTarget "FrutillaFinanzasTests" */;
+			buildPhases = (
+				9E16585FFC0AE933C06476E8 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0717001BDD0E6DCC7F6E49D3 /* PBXTargetDependency */,
+			);
+			name = FrutillaFinanzasTests;
+			packageProductDependencies = (
+			);
+			productName = FrutillaFinanzasTests;
+			productReference = 2FFD195F598773A42D5E40DE /* FrutillaFinanzasTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		961DA4F84F5B0223D9D2D3C7 /* FrutillaFinanzas */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 69265FEDC4B8C05103CA88B4 /* Build configuration list for PBXNativeTarget "FrutillaFinanzas" */;
+			buildPhases = (
+				F694D52CD92740EF0D6CA14C /* Sources */,
+				5A62ED15FF7338D6AD894B20 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FrutillaFinanzas;
+			packageProductDependencies = (
+			);
+			productName = FrutillaFinanzas;
+			productReference = F9246AA97BF5CF6537542AF6 /* FrutillaFinanzas.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D6F001C7AA738B900C24765B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					7F38C8B29CEB33ED6045C928 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					961DA4F84F5B0223D9D2D3C7 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = C363A4D3627834280F63FDB7 /* Build configuration list for PBXProject "FrutillaFinanzas" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = es;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				es,
+			);
+			mainGroup = A791D4224C4032ED53F4363E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				961DA4F84F5B0223D9D2D3C7 /* FrutillaFinanzas */,
+				7F38C8B29CEB33ED6045C928 /* FrutillaFinanzasTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5A62ED15FF7338D6AD894B20 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				152B23B51138E2335E1BB17E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9E16585FFC0AE933C06476E8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB6A9B8264DA0C3AC8E5592F /* FormatoTests.swift in Sources */,
+				C34CDC94132F191E33D48029 /* ModelosTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F694D52CD92740EF0D6CA14C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				056936DA668B565854141942 /* Acciones.swift in Sources */,
+				7A38FA8C5BCFCDA5AE99DF18 /* AjustesView.swift in Sources */,
+				62EBECCA08BE44B8DD243819 /* Categoria.swift in Sources */,
+				8EF6B9BB796D955CE6764899 /* CategoriasView.swift in Sources */,
+				222C11CB7E9CDAF173378F2B /* Componentes.swift in Sources */,
+				AD0928FFF1AAF770EC952F28 /* Cuenta.swift in Sources */,
+				1D3296084F0F520E8EB53F8E /* CuentaDetalleView.swift in Sources */,
+				389AA9AD6A805350D212A3EA /* CuentaFormView.swift in Sources */,
+				99B713884422897661F0663D /* CuentasView.swift in Sources */,
+				4C2419C837C658C368A7CE30 /* Cuota.swift in Sources */,
+				126049E6BBEE8FC8FF54D52E /* CuotaDetalleView.swift in Sources */,
+				3BA8F0E667A88BBD60A2173F /* CuotaFormView.swift in Sources */,
+				A8F62DDD78E41C4B0F139246 /* CuotasView.swift in Sources */,
+				2749D8DE0DC3FDAC413AA214 /* DatosIniciales.swift in Sources */,
+				6C9A57985A5DBE39722E0494 /* ExportadorCSV.swift in Sources */,
+				B2A1B0798951F9A6C0A8C44C /* Fechas.swift in Sources */,
+				DB3D55457B04B91A7B6204A5 /* Finanzas.swift in Sources */,
+				401EE86676A46BB775C732AC /* Formato.swift in Sources */,
+				B15B1F27B4A2265322455699 /* FrutillaFinanzasApp.swift in Sources */,
+				4D688C584737C6CFFDD88154 /* InicioView.swift in Sources */,
+				CE4C9DA4D09E12F5630B8EEC /* Marca.swift in Sources */,
+				A26BEE1BA6E339FA97E8404A /* Movimiento.swift in Sources */,
+				05F3BD41CC1E9F83BBB7C8DF /* MovimientoFila.swift in Sources */,
+				A6191D63666E92BAD329CDE7 /* MovimientoFormView.swift in Sources */,
+				05D089EE1E93AE0478BC950B /* MovimientosView.swift in Sources */,
+				AD76B6E0D8CC72B71451684B /* RaizView.swift in Sources */,
+				5BE28C9CB487F524043F1F58 /* Recordatorios.swift in Sources */,
+				3989B16650B8F6A97F30DE5A /* ResumenMesView.swift in Sources */,
+				E82775060BB1D57906AD38D1 /* Suscripcion.swift in Sources */,
+				4146F60A17A17E290E1C5C16 /* SuscripcionesView.swift in Sources */,
+				583EC079303C1AB1753AA88D /* Tipos.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0717001BDD0E6DCC7F6E49D3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 961DA4F84F5B0223D9D2D3C7 /* FrutillaFinanzas */;
+			targetProxy = 6CE6D07F9170A8BC2F974111 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5B22FD842D72D2E90735950D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Frutilla Finanzas";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.soul.frutillafinanzas;
+				PRODUCT_NAME = FrutillaFinanzas;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		6623B554A8D3540C23D707E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.soul.frutillafinanzas.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FrutillaFinanzas.app/FrutillaFinanzas";
+			};
+			name = Debug;
+		};
+		66B73A95BB42749C149069C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		87F578A7B6FFED07882C1348 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C8E2C02E43C605D59D338DD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.soul.frutillafinanzas.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FrutillaFinanzas.app/FrutillaFinanzas";
+			};
+			name = Release;
+		};
+		F9BA3EB37A323D3197C50150 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Frutilla Finanzas";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.soul.frutillafinanzas;
+				PRODUCT_NAME = FrutillaFinanzas;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		69265FEDC4B8C05103CA88B4 /* Build configuration list for PBXNativeTarget "FrutillaFinanzas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B22FD842D72D2E90735950D /* Debug */,
+				F9BA3EB37A323D3197C50150 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C363A4D3627834280F63FDB7 /* Build configuration list for PBXProject "FrutillaFinanzas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				66B73A95BB42749C149069C2 /* Debug */,
+				87F578A7B6FFED07882C1348 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CBC3CF9803239BB1F5DCDAF1 /* Build configuration list for PBXNativeTarget "FrutillaFinanzasTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6623B554A8D3540C23D707E0 /* Debug */,
+				C8E2C02E43C605D59D338DD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D6F001C7AA738B900C24765B /* Project object */;
+}
