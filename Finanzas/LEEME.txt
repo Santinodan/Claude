@@ -44,13 +44,19 @@ Planillas en Google Drive (lo principal hoy)
   lo sube desde su cuenta personal (dangelosantino29).
 
   Cómo se arma el mes (local):
-    1. Movimientos del mes en un CSV: Hoja;Fecha;Detalle;Categoria;Pesos;USD;Metodo;Cuota
+    1. Movimientos del mes en un CSV:
+       Hoja;Fecha;Detalle;Categoria;Pesos;USD;Metodo;Cuota;Cantidad;PrecioEntrada;PrecioHoy
+       (Hoja = Gasto / Ingreso / Inversion; ver detalle en el script).
     2. python3 _Herramientas/armar_planilla.py 2026-11 movimientos.csv
        Usa _Herramientas/Plantilla_Finanzas.xlsx (copia de "Plantilla - Finanzas personales"),
        pone el mes, carga gastos e ingresos, corrige Ingresos!F4 y rehace el gráfico de torta.
     3. Snati sube el .xlsx a Drive. Para actualizarlo sin cambiar el link:
        clic derecho > Administrar versiones > Subir nueva versión (dejarlo como .xlsx).
-  Pendiente en la plantilla: Resumen General!C30 da #REF! (patrimonio no calcula).
+  Gastos de la tarjeta Binance en otra moneda (CNY, HKD, BRL...): moneda -> USD con el
+  tipo de cambio oficial del día (https://api.frankfurter.dev/v1/AAAA-MM-DD?base=USD;
+  fin de semana: cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@AAAA-MM-DD/v1/currencies/usd.json),
+  y USD -> pesos con el dólar cripto del día. Método = Binance.
+  El ahorro en Binance (USDT en Earn) va en la pestaña Inversiones.
   Columna USD: cada gasto se pasa a dólares con el dólar cripto VENTA del día del movimiento
   (no el de hoy). Historial: https://api.argentinadatos.com/v1/cotizaciones/dolares/cripto
   En vivo: https://dolarapi.com/v1/dolares/cripto (o criptoya.com/api/dolar).
