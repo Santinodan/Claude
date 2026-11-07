@@ -42,4 +42,8 @@ Planillas en Google Drive (lo principal hoy)
   Al copiar la plantilla, cambiar a mano el mes en Ingresos (B4) y Resumen General (B2):
   la plantilla trae "junio 2026".
   Para cargar datos desde Claude hace falta el conector de Google Sheets activo.
-  Dólar cripto en vivo: https://dolarapi.com/v1/dolares/cripto (o criptoya.com/api/dolar).
+  Columna USD: cada gasto se pasa a dólares con el dólar cripto VENTA del día del movimiento
+  (no el de hoy). Historial: https://api.argentinadatos.com/v1/cotizaciones/dolares/cripto
+  En vivo: https://dolarapi.com/v1/dolares/cripto (o criptoya.com/api/dolar).
+  Transferencias de Binance a Mercado Pago = plata propia que se mueve, NO es ingreso.
+  Novia: Tizi (los regalos van en categoría Regalo).
