@@ -28,6 +28,7 @@
 | `Powergrade/High Ticket/` | LUT **High Ticket** (D-Log / D-Log 2 / Rec709): look cine premium sacado de referencias. Sin probar. |
 | `Apps/FrutillaFinanzas/` | App de iOS **Frutilla Finanzas** (SwiftUI + SwiftData) para registrar gastos. Proyecto con XcodeGen (`project.yml`). Ver `Apps/FrutillaFinanzas/LEEME.txt`. |
 | `Finanzas/` | Finanzas de Snati (personal + trabajo): movimientos por mes en CSV (formato Frutilla), cobros a clientes, gastos fijos, metas y resumen mensual con `_Herramientas/resumen_mes.py`. Ver `Finanzas/LEEME.txt`. |
+| `Finanzas/COMO_CARGAR.md` | Paso a paso para cargar gastos, ingresos y ahorro del mes (capturas → CSV → Excel → Drive personal). |
 | `.claude/skills/creador-de-luts/` | Skill **Creador de LUTs**: receta del look que funcionó, scripts para generar, retocar y comparar LUTs. |
 
 ## Áreas de trabajo
