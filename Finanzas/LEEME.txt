@@ -33,3 +33,13 @@ Resumen del mes
   Muestra ingresos, gastos y resultado por moneda (no mezcla pesos con dólares),
   gastos por categoría, cobros pendientes y total de fijos.
   O más fácil: pedile a Claude "haceme el resumen de noviembre".
+
+Planillas en Google Drive (lo principal hoy)
+  Carpeta "Finanzas": https://drive.google.com/drive/folders/1spneYExxL9MmlLOMD8zEre9nmkXQ3SEI
+  Una planilla por mes, copiada de "Plantilla - Finanzas personales"
+  (pestañas Gastos, Inversiones, Ingresos, Resumen, Resumen General).
+  Nombre: "<Mes> 2026 - Finanzas personales".
+  Al copiar la plantilla, cambiar a mano el mes en Ingresos (B4) y Resumen General (B2):
+  la plantilla trae "junio 2026".
+  Para cargar datos desde Claude hace falta el conector de Google Sheets activo.
+  Dólar cripto en vivo: https://dolarapi.com/v1/dolares/cripto (o criptoya.com/api/dolar).
