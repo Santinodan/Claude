@@ -71,7 +71,13 @@ Todo se arma local y Snati lo sube desde su cuenta personal (dangelosantino29).
 - **Cuotas:** columna Cuota como `3/6`. Si una cuota se debita en partes, va como un solo gasto
   (cada parte se pasa a USD con su propio día).
 - **No es ingreso:** pasar plata de Binance a Mercado Pago (aparece como "Transferencia recibida").
-- **Ahorro:** lo que hay en Binance (USDT en Earn) va como `Inversion`, con precio 1.
+- **Ingresos del mes (desde noviembre 2026):** una línea "Saldo Binance + gastado en el mes"
+  (USD = saldo actual de Binance + USD gastados en el mes; pesos = gastado en pesos + saldo × cripto del día)
+  y otra con los dólares en efectivo. **Se recalcula cada vez que cambian los gastos o el saldo.**
+  Así el "Restante" del Excel da exactamente lo que Snati tiene (Binance + efectivo).
+- **Ahorro:** Binance (USDT en Earn) y dólares en efectivo van como `Ahorro` (precio 1): salen en el
+  dashboard pero no en Inversiones del Excel, para no contarlos dos veces en el patrimonio.
+  `Inversion` queda para inversiones reales (Cedears, acciones).
 - **Fecha del Excel:** dd/mm. **Detalle:** corto y claro; si fue en otra moneda, poner la moneda y el país.
 
 ## Al cerrar el mes

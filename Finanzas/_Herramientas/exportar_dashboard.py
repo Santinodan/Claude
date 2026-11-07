@@ -4,7 +4,7 @@
 Uso:
     python3 _Herramientas/exportar_dashboard.py carpeta_salida mes1.csv [mes2.csv ...]
 
-Cada CSV de entrada es el mismo que usa armar_planilla.py
+Cada CSV de entrada es el mismo que usa armar_planilla.py (filas Inversion y Ahorro van a ahorro.csv)
 (Hoja;Fecha;Detalle;Categoria;Pesos;USD;Metodo;Cuota;Cantidad;PrecioEntrada;PrecioHoy).
 Sale:
     gastos.csv    id,mes,fecha,detalle,categoria,pesos,usd,metodo,cuota
@@ -61,7 +61,7 @@ def main():
     with open(salida / "ahorro.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["id", "mes", "fecha", "activo", "tipo", "cantidad", "precio_usd", "valor_usd"])
-        for i, r in enumerate([r for r in filas if tipo(r) == "inv"], 1):
+        for i, r in enumerate([r for r in filas if tipo(r) in ("inv", "aho")], 1):
             d = iso(r["Fecha"])
             c, p = numero(r.get("Cantidad")) or 0, numero(r.get("PrecioHoy")) or 0
             w.writerow([i, d[:7], d, r["Detalle"], r["Categoria"], c, p, round(c * p, 2)])

@@ -6,7 +6,9 @@ Uso:
 
 El CSV (separador ";") tiene estas columnas:
     Hoja;Fecha;Detalle;Categoria;Pesos;USD;Metodo;Cuota;Cantidad;PrecioEntrada;PrecioHoy
-  Hoja  = Gasto, Ingreso o Inversion.
+  Hoja  = Gasto, Ingreso, Inversion o Ahorro.
+  Ahorro (saldo en Binance, dólares en efectivo) va solo al dashboard: en el Excel ya está
+  reflejado en "Restante" (ingresos - gastos), así que no se carga en Inversiones.
   Fecha = dd/mm/aaaa.  Números con punto o coma decimal (12500,50 o 12500.50).
   Ingreso:   "Detalle" es quién pagó; usa Pesos y USD.
   Inversion: "Detalle" es el ticker (ej. USDT), "Categoria" el tipo (ej. Earn);
@@ -99,6 +101,8 @@ def armar(mes, csv_path, salida):
     fg, fi, fv = 5, 7, 5
     for r in filas:
         hoja = r["Hoja"].strip().lower()
+        if hoja.startswith("aho"):
+            continue
         if hoja.startswith("inv"):
             v = fv
             inversiones.cell(v, 1, fecha(r["Fecha"])).number_format = "dd/mm/yyyy"
