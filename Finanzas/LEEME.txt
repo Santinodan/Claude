@@ -39,9 +39,18 @@ Planillas en Google Drive (lo principal hoy)
   Una planilla por mes, copiada de "Plantilla - Finanzas personales"
   (pestañas Gastos, Inversiones, Ingresos, Resumen, Resumen General).
   Nombre: "<Mes> 2026 - Finanzas personales".
-  Al copiar la plantilla, cambiar a mano el mes en Ingresos (B4) y Resumen General (B2):
-  la plantilla trae "junio 2026".
-  Para cargar datos desde Claude hace falta el conector de Google Sheets activo.
+  IMPORTANTE: Snati no quiere archivos a nombre de la cuenta de Drive conectada a Claude
+  (mediapeakbiz). Claude NO crea ni copia planillas en Drive: arma el .xlsx local y Snati
+  lo sube desde su cuenta personal (dangelosantino29).
+
+  Cómo se arma el mes (local):
+    1. Movimientos del mes en un CSV: Hoja;Fecha;Detalle;Categoria;Pesos;USD;Metodo;Cuota
+    2. python3 _Herramientas/armar_planilla.py 2026-11 movimientos.csv
+       Usa _Herramientas/Plantilla_Finanzas.xlsx (copia de "Plantilla - Finanzas personales"),
+       pone el mes, carga gastos e ingresos, corrige Ingresos!F4 y rehace el gráfico de torta.
+    3. Snati sube el .xlsx a Drive. Para actualizarlo sin cambiar el link:
+       clic derecho > Administrar versiones > Subir nueva versión (dejarlo como .xlsx).
+  Pendiente en la plantilla: Resumen General!C30 da #REF! (patrimonio no calcula).
   Columna USD: cada gasto se pasa a dólares con el dólar cripto VENTA del día del movimiento
   (no el de hoy). Historial: https://api.argentinadatos.com/v1/cotizaciones/dolares/cripto
   En vivo: https://dolarapi.com/v1/dolares/cripto (o criptoya.com/api/dolar).
