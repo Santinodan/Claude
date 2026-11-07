@@ -15,7 +15,8 @@ personal.
 | Plantilla vacía del Excel | `Finanzas/_Herramientas/Plantilla_Finanzas.xlsx` (copia de "Plantilla - Finanzas personales" del Drive) |
 | Script que arma el Excel | `Finanzas/_Herramientas/armar_planilla.py` |
 | Carpeta de Drive (cuenta personal) | https://drive.google.com/drive/folders/1spneYExxL9MmlLOMD8zEre9nmkXQ3SEI |
-| Dashboard para ver el mes en Claude | Artifact privado "Finanzas Noviembre 2026" (Claude lo actualiza en cada carga) |
+| Dashboard para ver todo en Claude | Artifact privado "Finanzas personales": https://claude.ai/artifact/XpnyCv4DunkSYbZzL8dSfW (todos los meses, con selector) |
+| Script que arma los datos del dashboard | `Finanzas/_Herramientas/exportar_dashboard.py` |
 
 **Regla importante:** Claude no crea ni copia archivos en el Drive conectado (cuenta mediapeakbiz).
 Todo se arma local y Snati lo sube desde su cuenta personal (dangelosantino29).
@@ -50,8 +51,16 @@ Todo se arma local y Snati lo sube desde su cuenta personal (dangelosantino29).
    inversiones cargados, y el gráfico de torta actualizado.
 6. **Revisar** recalculando con LibreOffice (`soffice --headless --convert-to xlsx`) que los totales
    den igual que la suma del CSV.
-7. **Mandarle el Excel a Snati** y actualizar el dashboard (subir los CSV nuevos y apuntar cada fuente
-   al archivo nuevo).
+7. **Mandarle el Excel a Snati.**
+8. **Actualizar el dashboard** con todos los meses juntos:
+
+   ```bash
+   python3 Finanzas/_Herramientas/exportar_dashboard.py salida/ movimientos_2026-11.csv movimientos_2026-12.csv
+   ```
+
+   Sale `gastos.csv`, `ingresos.csv` y `ahorro.csv` (con columna `mes`). Se suben al dashboard como
+   archivos y cada fuente (`gastos`, `ingresos`, `ahorro`) pasa a apuntar al archivo nuevo. El selector
+   de mes muestra solo los meses que haya; por defecto abre el último.
 
 ## Criterios de carga
 
