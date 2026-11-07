@@ -1,0 +1,35 @@
+FINANZAS - plata personal y del trabajo, en un solo lugar
+=========================================================
+
+Qué hay
+  Movimientos/            Un CSV por mes (ej. 2026-11.csv) con ingresos y gastos.
+                          Copiá _plantilla.csv para arrancar un mes nuevo.
+                          También podés tirar acá el CSV que exporta Frutilla Finanzas
+                          (Ajustes > Exportar): es el mismo formato y el resumen
+                          ignora los movimientos repetidos.
+  Cobros_Clientes.csv     Lo que facturás / cobrás a clientes y lo que falta cobrar.
+  Gastos_Fijos.csv        Alquiler, servicios, suscripciones, monotributo, etc.
+  Ahorro_y_Metas.csv      Metas de ahorro y cuánto llevás.
+  Resumenes/              Resumen de cada mes (AAAA-MM.md), lo genera el script.
+  Comprobantes/           Facturas y tickets. NO se suben al repo (está en .gitignore).
+  _Herramientas/resumen_mes.py   Arma el resumen del mes.
+
+Formato de los CSV (se abren con Excel / Numbers / Google Sheets)
+  Separador ";" · fecha dd/mm/aaaa · coma decimal (12.500,50) · moneda ARS, USD, etc.
+  Movimientos:  Fecha;Tipo;Monto;Moneda;Categoría;Cuenta;Cuenta destino;Nota
+    Tipo = Ingreso / Gasto / Transferencia. Los gastos van en negativo.
+  Cobros:       Estado = Pendiente / Seña / Cobrado. Si pasó el vencimiento, sale VENCIDO.
+  Fijos:        Activo = si / no (para pausar uno sin borrarlo).
+
+Categorías sugeridas
+  Gastos personales: Supermercado, Comida, Transporte, Hogar, Servicios, Salud, Salidas,
+                     Ropa, Educación, Suscripciones, Cuotas, Mascotas, Regalos, Otros.
+  Gastos de trabajo: Software, Equipo, Publicidad, Monotributo, Impuestos, Freelancers.
+  Ingresos:          Clientes, Ventas, Inversiones, Otros ingresos.
+
+Resumen del mes
+  python3 _Herramientas/resumen_mes.py            (mes actual)
+  python3 _Herramientas/resumen_mes.py 2026-11    (un mes puntual)
+  Muestra ingresos, gastos y resultado por moneda (no mezcla pesos con dólares),
+  gastos por categoría, cobros pendientes y total de fijos.
+  O más fácil: pedile a Claude "haceme el resumen de noviembre".
