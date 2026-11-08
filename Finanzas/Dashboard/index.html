@@ -44,6 +44,21 @@
   .fz-tip-save { font-size: var(--cds-font-size-caption); color: var(--color-ok); font-variant-numeric: tabular-nums; white-space: nowrap; align-self: start; }
   .fz-save-line { margin: 0; font-size: var(--cds-font-size-body); }
   .fz-save-line b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); color: var(--color-ok); font-variant-numeric: tabular-nums; }
+  .fz-sus-top { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
+  .fz-sus-top > div { display: grid; gap: var(--cds-gap-xs); }
+  .fz-sus-top .fz-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-sus-top .fz-num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; min-height: 1.3em; }
+  .fz-sus-top .fz-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .fz-card h3 { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+  .fz-matrix-box { overflow-x: auto; }
+  .fz-matrix { display: grid; gap: 1px; min-width: max-content; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .fz-matrix > div { padding: var(--cds-pad-xs) var(--cds-pad-sm); white-space: nowrap; }
+  .fz-matrix .fz-mh { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); text-align: right; border-bottom: 1px solid var(--color-border-line); }
+  .fz-matrix .fz-mh.fz-ml { text-align: left; }
+  .fz-matrix .fz-mn { color: var(--color-fg); }
+  .fz-matrix .fz-mc { text-align: right; border-radius: var(--cds-radius); }
+  .fz-matrix .fz-mc.fz-on { background: color-mix(in srgb, var(--color-ok) 14%, transparent); color: var(--color-fg); }
+  .fz-matrix .fz-mc.fz-off { color: var(--color-fg-muted); }
   @media (max-width: 40rem) { .fz-hide-narrow { display: none; } .fz details dl { grid-template-columns: 1fr; } }
 </style>
 
@@ -109,6 +124,35 @@
       </div>
     </article>
   </section>
+
+  <article class="fz-card" id="suscripciones">
+    <h2>Suscripciones</h2>
+    <p class="fz-note">Lo que pagás por servicios que se cobran todos los meses, celular incluido.</p>
+    <div class="fz-sus-top">
+      <div>
+        <span class="fz-label">En el período</span>
+        <span class="fz-num dash-skeleton" data-draw="sus-total" data-source="susc_total" data-field="pesos" data-where="mes=2026-11">—</span>
+        <span class="fz-sub"><span data-draw="sus-total-usd" data-source="susc_total" data-field="usd" data-where="mes=2026-11">—</span> · <span data-draw="sus-cant" data-source="susc_total" data-field="servicios" data-where="mes=2026-11">—</span> servicios</span>
+      </div>
+      <div>
+        <span class="fz-label">Por año, a este ritmo</span>
+        <span class="fz-num dash-skeleton" data-draw="sus-anual" data-source="susc_total" data-field="usd_anual" data-where="mes=2026-11">—</span>
+        <span class="fz-sub">Lo que pagarías en 12 meses</span>
+      </div>
+    </div>
+    <h3>Servicios del período</h3>
+    <div class="fz-tablebox">
+      <table class="fz-table" data-source="suscripciones" data-row-key="mes,servicio">
+        <thead><tr><th data-field="servicio">Servicio</th><th class="fz-r" data-field="pesos">Pesos</th><th class="fz-r" data-field="usd">USD</th><th class="fz-r" data-field="veces">Pagos</th></tr></thead>
+        <tbody data-draw="tabla-sus"></tbody>
+      </table>
+    </div>
+    <h3>Mes por mes</h3>
+    <p class="fz-note">En verde, los meses en que se pagó. Así ves qué diste de baja y qué sigue.</p>
+    <div class="fz-matrix-box">
+      <div class="fz-matrix" data-draw="sus-matriz" data-source="suscripciones meses"></div>
+    </div>
+  </article>
 
   <article class="fz-card" id="consejos">
     <h2>Consejos para ahorrar</h2>
@@ -380,6 +424,49 @@
     },
   });
 
+  dash.calc('suscripciones', {
+    title: 'Suscripciones por servicio',
+    description: 'Gastos de la categoría Suscripciones agrupados por servicio (nombres unificados: Disney Plus y Disney+ son lo mismo), para cada mes y para todos juntos ("todo").',
+    inputs: ['gastos'],
+    fn: (gastos) => {
+      const servicio = (d) => {
+        const t = String(d).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (t.includes('disney')) return 'Disney+';
+        if (t.includes('youtube') || t.includes('youtuve')) return 'YouTube Premium';
+        if (t.includes('google one')) return 'Google One';
+        if (t.includes('spotify')) return 'Spotify';
+        if (t.includes('pedido')) return 'PedidosYa Plus';
+        if (t.includes('claude')) return 'Claude';
+        if (t.includes('celular') || t.includes('movistar')) return 'Movistar (celular)';
+        return String(d).trim();
+      };
+      const m = new Map();
+      for (const g of gastos.filter((r) => r.categoria === 'Suscripciones')) for (const mes of [g.mes, 'todo']) {
+        const sv = servicio(g.detalle), id = mes + '|' + sv;
+        const x = m.get(id) || { mes, servicio: sv, pesos: 0, usd: 0, veces: 0 };
+        x.pesos += Number(g.pesos || 0); x.usd += Number(g.usd || 0); x.veces += 1; m.set(id, x);
+      }
+      return [...m.values()].map((x) => ({ ...x, pesos: Math.round(x.pesos * 100) / 100, usd: Math.round(x.usd * 100) / 100 }))
+        .sort((a, b) => a.mes.localeCompare(b.mes) || b.pesos - a.pesos);
+    },
+  });
+
+  dash.calc('susc_total', {
+    title: 'Total en suscripciones',
+    description: 'Pesos, dólares y cantidad de servicios por mes, y lo que daría en un año a ese ritmo (en "todo": promedio por mes con gastos × 12).',
+    inputs: ['suscripciones', 'meses', 'gastos'],
+    fn: (suscripciones, meses, gastos) => {
+      const conGastos = new Set(gastos.map((g) => g.mes)).size || 1;
+      const out = [...meses.map((x) => x.mes), 'todo'].map((mes) => {
+        const rows = suscripciones.filter((r) => r.mes === mes);
+        const pesos = rows.reduce((s, r) => s + r.pesos, 0), usd = rows.reduce((s, r) => s + r.usd, 0);
+        const porMes = mes === 'todo' ? usd / conGastos : usd;
+        return { mes, pesos: Math.round(pesos * 100) / 100, usd: Math.round(usd * 100) / 100, servicios: rows.length, usd_anual: Math.round(porMes * 12 * 100) / 100 };
+      });
+      return out;
+    },
+  });
+
   const fail = (el) => { el.replaceChildren(); const d = document.createElement('div'); d.className = 'fz-fail'; d.textContent = 'Failed to load'; el.append(d); };
   const fila = (key, cells) => {
     const tr = document.createElement('tr'); tr.dataset.key = key;
@@ -548,6 +635,44 @@
       const sv = document.createElement('span'); sv.className = 'fz-tip-save'; sv.textContent = N(c.ahorro_usd_mes) > 0 ? `+${fzUSD(N(c.ahorro_usd_mes))}/mes` : '';
       const p = document.createElement('p'); p.textContent = c.detalle;
       li.append(h, sv, p); ol.append(li);
+    }
+  });
+
+  numero('sus-total', 'susc_total', 'pesos', (v) => fzARS(N(v)));
+  numero('sus-total-usd', 'susc_total', 'usd', (v) => fzUSD(N(v)));
+  numero('sus-cant', 'susc_total', 'servicios', (v) => String(N(v)));
+  numero('sus-anual', 'susc_total', 'usd_anual', (v) => fzUSD(N(v)));
+
+  dash.draw('tabla-sus', (tb) => {
+    const d = dash.data('suscripciones');
+    tb.replaceChildren();
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    for (const r of d.data.filter((x) => x.mes === s)) {
+      tb.append(fila(`${encodeURIComponent(r.mes)},${encodeURIComponent(r.servicio)}`, [[r.servicio], [fzARS(N(r.pesos)), 'fz-r'], [fzUSD(N(r.usd)), 'fz-r'], [String(N(r.veces)), 'fz-r']]));
+    }
+  });
+
+  dash.draw('sus-matriz', (el) => {
+    const d = dash.data('suscripciones'), m = dash.data('meses');
+    el.replaceChildren();
+    if (d.status === 'error' || m.status === 'error') return fail(el);
+    if (d.status !== 'ok' || m.status !== 'ok') return;
+    const meses = m.data.map((x) => x.mes).sort();
+    const filas = d.data.filter((r) => r.mes !== 'todo');
+    const servicios = [...new Set(d.data.filter((r) => r.mes === 'todo').map((r) => r.servicio))];
+    const s = fzSel();
+    el.style.gridTemplateColumns = `auto repeat(${meses.length}, auto)`;
+    const cel = (txt, cls) => { const c = document.createElement('div'); c.className = cls; c.textContent = txt; el.append(c); return c; };
+    cel('Servicio', 'fz-mh fz-ml');
+    for (const mes of meses) { const h = cel(fzMesCorto(mes), 'fz-mh'); if (mes === s) h.style.color = 'var(--color-fg)'; }
+    for (const sv of servicios) {
+      cel(sv, 'fz-mn');
+      for (const mes of meses) {
+        const r = filas.find((x) => x.mes === mes && x.servicio === sv);
+        const c = cel(r ? fzARS(N(r.pesos)) : '—', 'fz-mc ' + (r ? 'fz-on' : 'fz-off'));
+        c.title = `${sv} · ${fzMes(mes)}`;
+      }
     }
   });
 
