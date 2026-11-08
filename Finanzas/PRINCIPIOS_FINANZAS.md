@@ -75,12 +75,14 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 
 - Gimnasio, boxeo → Salud · Ropa de marca, perfumes, juegos → Gusto · Regalos (Tizi, su familia) → Regalo
 - Celular (Movistar), Spotify, YouTube, Google One → Suscripciones · Uber, DiDi, Cabify → Transporte
+- Súper chino del barrio (Xiangmei Gao) → Comidas y bebidas · Peluquería (Federico Carranza) → Personal · EBANX = Uber → Transporte · Accesorios DJI → Gusto
 - Pauta de Meta, testeos, ebooks para testear → Educación · Wi-Fi de vuelo, peluquería, cuidado personal → Personal
 
 ### Ingresos
 
 - **Plata como un solo pozo:** no se separa por cuenta. Lo que entra a Binance es ingreso del mes; después
   Snati la pasa a Mercado Pago.
+- **Transferencias enviadas grandes a personas desconocidas suelen ser compra de USDT en Binance (P2P): no son gasto.** Preguntar si no está claro.
 - **Transferencias recibidas en Mercado Pago = retiros de Binance (P2P), no ingreso.** Excepción: las de Mariana Calabrese sí son ingreso. Las de su papá (D'Angelo Claudio Javier) son regalo.
 - **Resumen de Mercado Pago (PDF):** sirve para cargar un mes entero; los rendimientos se suman en una sola línea de ingreso.
 - **Fuente principal: comisiones de SOUL.** Gian manda un documento de cierre cada mes con lo que cobra
@@ -132,7 +134,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 - "Error de Pago" de junio ($40.900, mismo monto que el jogging) y "Aduana" de agosto ($7.000): sin categoría.
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
-- Octubre, tarjeta Binance: confirmar si hay movimientos antes del 12/10 o entre el 24 y 25/10; aclarar Alipay OtherRetail914 (142 CNY) y 9142 (104,5 CNY), KLATCH (US$ 14,83), Gumroad (US$ 11,19), Ctrip (181 CNY) y Microsoft Store ($13.999). En Mercado Pago quedan por aclarar: transferencia a Franco Pennella ($548.000, no cargada), Alejandra Matilla ($32.900), Xiangmei Gao ($22.000 y $18.900), Federico Carranza ($16.500), EBANX x3 ($10.930) y qué fue lo de Temu ($89.527). ¿Septiembre se dejó de anotar a mitad de mes?
+- Octubre, tarjeta Binance: confirmar si hay movimientos antes del 12/10 o entre el 24 y 25/10; aclarar Alipay OtherRetail914 (142 CNY) y 9142 (104,5 CNY), KLATCH (US$ 14,83), Gumroad (US$ 11,19), Ctrip (181 CNY) y Microsoft Store ($13.999). Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
 - El saldo de Binance al 8/11 (US$ 1.157,58) es estimado: confirmar con captura.
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 

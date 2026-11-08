@@ -1,22 +1,26 @@
 id,mes,orden,titulo,detalle,ahorro_usd_mes
-1,todo,1,Uber es tu gasto repetido más caro,"20 viajes desde junio, $202.251 (US$ 131). Muchos son vueltas de lo de Tizi. Si la mitad los hacés en colectivo o compartidos, ahorrás unos US$ 13 por mes.",13
-2,todo,2,Frená las compras de impulso grandes,"2 afeitadoras en 11 días en julio ($144.700), 4 perfumes ($136.000), remeras. Regla de 48 horas: si algo pasa los $30.000 y no lo necesitás, esperá dos días antes de comprarlo.",40
-3,todo,3,Ponele un tope a salidas y regalos con Tizi,"32 gastos, unos $600.000: el 22% de todo lo que gastaste. Definí un monto por mes (por ejemplo US$ 120) y alterná con planes en casa.",30
-4,todo,4,"Suscripciones: venís bien, no vuelvas atrás","Pasaste de $55.540 en junio a $16.047 en noviembre. Que no vuelvan Disney+ ni PedidosYa Plus, y Betano (apuestas) afuera.",0
-5,todo,5,"Ahorrá primero, gastá después","Con los US$ 702 de SOUL, apartá el 30% (unos US$ 210) el mismo día que cobrás y no lo toques. Lo que queda es lo que podés gastar.",210
-6,2026-06,1,Gusto fue lo más grande del mes,"24% del mes: 3 perfumes ($104.500), remeras de fútbol y juegos. Elegí un solo gusto grande por mes.",35
-7,2026-06,2,Uber a Madero salió caro,"6 viajes de Uber por $77.700, y solo ida y vuelta a Madero fueron $50.800. Para salidas lejos, compartí el viaje o volvé en grupo.",15
-8,2026-06,3,Cortá las apuestas,"3 apuestas en Betano, $15.000. Es plata que no vuelve: cortarlo es ahorro directo.",10
-9,2026-06,4,Suscripciones al máximo,"$55.540 en 7 servicios, el mes más alto. Después recortaste: bien hecho.",0
-10,2026-07,1,Dos afeitadoras en 11 días,"Philips ($57.000) y Voltra ($87.700): $144.700 en lo mismo. Antes de reemplazar algo que ya compraste, probalo un mes.",0
-11,2026-07,2,Personal se llevó el 36% del mes,"$332.800, sobre todo afeitadoras y productos de cuidado. Son compras de una vez: el mes que viene no deberían repetirse.",0
-12,2026-07,3,Salidas y regalos con Tizi,"16 gastos, unos $239.000. Con un tope mensual lo tenés controlado sin dejar de salir.",30
-13,2026-07,4,Uber todas las semanas,"9 viajes, $55.000. Con colectivo en algunas vueltas, ahorrás la mitad.",15
-14,2026-08,1,Tu mejor mes de control,Gastaste 69% menos que en julio ($284.050). Este es el nivel a sostener.,0
-15,2026-08,2,Educación fue lo más grande,"$91.000 en testeos, ebook y la deuda de Meta. Es inversión: anotá qué te devolvió para saber si repetirla.",0
-16,2026-08,3,Gimnasio + boxeo,"$85.000, el 30% del mes. Si pagás en efectivo, preguntá por descuento pagando tres meses juntos.",8
-17,2026-09,1,La pauta de Meta fue el 61%,$121.107 en pauta. Es inversión en el negocio: separala de los gastos personales o medí cuánto te trajo.,0
-18,2026-09,2,Mes incompleto,"Solo está cargado hasta el 11/9. Si tenés capturas del resto, el análisis va a ser más real.",0
-19,2026-11,1,El viaje concentra el mes,"Con la tarjeta de Binance gastaste $259.169, el 71% de lo que va de noviembre. Ropa (Chrome Hearts y North Face): $106.159.",0
-20,2026-11,2,Uber en Hong Kong,"Un solo viaje salió $52.701 (US$ 31,83). En viajes, el metro o DiDi suelen salir mucho menos.",0
-21,2026-11,3,Apartá ya lo del cobro,"Entraron US$ 702 de SOUL el 8/11. Separá US$ 210 ahora, antes de seguir gastando.",210
+1,2026-06,1,Gusto fue lo más grande del mes,"24% del mes: 3 perfumes ($104.500), remeras de fútbol y juegos. Elegí un solo gusto grande por mes.",35
+2,2026-06,2,Uber a Madero salió caro,"6 viajes de Uber por $77.700, y solo ida y vuelta a Madero fueron $50.800. Para salidas lejos, compartí el viaje o volvé en grupo.",15
+3,2026-06,3,Cortá las apuestas,"3 apuestas en Betano, $15.000. Es plata que no vuelve: cortarlo es ahorro directo.",10
+4,2026-06,4,Suscripciones al máximo,"$55.540 en 7 servicios, el mes más alto. Después recortaste: bien hecho.",0
+5,2026-07,1,Dos afeitadoras en 11 días,"Philips ($57.000) y Voltra ($87.700): $144.700 en lo mismo. Antes de reemplazar algo que ya compraste, probalo un mes.",0
+6,2026-07,2,Personal se llevó el 36% del mes,"$332.800, sobre todo afeitadoras y productos de cuidado. Son compras de una vez: el mes que viene no deberían repetirse.",0
+7,2026-07,3,Salidas y regalos con Tizi,"16 gastos, unos $239.000. Con un tope mensual lo tenés controlado sin dejar de salir.",30
+8,2026-07,4,Uber todas las semanas,"9 viajes, $55.000. Con colectivo en algunas vueltas, ahorrás la mitad.",15
+9,2026-08,1,Tu mejor mes de control,Gastaste 69% menos que en julio ($284.050). Este es el nivel a sostener.,0
+10,2026-08,2,Educación fue lo más grande,"$91.000 en testeos, ebook y la deuda de Meta. Es inversión: anotá qué te devolvió para saber si repetirla.",0
+11,2026-08,3,Gimnasio + boxeo,"$85.000, el 30% del mes. Si pagás en efectivo, preguntá por descuento pagando tres meses juntos.",8
+12,2026-09,1,La pauta de Meta fue el 61%,$121.107 en pauta. Es inversión en el negocio: separala de los gastos personales o medí cuánto te trajo.,0
+13,2026-09,2,Mes incompleto,"Solo está cargado hasta el 11/9. Si tenés capturas del resto, el análisis va a ser más real.",0
+14,2026-11,1,El viaje concentra el mes,"Con la tarjeta de Binance gastaste $259.169, el 71% de lo que va de noviembre. Ropa (Chrome Hearts y North Face): $106.159.",0
+15,2026-11,2,Uber en Hong Kong,"Un solo viaje salió $52.701 (US$ 31,83). En viajes, el metro o DiDi suelen salir mucho menos.",0
+16,2026-11,3,Apartá ya lo del cobro,"Entraron US$ 702 de SOUL el 8/11. Separá US$ 210 ahora, antes de seguir gastando.",210
+17,todo,1,Transporte por app: tu gasto repetido más caro,"21 Uber desde junio, $213.181 (US$ 137). Sumando DiDi, Cabify y bicis: 32 viajes, $266.281 (US$ 170). Si la mitad los hacés en colectivo o compartidos, ahorrás unos US$ 14 por mes.",14
+18,todo,2,Frená las compras de impulso grandes,"2 afeitadoras en 11 días en julio ($144.700), 4 perfumes ($136.000), accesorios de la DJI en Temu ($89.527). Regla de 48 horas: si pasa los $30.000 y no lo necesitás, esperá dos días.",40
+19,todo,3,Ponele un tope a salidas y regalos con Tizi,"32 gastos, unos $590.000: el 18% de todo lo que gastaste. Definí un monto por mes (por ejemplo US$ 120) y alterná con planes en casa.",30
+20,todo,4,Ojo con Adobe y Apple,"Las suscripciones venían bajando ($55.540 en junio, $25.300 en agosto), pero en octubre saltaron a $83.048 por Adobe ($46.875) y Apple ($16.204). Si Adobe es para editar a clientes, que lo cubra el trabajo o pasate al plan anual.",10
+21,todo,5,"Ahorrá primero, gastá después","Con los US$ 702 de SOUL, apartá el 30% (unos US$ 210) el mismo día que cobrás y no lo toques. Lo que queda es lo que podés gastar.",210
+22,2026-10,1,La comida fue lo más grande,$132.118 en el mes. Solo PedidosYa y Rappi fueron $45.031: retirar en el local o cocinar un par de veces por semana baja eso a la mitad.,14
+23,2026-10,2,Adobe se lleva casi lo mismo que todas las demás juntas,"$46.875 de Adobe contra $36.173 de YouTube, Spotify, Apple y Movistar sumados. Revisá si lo pagás mensual y si lo podés pasar a gastos del trabajo.",10
+24,2026-10,3,En China te moviste bien,"DiDi y bicis compartidas: $48.350 en una semana de viaje, mucho menos que un Uber en Buenos Aires.",0
+25,2026-10,4,Hay $118.190 sin explicar,El pago a Alejandra Matilla y dos compras grandes en China quedaron sin categoría. Anotar en el momento evita que se pierdan.,0
