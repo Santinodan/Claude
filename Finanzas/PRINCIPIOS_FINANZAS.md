@@ -125,14 +125,14 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 | Julio | $924.830 | 617 | 680 | Importado del Drive |
 | Agosto | $284.050 | 182 | 210 | Importado del Drive |
 | Septiembre | $198.607 | 125 | — | Importado; solo hasta el 11/9 |
-| Octubre | $358.723 | 221 | 745 | Dato histórico (no se suma a lo actual). Gastos del resumen de Mercado Pago; faltan los de Binance. Ingresos: monitor, regalo de papá, Mariana Calabrese |
+| Octubre | $611.752 | 376 | 745 | Dato histórico (no se suma a lo actual). Mercado Pago (resumen PDF) + tarjeta Binance (12 al 29/10, parte del viaje a China). Ingresos: monitor, regalo de papá, Mariana Calabrese |
 | Noviembre (al 8) | $364.134 | 221 | 2.378 | En curso; patrimonio US$ 2.157,58 |
 
 **Preguntas pendientes para Snati:**
 - "Error de Pago" de junio ($40.900, mismo monto que el jogging) y "Aduana" de agosto ($7.000): sin categoría.
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
-- Octubre: faltan los gastos de la tarjeta Binance. En Mercado Pago quedan por aclarar: transferencia a Franco Pennella ($548.000, no cargada), Alejandra Matilla ($32.900), Xiangmei Gao ($22.000 y $18.900), Federico Carranza ($16.500), EBANX x3 ($10.930) y qué fue lo de Temu ($89.527). ¿Septiembre se dejó de anotar a mitad de mes?
+- Octubre, tarjeta Binance: confirmar si hay movimientos antes del 12/10 o entre el 24 y 25/10; aclarar Alipay OtherRetail914 (142 CNY) y 9142 (104,5 CNY), KLATCH (US$ 14,83), Gumroad (US$ 11,19), Ctrip (181 CNY) y Microsoft Store ($13.999). En Mercado Pago quedan por aclarar: transferencia a Franco Pennella ($548.000, no cargada), Alejandra Matilla ($32.900), Xiangmei Gao ($22.000 y $18.900), Federico Carranza ($16.500), EBANX x3 ($10.930) y qué fue lo de Temu ($89.527). ¿Septiembre se dejó de anotar a mitad de mes?
 - El saldo de Binance al 8/11 (US$ 1.157,58) es estimado: confirmar con captura.
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
