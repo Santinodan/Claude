@@ -81,7 +81,8 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 
 - **Plata como un solo pozo:** no se separa por cuenta. Lo que entra a Binance es ingreso del mes; después
   Snati la pasa a Mercado Pago.
-- **Transferencias de Binance a Mercado Pago no son ingreso** (aparecen como "Transferencia recibida").
+- **Transferencias recibidas en Mercado Pago = retiros de Binance (P2P), no ingreso.** Excepción: las de Mariana Calabrese sí son ingreso. Las de su papá (D'Angelo Claudio Javier) son regalo.
+- **Resumen de Mercado Pago (PDF):** sirve para cargar un mes entero; los rendimientos se suman en una sola línea de ingreso.
 - **Fuente principal: comisiones de SOUL.** Gian manda un documento de cierre cada mes con lo que cobra
   Snati. Se carga en la fecha en que **entra la plata** (entró el 8/11 → noviembre).
   En el detalle se pone de qué cajas sale. Snati lo llama por el mes en que cobra: el pago del 8/11 es el "cierre de noviembre".
@@ -124,14 +125,14 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 | Julio | $924.830 | 617 | 680 | Importado del Drive |
 | Agosto | $284.050 | 182 | 210 | Importado del Drive |
 | Septiembre | $198.607 | 125 | — | Importado; solo hasta el 11/9 |
-| Octubre | — | — | 730 | Solo dato histórico: venta del monitor (US$ 300) y regalo de papá ($700.000). Gastos por cargar. No se suma a lo actual |
+| Octubre | $358.723 | 221 | 745 | Dato histórico (no se suma a lo actual). Gastos del resumen de Mercado Pago; faltan los de Binance. Ingresos: monitor, regalo de papá, Mariana Calabrese |
 | Noviembre (al 8) | $364.134 | 221 | 2.378 | En curso; patrimonio US$ 2.157,58 |
 
 **Preguntas pendientes para Snati:**
 - "Error de Pago" de junio ($40.900, mismo monto que el jogging) y "Aduana" de agosto ($7.000): sin categoría.
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
-- Octubre: faltan las capturas de gastos (Snati las va a pasar). ¿Septiembre se dejó de anotar a mitad de mes?
+- Octubre: faltan los gastos de la tarjeta Binance. En Mercado Pago quedan por aclarar: transferencia a Franco Pennella ($548.000, no cargada), Alejandra Matilla ($32.900), Xiangmei Gao ($22.000 y $18.900), Federico Carranza ($16.500), EBANX x3 ($10.930) y qué fue lo de Temu ($89.527). ¿Septiembre se dejó de anotar a mitad de mes?
 - El saldo de Binance al 8/11 (US$ 1.157,58) es estimado: confirmar con captura.
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
