@@ -1,7 +1,12 @@
 FINANZAS - plata personal y del trabajo, en un solo lugar
 =========================================================
 
-Qué hay
+Qué hay (lo principal, ver COMO_CARGAR.md)
+  Datos/                  UN CSV POR MES (2026-06.csv ...): la fuente de todo. De acá salen el Excel y el dashboard.
+  Planillas/              Excel de cada mes, armado desde Datos/. Originales_Drive/ = respaldo de lo bajado del Drive.
+  Dashboard/index.html    Código del dashboard "Finanzas personales" (vista gráfica del Excel).
+
+Qué más hay (estructura vieja, formato Frutilla)
   Movimientos/            Un CSV por mes (ej. 2026-11.csv) con ingresos y gastos.
                           Copiá _plantilla.csv para arrancar un mes nuevo.
                           También podés tirar acá el CSV que exporta Frutilla Finanzas

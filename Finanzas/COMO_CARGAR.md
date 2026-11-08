@@ -2,6 +2,12 @@
 
 Guía para Snati y para Claude. Si arrancás una sesión nueva, leé esto primero.
 
+## Regla de oro
+
+**El dashboard es la presentación gráfica del Excel.** Los dos salen de los mismos datos
+(`Finanzas/Datos/`) y tienen que mostrar siempre lo mismo. Cada cambio se hace en el CSV del mes,
+y de ahí se regeneran el Excel y el dashboard. Todo se commitea y se pushea (pedido explícito de Snati).
+
 ## La idea en una línea
 
 Snati manda capturas de lo que gasta, cobra y ahorra. Claude lo pasa a un CSV, arma el Excel del mes
@@ -12,6 +18,10 @@ personal.
 
 | Qué | Dónde |
 |---|---|
+| **Datos de cada mes (la fuente de todo)** | `Finanzas/Datos/AAAA-MM.csv` (formato de carga, ver abajo) |
+| Excel de cada mes (armado desde los datos) | `Finanzas/Planillas/<Mes>_2026_Finanzas_personales.xlsx` |
+| Planillas originales bajadas del Drive (respaldo, no tocar) | `Finanzas/Planillas/Originales_Drive/` |
+| Página del dashboard (copia del código) | `Finanzas/Dashboard/index.html` |
 | Plantilla vacía del Excel | `Finanzas/_Herramientas/Plantilla_Finanzas.xlsx` (copia de "Plantilla - Finanzas personales" del Drive) |
 | Script que arma el Excel | `Finanzas/_Herramientas/armar_planilla.py` |
 | Carpeta de Drive (cuenta personal) | https://drive.google.com/drive/folders/1spneYExxL9MmlLOMD8zEre9nmkXQ3SEI |
@@ -32,7 +42,7 @@ Todo se arma local y Snati lo sube desde su cuenta personal (dangelosantino29).
      (`https://api.frankfurter.dev/v1/AAAA-MM-DD?base=USD`; para fin de semana
      `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@AAAA-MM-DD/v1/currencies/usd.json`),
      y después pesos = USD × dólar cripto de ese día.
-4. **Agregar las filas al CSV del mes** (separador `;`, coma decimal):
+4. **Agregar las filas a `Finanzas/Datos/AAAA-MM.csv`** (separador `;`, coma decimal):
 
    ```
    Hoja;Fecha;Detalle;Categoria;Pesos;USD;Metodo;Cuota;Cantidad;PrecioEntrada;PrecioHoy
@@ -44,10 +54,10 @@ Todo se arma local y Snati lo sube desde su cuenta personal (dangelosantino29).
 5. **Armar el Excel:**
 
    ```bash
-   python3 Finanzas/_Herramientas/armar_planilla.py 2026-11 movimientos_2026-11.csv
+   python3 Finanzas/_Herramientas/armar_planilla.py 2026-11 Finanzas/Datos/2026-11.csv -o Finanzas/Planillas/Noviembre_2026_Finanzas_personales.xlsx
    ```
 
-   Sale `Noviembre 2026 - Finanzas personales.xlsx`, con el mes puesto, los gastos, ingresos e
+   Sale el Excel del mes en `Finanzas/Planillas/`, con el mes puesto, los gastos, ingresos e
    inversiones cargados, y el gráfico de torta actualizado.
 6. **Revisar** recalculando con LibreOffice (`soffice --headless --convert-to xlsx`) que los totales
    den igual que la suma del CSV.
@@ -55,19 +65,20 @@ Todo se arma local y Snati lo sube desde su cuenta personal (dangelosantino29).
 8. **Actualizar el dashboard** con todos los meses juntos:
 
    ```bash
-   python3 Finanzas/_Herramientas/exportar_dashboard.py salida/ movimientos_2026-11.csv movimientos_2026-12.csv
+   python3 Finanzas/_Herramientas/exportar_dashboard.py salida/ Finanzas/Datos/2026-*.csv
    ```
 
    Sale `gastos.csv`, `ingresos.csv` y `ahorro.csv` (con columna `mes`). Se suben al dashboard como
    archivos y cada fuente (`gastos`, `ingresos`, `ahorro`) pasa a apuntar al archivo nuevo. El selector
    de mes muestra solo los meses que haya; por defecto abre el último.
+9. **Commit y push** de `Finanzas/Datos/`, `Finanzas/Planillas/` y, si cambió, `Finanzas/Dashboard/index.html`.
 
 ## Criterios de carga
 
 - **Categorías:** Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Transporte.
   Si aparece una nueva, el script la agrega sola a la tabla y al gráfico.
   - Gimnasio → Salud. Ropa de marca para Snati → Gusto. Regalos (Tizi, su familia) → Regalo.
-  - Celular (Movistar), Wi-Fi de vuelo → Personal. Uber, DiDi, taxis → Transporte.
+  - Celular (Movistar) → Suscripciones (como en los meses viejos). Wi-Fi de vuelo → Personal. Uber, DiDi, taxis → Transporte.
 - **Cuotas:** columna Cuota como `3/6`. Si una cuota se debita en partes, va como un solo gasto
   (cada parte se pasa a USD con su propio día).
 - **No es ingreso:** pasar plata de Binance a Mercado Pago (aparece como "Transferencia recibida").
@@ -75,6 +86,8 @@ Todo se arma local y Snati lo sube desde su cuenta personal (dangelosantino29).
   (USD = saldo actual de Binance + USD gastados en el mes; pesos = gastado en pesos + saldo × cripto del día)
   y otra con los dólares en efectivo. **Se recalcula cada vez que cambian los gastos o el saldo.**
   Así el "Restante" del Excel da exactamente lo que Snati tiene (Binance + efectivo).
+- **Plata como un solo pozo:** no hace falta separar por cuenta (Binance, Mercado Pago). Un ingreso que
+  entra a Binance se carga como ingreso del mes y listo; después Snati la va pasando a Mercado Pago.
 - **Ahorro:** Binance (USDT en Earn) y dólares en efectivo van como `Ahorro` (precio 1): salen en el
   dashboard pero no en Inversiones del Excel, para no contarlos dos veces en el patrimonio.
   `Inversion` queda para inversiones reales (Cedears, acciones).
@@ -88,6 +101,6 @@ Todo se arma local y Snati lo sube desde su cuenta personal (dangelosantino29).
 
 ## Privacidad
 
-- Los montos reales **no se suben a este repo** hasta que Snati confirme que el repo es privado.
-  Hasta entonces, los CSV con datos viven en la sesión y en el Excel/Drive de Snati.
+- Snati pidió que los datos y planillas estén en este repo. Cualquiera con acceso al repo los ve:
+  mantenerlo **privado** en GitHub.
 - El dashboard es privado: solo lo ve la cuenta de Claude de Snati, salvo que lo comparta desde el botón Compartir.

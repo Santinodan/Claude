@@ -1,0 +1,484 @@
+<meta name="dash-one-writer">
+<style>
+  .fz { display: grid; gap: var(--cds-gap-lg); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+  .fz-head { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); align-items: flex-end; justify-content: space-between; }
+  .fz-head > div { min-width: 0; flex: 1 1 22rem; }
+  .fz-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+  .fz-head p { margin: var(--cds-gap-xs) 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 70ch; }
+  .fz-head b { color: var(--color-fg); font-weight: 600; }
+  .fz-pick { display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-pick select { min-width: 12rem; }
+  .fz-tiles { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); }
+  .fz-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-xs); align-content: start; }
+  .fz-tile .fz-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-tile .fz-num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; min-height: 1.3em; }
+  .fz-tile .fz-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .fz-grid { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+  .fz-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; display: grid; gap: var(--cds-gap-sm); align-content: start; }
+  .fz-card h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .fz-card .fz-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-chart { position: relative; min-height: 14rem; }
+  .fz-chart svg { display: block; }
+  .fz-chart text { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .fz-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+  .fz-tip .fz-tip-k { color: var(--cds-text-secondary); }
+  .fz-tablebox { overflow: auto; max-height: 28rem; }
+  .fz-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .fz-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .fz-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  .fz-table .fz-r { text-align: right; white-space: nowrap; }
+  .fz-fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .fz-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+  .fz [data-dash-source-state=empty] { color: transparent; }
+  .fz [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  .fz details { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz details summary { cursor: pointer; color: var(--color-fg); }
+  .fz details dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--cds-gap-xs) var(--cds-gap-md); margin: var(--cds-gap-sm) 0 0; }
+  .fz details dt { color: var(--color-fg); }
+  .fz details dd { margin: 0; }
+  @media (max-width: 40rem) { .fz-hide-narrow { display: none; } .fz details dl { grid-template-columns: 1fr; } }
+</style>
+
+<div class="fz" lang="es-AR">
+  <header class="fz-head" id="resumen">
+    <div>
+      <h1>Finanzas personales</h1>
+      <p><span data-draw="mes-frase">—</span> gastaste <b class="dash-skeleton" data-draw="t-pesos" data-source="totales" data-field="pesos" data-where="mes=2026-11">—</b>, unos <b class="dash-skeleton" data-draw="t-usd" data-source="totales" data-field="usd" data-where="mes=2026-11">—</b>. Lo que más pesó fue <b class="dash-skeleton" data-draw="top-cat" data-source="top_categoria" data-field="categoria" data-where="mes=2026-11">—</b>.</p>
+    </div>
+    <label class="fz-pick" for="fz-mes">Mes
+      <select class="dash-select" id="fz-mes" data-draw="mes-select" data-source="meses"></select>
+    </label>
+  </header>
+
+  <section class="fz-tiles" aria-label="Totales">
+    <div class="fz-tile">
+      <span class="fz-label">Gastado en pesos</span>
+      <span class="fz-num dash-skeleton" data-draw="tile-pesos" data-source="totales" data-field="pesos" data-where="mes=2026-11">—</span>
+      <span class="fz-sub"><span data-draw="tile-cant" data-source="totales" data-field="cantidad" data-where="mes=2026-11">—</span> gastos</span>
+    </div>
+    <div class="fz-tile">
+      <span class="fz-label">Gastado en dólares</span>
+      <span class="fz-num dash-skeleton" data-draw="tile-usd" data-source="totales" data-field="usd" data-where="mes=2026-11">—</span>
+      <span class="fz-sub">Al dólar cripto de cada día</span>
+    </div>
+    <div class="fz-tile">
+      <span class="fz-label">Ahorro</span>
+      <span class="fz-num dash-skeleton" data-draw="tile-ahorro" data-source="ahorro_actual" data-field="usd" data-where="mes=2026-11">—</span>
+      <span class="fz-sub">Binance + efectivo, último saldo informado</span>
+    </div>
+    <div class="fz-tile">
+      <span class="fz-label">Ingresos</span>
+      <span class="fz-num dash-skeleton" data-draw="tile-ing" data-source="ingresos_total" data-field="pesos" data-where="mes=2026-11">—</span>
+      <span class="fz-sub">Con lo que tenías al empezar el mes</span>
+    </div>
+  </section>
+
+  <article class="fz-card" id="mes-a-mes">
+    <h2>Mes a mes</h2>
+    <p class="fz-note">Total gastado en pesos cada mes. El mes elegido va resaltado.</p>
+    <div class="fz-chart" data-draw="mes-chart" data-source="por_mes"></div>
+  </article>
+
+  <section class="fz-grid">
+    <article class="fz-card" id="categorias">
+      <h2>Gastos por categoría</h2>
+      <p class="fz-note">En pesos, con el porcentaje del total del período.</p>
+      <div class="fz-chart" data-draw="cat-chart" data-source="por_categoria"></div>
+    </article>
+    <article class="fz-card fz-card-dia" id="por-dia">
+      <h2>Gasto por día</h2>
+      <p class="fz-note">En pesos, cada día del mes elegido.</p>
+      <div class="fz-chart" data-draw="dia-chart" data-source="por_dia"></div>
+    </article>
+  </section>
+
+  <section class="fz-grid">
+    <article class="fz-card" id="metodos">
+      <h2>Por medio de pago</h2>
+      <p class="fz-note">Mercado Pago, tarjeta Binance u otros.</p>
+      <div class="fz-tablebox">
+        <table class="fz-table" data-source="por_metodo" data-row-key="mes,metodo">
+          <thead><tr><th data-field="metodo">Medio</th><th class="fz-r" data-field="pesos">Pesos</th><th class="fz-r" data-field="usd">USD</th><th class="fz-r" data-field="cantidad">Gastos</th></tr></thead>
+          <tbody data-draw="tabla-metodos"></tbody>
+        </table>
+      </div>
+    </article>
+    <article class="fz-card" id="ahorro">
+      <h2>Ahorro e inversiones</h2>
+      <p class="fz-note">Binance y efectivo: cada saldo que informaste, del más nuevo al más viejo.</p>
+      <div class="fz-tablebox">
+        <table class="fz-table" data-source="ahorro" data-row-key="id">
+          <thead><tr><th data-field="fecha">Fecha</th><th data-field="activo">Activo</th><th data-field="tipo">Dónde</th><th class="fz-r" data-field="valor_usd">Valor USD</th></tr></thead>
+          <tbody data-draw="tabla-ahorro"></tbody>
+        </table>
+      </div>
+      <h2>Ingresos</h2>
+      <div class="fz-tablebox">
+        <table class="fz-table" data-source="ingresos" data-row-key="id">
+          <thead><tr><th data-field="fecha">Fecha</th><th data-field="quien_pago">Quién pagó</th><th class="fz-r" data-field="pesos">Pesos</th></tr></thead>
+          <tbody data-draw="tabla-ingresos"></tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <article class="fz-card" id="gastos">
+    <h2>Gastos</h2>
+    <p class="fz-note">Los del período elegido, ordenados por fecha. Los gastos en otra moneda se pasaron a dólares con el tipo de cambio de ese día.</p>
+    <div class="fz-tablebox">
+      <table class="fz-table" data-source="gastos" data-row-key="id">
+        <thead><tr>
+          <th data-field="fecha">Fecha</th>
+          <th data-field="detalle">Detalle</th>
+          <th data-field="categoria">Categoría</th>
+          <th class="fz-r" data-field="pesos">Pesos</th>
+          <th class="fz-r" data-field="usd">USD</th>
+          <th class="fz-hide-narrow" data-field="metodo">Medio</th>
+          <th class="fz-hide-narrow" data-field="cuota">Cuota</th>
+        </tr></thead>
+        <tbody data-draw="tabla-gastos"></tbody>
+      </table>
+    </div>
+  </article>
+
+  <details>
+    <summary>Cómo se calculan los números</summary>
+    <dl>
+      <dt>Pesos a dólares</dt><dd>Cada gasto se pasa con el dólar cripto venta del día en que se hizo, no con el de hoy.</dd>
+      <dt>Otras monedas</dt><dd>Yuanes, dólares de Hong Kong o reales se pasan primero a dólares con el tipo de cambio oficial de ese día, y después a pesos con el dólar cripto.</dd>
+      <dt>Ingresos</dt><dd>Desde noviembre, el ingreso del mes es lo que tenés en Binance más lo que gastaste en el mes, más los dólares en efectivo. Las transferencias de Binance a Mercado Pago no se suman aparte: son plata tuya que se mueve.</dd>
+      <dt>Cuotas</dt><dd>Una cuota debitada en partes cuenta como un solo gasto.</dd>
+      <dt>Ahorro</dt><dd>Suma de Binance y dólares en efectivo, con el último saldo que informaste dentro del período elegido.</dd>
+    </dl>
+  </details>
+</div>
+
+<script>
+  const N = (x) => { const v = Number(x); return Number.isFinite(v) ? v : 0; };
+  window.fzARS = (v) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(v);
+  window.fzARS2 = (v) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 2 }).format(v);
+  window.fzUSD = (v) => 'US$ ' + new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
+  window.fzPct = (v) => new Intl.NumberFormat('es-AR', { style: 'percent', maximumFractionDigits: 0 }).format(v);
+  window.fzDia = (iso) => { const [, m, d] = String(iso).slice(0, 10).split('-'); return `${d}/${m}`; };
+  window.fzMes = (mes) => {
+    if (mes === 'todo') return 'todos los meses';
+    const [y, m] = String(mes).split('-').map(Number);
+    return new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(Date.UTC(y, m - 1, 1)));
+  };
+  window.fzMesCorto = (mes) => {
+    const [y, m] = String(mes).split('-').map(Number);
+    return new Intl.DateTimeFormat('es-AR', { month: 'short', timeZone: 'UTC' }).format(new Date(Date.UTC(y, m - 1, 1))).replace('.', '') + ' ' + String(y).slice(2);
+  };
+  // Mes elegido: el del filtro, o el último con datos.
+  window.fzSel = () => {
+    const p = dash.params().mes;
+    if (p) return p;
+    const m = dash.data('meses');
+    return m.status === 'ok' && m.data.length ? m.data[0].mes : '';
+  };
+
+  dash.calc('meses', {
+    title: 'Meses con datos',
+    description: 'Cada mes que tiene gastos, ingresos o ahorro cargado, del más nuevo al más viejo.',
+    inputs: ['gastos', 'ingresos', 'ahorro'],
+    fn: (gastos, ingresos, ahorro) => [...new Set([...gastos, ...ingresos, ...ahorro].map((r) => r.mes))].sort().reverse().map((mes) => ({ mes })),
+  });
+
+  dash.calc('totales', {
+    title: 'Total gastado',
+    description: 'Pesos, dólares y cantidad de gastos de cada mes, y de todos los meses juntos ("todo").',
+    inputs: ['gastos', 'meses'],
+    fn: (gastos, meses) => {
+      const m = new Map([['todo', { mes: 'todo', pesos: 0, usd: 0, cantidad: 0 }], ...meses.map((x) => [x.mes, { mes: x.mes, pesos: 0, usd: 0, cantidad: 0 }])]);
+      for (const g of gastos) for (const k of [g.mes, 'todo']) {
+        const c = m.get(k) || { mes: k, pesos: 0, usd: 0, cantidad: 0 };
+        c.pesos += Number(g.pesos || 0); c.usd += Number(g.usd || 0); c.cantidad += 1; m.set(k, c);
+      }
+      return [...m.values()].map((c) => ({ ...c, pesos: Math.round(c.pesos * 100) / 100, usd: Math.round(c.usd * 100) / 100 }));
+    },
+  });
+
+  dash.calc('por_categoria', {
+    title: 'Gastos por categoría',
+    description: 'Pesos, dólares, cantidad y parte del total por categoría, para cada mes y para todos juntos ("todo").',
+    inputs: ['gastos'],
+    fn: (gastos) => {
+      const m = new Map(), tot = new Map();
+      for (const g of gastos) for (const k of [g.mes, 'todo']) {
+        const id = k + '|' + g.categoria;
+        const c = m.get(id) || { mes: k, categoria: g.categoria, pesos: 0, usd: 0, cantidad: 0 };
+        c.pesos += Number(g.pesos || 0); c.usd += Number(g.usd || 0); c.cantidad += 1; m.set(id, c);
+        tot.set(k, (tot.get(k) || 0) + Number(g.pesos || 0));
+      }
+      return [...m.values()]
+        .map((c) => ({ ...c, pesos: Math.round(c.pesos * 100) / 100, usd: Math.round(c.usd * 100) / 100, parte: tot.get(c.mes) ? c.pesos / tot.get(c.mes) : 0 }))
+        .sort((a, b) => a.mes.localeCompare(b.mes) || b.pesos - a.pesos);
+    },
+  });
+
+  dash.calc('top_categoria', {
+    title: 'Categoría más grande',
+    description: 'La categoría con más pesos gastados en cada mes y en todos juntos ("todo").',
+    inputs: ['por_categoria'],
+    fn: (por_categoria) => {
+      const m = new Map();
+      for (const c of por_categoria) if (!m.has(c.mes) || c.pesos > m.get(c.mes).pesos) m.set(c.mes, { mes: c.mes, categoria: c.categoria, pesos: c.pesos });
+      return [...m.values()];
+    },
+  });
+
+  dash.calc('por_metodo', {
+    title: 'Gastos por medio de pago',
+    description: 'Pesos, dólares y cantidad de gastos por medio de pago, para cada mes y para todos juntos ("todo").',
+    inputs: ['gastos'],
+    fn: (gastos) => {
+      const m = new Map();
+      for (const g of gastos) for (const k of [g.mes, 'todo']) {
+        const id = k + '|' + g.metodo;
+        const c = m.get(id) || { mes: k, metodo: g.metodo, pesos: 0, usd: 0, cantidad: 0 };
+        c.pesos += Number(g.pesos || 0); c.usd += Number(g.usd || 0); c.cantidad += 1; m.set(id, c);
+      }
+      return [...m.values()].map((c) => ({ ...c, pesos: Math.round(c.pesos * 100) / 100, usd: Math.round(c.usd * 100) / 100 })).sort((a, b) => a.mes.localeCompare(b.mes) || b.pesos - a.pesos);
+    },
+  });
+
+  dash.calc('por_dia', {
+    title: 'Gasto por día',
+    description: 'Pesos gastados cada día de cada mes, del primer al último día con movimientos (días sin gastos en cero).',
+    inputs: ['gastos'],
+    fn: (gastos) => {
+      const porMes = new Map();
+      for (const g of gastos) {
+        const d = g.fecha.slice(0, 10);
+        if (!porMes.has(g.mes)) porMes.set(g.mes, new Map());
+        porMes.get(g.mes).set(d, (porMes.get(g.mes).get(d) || 0) + Number(g.pesos || 0));
+      }
+      const out = [];
+      for (const [mes, dias] of porMes) {
+        const ks = [...dias.keys()].sort();
+        for (let d = new Date(ks[0] + 'T00:00:00Z'); d <= new Date(ks[ks.length - 1] + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + 1)) {
+          const k = d.toISOString().slice(0, 10);
+          out.push({ mes, fecha: k, pesos: Math.round((dias.get(k) || 0) * 100) / 100 });
+        }
+      }
+      return out.sort((a, b) => a.fecha.localeCompare(b.fecha));
+    },
+  });
+
+  dash.calc('por_mes', {
+    title: 'Gasto por mes',
+    description: 'Pesos y dólares gastados en cada mes (los meses sin gastos, en cero).',
+    inputs: ['gastos', 'meses'],
+    fn: (gastos, meses) => {
+      const m = new Map(meses.map((x) => [x.mes, { mes: x.mes, pesos: 0, usd: 0 }]));
+      for (const g of gastos) {
+        const c = m.get(g.mes) || { mes: g.mes, pesos: 0, usd: 0 };
+        c.pesos += Number(g.pesos || 0); c.usd += Number(g.usd || 0); m.set(g.mes, c);
+      }
+      return [...m.values()].map((c) => ({ ...c, pesos: Math.round(c.pesos * 100) / 100, usd: Math.round(c.usd * 100) / 100 })).sort((a, b) => a.mes.localeCompare(b.mes));
+    },
+  });
+
+  dash.calc('ingresos_total', {
+    title: 'Ingresos totales',
+    description: 'Ingresos en pesos y dólares de cada mes y de todos juntos ("todo").',
+    inputs: ['ingresos', 'meses'],
+    fn: (ingresos, meses) => {
+      const m = new Map([['todo', { mes: 'todo', pesos: 0, usd: 0 }], ...meses.map((x) => [x.mes, { mes: x.mes, pesos: 0, usd: 0 }])]);
+      for (const i of ingresos) for (const k of [i.mes, 'todo']) {
+        const c = m.get(k) || { mes: k, pesos: 0, usd: 0 };
+        c.pesos += Number(i.pesos || 0); c.usd += Number(i.usd || 0); m.set(k, c);
+      }
+      return [...m.values()].map((c) => ({ ...c, pesos: Math.round(c.pesos * 100) / 100, usd: Math.round(c.usd * 100) / 100 }));
+    },
+  });
+
+  dash.calc('ahorro_actual', {
+    title: 'Ahorro al cierre',
+    description: 'Suma en dólares del último saldo informado dentro de cada mes, y el último de todos ("todo").',
+    inputs: ['ahorro', 'meses'],
+    fn: (ahorro, meses) => {
+      const ultimo = (rows) => {
+        if (!rows.length) return { usd: 0, fecha: '' };
+        const f = rows.map((r) => r.fecha).sort().pop();
+        return { usd: Math.round(rows.filter((r) => r.fecha === f).reduce((s, r) => s + Number(r.valor_usd || 0), 0) * 100) / 100, fecha: f };
+      };
+      return [{ mes: 'todo', ...ultimo(ahorro) }, ...meses.map((x) => ({ mes: x.mes, ...ultimo(ahorro.filter((r) => r.mes === x.mes)) }))];
+    },
+  });
+
+  const fail = (el) => { el.replaceChildren(); const d = document.createElement('div'); d.className = 'fz-fail'; d.textContent = 'Failed to load'; el.append(d); };
+  const fila = (key, cells) => {
+    const tr = document.createElement('tr'); tr.dataset.key = key;
+    for (const [txt, cls] of cells) { const td = document.createElement('td'); if (cls) td.className = cls; td.textContent = txt; tr.append(td); }
+    return tr;
+  };
+  const enMes = (r, sel) => sel === 'todo' || r.mes === sel;
+
+  // La tarjeta por día solo tiene sentido con un mes elegido.
+  dash.onData(() => {
+    const todo = fzSel() === 'todo';
+    document.querySelectorAll('.fz-card-dia').forEach((c) => { c.hidden = todo; });
+  });
+
+  // Selector de mes
+  dash.draw('mes-select', (sel) => {
+    const m = dash.data('meses');
+    const meses = m.status === 'ok' ? m.data.map((r) => r.mes) : [];
+    sel.replaceChildren(...meses.map((x) => new Option(fzMes(x).replace(/^./, (c) => c.toUpperCase()), x)), new Option('Todos los meses', 'todo'));
+    sel.value = fzSel();
+    sel.onchange = () => dash.setParams({ mes: sel.value });
+  });
+
+  dash.draw('mes-frase', (el) => {
+    const s = fzSel();
+    el.textContent = !s ? '—' : s === 'todo' ? 'En todos los meses' : `En ${fzMes(s)}`;
+  });
+
+  // Números del período elegido
+  const numero = (name, id, field, fmt) => dash.draw(name, (el) => {
+    const s = fzSel();
+    el.dataset.where = `mes=${encodeURIComponent(s)}`;
+    const d = dash.data(id);
+    const r = d.status === 'ok' ? d.data.find((x) => x.mes === s) : null;
+    if (r) { el.textContent = fmt(r[field]); el.classList.remove('dash-skeleton'); }
+    else { el.textContent = '—'; if (d.status === 'ok' || d.status === 'error') el.classList.remove('dash-skeleton'); }
+  });
+  numero('t-pesos', 'totales', 'pesos', (v) => fzARS(N(v)));
+  numero('t-usd', 'totales', 'usd', (v) => fzUSD(N(v)));
+  numero('tile-pesos', 'totales', 'pesos', (v) => fzARS(N(v)));
+  numero('tile-usd', 'totales', 'usd', (v) => fzUSD(N(v)));
+  numero('tile-cant', 'totales', 'cantidad', (v) => String(N(v)));
+  numero('tile-ahorro', 'ahorro_actual', 'usd', (v) => fzUSD(N(v)));
+  numero('tile-ing', 'ingresos_total', 'pesos', (v) => fzARS2(N(v)));
+  numero('top-cat', 'top_categoria', 'categoria', (v) => String(v));
+
+  // Tooltip (vive dentro de cada gráfico)
+  const tip = (el) => { const t = document.createElement('div'); t.className = 'fz-tip'; t.hidden = true; el.append(t); return t; };
+  const showTip = (el, t, ev, k, v) => {
+    t.replaceChildren();
+    const a = document.createElement('div'); a.className = 'fz-tip-k'; a.textContent = k;
+    const b = document.createElement('div'); b.textContent = v;
+    t.append(a, b); t.hidden = false;
+    const box = el.getBoundingClientRect();
+    let x = ev.clientX - box.left + 12, y = ev.clientY - box.top + 12;
+    x = Math.min(x, el.clientWidth - t.offsetWidth - 4); y = Math.min(y, el.clientHeight - t.offsetHeight - 4);
+    t.style.left = Math.max(0, x) + 'px'; t.style.top = Math.max(0, y) + 'px';
+  };
+  const fmtK = (v) => v === 0 ? '0' : `$ ${new Intl.NumberFormat('es-AR', { maximumFractionDigits: 0 }).format(v / 1000)} mil`;
+
+  // Barras verticales genéricas
+  const barras = (el, rows, keyOf, labelOf, valOf, tipOf, colorOf, ariaLabel) => {
+    const W = Math.max(260, el.clientWidth), H = 224;
+    const y = d3.scaleLinear([0, d3.max(rows, valOf) || 1], [H - 24, 10]).nice();
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', ariaLabel);
+    const ticks = y.ticks(4);
+    const probe = svg.append('g');
+    const ml = (d3.max(ticks, (v) => probe.append('text').text(fmtK(v)).node().getComputedTextLength()) || 0) + 8;
+    const lw = d3.max(rows, (r) => probe.append('text').text(labelOf(r)).node().getComputedTextLength()) || 0;
+    probe.remove();
+    const x = d3.scaleBand(rows.map(keyOf), [ml, W - 4]).padding(0.3);
+    const bw = Math.min(32, x.bandwidth());
+    svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', ml).attr('x2', W - 4).attr('y1', (v) => y(v)).attr('y2', (v) => y(v)).attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(ticks).join('text').attr('x', ml - 6).attr('y', (v) => y(v)).attr('dy', '.35em').attr('text-anchor', 'end').attr('fill', 'var(--color-fg-muted)').text(fmtK);
+    const t = tip(el);
+    svg.append('g').selectAll('rect').data(rows).join('rect')
+      .attr('x', (r) => x(keyOf(r)) + (x.bandwidth() - bw) / 2).attr('width', bw)
+      .attr('y', (r) => y(valOf(r))).attr('height', (r) => Math.max(0, y(0) - y(valOf(r)))).attr('rx', 3)
+      .attr('fill', colorOf)
+      .on('pointermove', (ev, r) => showTip(el, t, ev, labelOf(r), tipOf(r)))
+      .on('pointerleave', () => { t.hidden = true; });
+    const every = Math.max(1, Math.ceil(rows.length / Math.max(1, Math.floor((W - ml) / (lw + 12)))));
+    svg.append('g').selectAll('text').data(rows.filter((r, i) => i % every === 0)).join('text')
+      .attr('x', (r) => x(keyOf(r)) + x.bandwidth() / 2).attr('y', H - 6).attr('text-anchor', 'middle').attr('fill', 'var(--color-fg-muted)').text(labelOf);
+  };
+
+  dash.draw('mes-chart', (el) => {
+    const d = dash.data('por_mes');
+    el.replaceChildren();
+    if (d.status === 'error') return fail(el);
+    if (d.status !== 'ok' || !d.data.length) return;
+    const s = fzSel();
+    barras(el, d.data, (r) => r.mes, (r) => fzMesCorto(r.mes), (r) => N(r.pesos),
+      (r) => `${fzARS(N(r.pesos))} · ${fzUSD(N(r.usd))}`,
+      (r) => (s === 'todo' || r.mes === s) ? dash.colors[0] : 'var(--cds-chart-muted)', 'Gasto por mes');
+  });
+
+  dash.draw('dia-chart', (el) => {
+    const d = dash.data('por_dia');
+    el.replaceChildren();
+    if (d.status === 'error') return fail(el);
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    const rows = d.data.filter((r) => r.mes === s);
+    if (!rows.length) return;
+    barras(el, rows, (r) => r.fecha, (r) => fzDia(r.fecha), (r) => N(r.pesos), (r) => fzARS(N(r.pesos)), () => dash.colors[0], 'Gasto por día');
+  });
+
+  // Barras horizontales por categoría
+  dash.draw('cat-chart', (el) => {
+    const d = dash.data('por_categoria');
+    el.replaceChildren();
+    if (d.status === 'error') return fail(el);
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    const rows = d.data.filter((r) => r.mes === s && N(r.pesos) > 0).sort((a, b) => N(b.pesos) - N(a.pesos));
+    if (!rows.length) return;
+    const W = Math.max(260, el.clientWidth), rowH = 30, H = rows.length * rowH + 8;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Gastos por categoría');
+    const probe = svg.append('g');
+    const lw = d3.max(rows, (r) => probe.append('text').text(r.categoria).node().getComputedTextLength()) || 0;
+    const vw = d3.max(rows, (r) => probe.append('text').text(`${fzARS(N(r.pesos))} · ${fzPct(N(r.parte))}`).node().getComputedTextLength()) || 0;
+    probe.remove();
+    const x0 = lw + 10, x1 = W - vw - 10;
+    const x = d3.scaleLinear([0, d3.max(rows, (r) => N(r.pesos)) || 1], [x0, Math.max(x0 + 20, x1)]);
+    const t = tip(el);
+    const g = svg.selectAll('g.row').data(rows).join('g').attr('class', 'row').attr('transform', (r, i) => `translate(0,${i * rowH + 4})`);
+    g.append('text').attr('x', lw).attr('y', rowH / 2).attr('dy', '.35em').attr('text-anchor', 'end').attr('fill', 'var(--color-fg)').text((r) => r.categoria);
+    g.append('rect').attr('x', x0).attr('y', 6).attr('height', rowH - 12).attr('rx', 3)
+      .attr('width', (r) => Math.max(2, x(N(r.pesos)) - x0))
+      .attr('fill', (r, i) => i === 0 ? dash.colors[0] : 'var(--cds-chart-muted)')
+      .on('pointermove', (ev, r) => showTip(el, t, ev, r.categoria, `${fzARS(N(r.pesos))} · ${fzUSD(N(r.usd))} · ${r.cantidad} gasto${N(r.cantidad) === 1 ? '' : 's'}`))
+      .on('pointerleave', () => { t.hidden = true; });
+    g.append('text').attr('x', (r) => x(N(r.pesos)) + 6).attr('y', rowH / 2).attr('dy', '.35em').attr('fill', 'var(--color-fg-muted)')
+      .text((r) => `${fzARS(N(r.pesos))} · ${fzPct(N(r.parte))}`);
+  });
+
+  // Tablas
+  dash.draw('tabla-gastos', (tb) => {
+    const d = dash.data('gastos');
+    tb.replaceChildren();
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    for (const g of d.data.filter((r) => enMes(r, s)).sort((a, b) => a.fecha.localeCompare(b.fecha) || N(a.id) - N(b.id))) {
+      tb.append(fila(g.id, [[fzDia(g.fecha)], [g.detalle], [g.categoria], [fzARS(N(g.pesos)), 'fz-r'], [fzUSD(N(g.usd)), 'fz-r'], [g.metodo, 'fz-hide-narrow'], [g.cuota || '', 'fz-hide-narrow']]));
+    }
+  });
+  dash.draw('tabla-metodos', (tb) => {
+    const d = dash.data('por_metodo');
+    tb.replaceChildren();
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    for (const m of d.data.filter((r) => r.mes === s)) {
+      tb.append(fila(`${encodeURIComponent(m.mes)},${encodeURIComponent(m.metodo)}`, [[m.metodo], [fzARS(N(m.pesos)), 'fz-r'], [fzUSD(N(m.usd)), 'fz-r'], [String(N(m.cantidad)), 'fz-r']]));
+    }
+  });
+  dash.draw('tabla-ahorro', (tb) => {
+    const d = dash.data('ahorro');
+    tb.replaceChildren();
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    for (const a of d.data.filter((r) => enMes(r, s)).sort((a, b) => b.fecha.localeCompare(a.fecha))) {
+      tb.append(fila(a.id, [[fzDia(a.fecha)], [a.activo], [a.tipo], [fzUSD(N(a.valor_usd)), 'fz-r']]));
+    }
+  });
+  dash.draw('tabla-ingresos', (tb) => {
+    const d = dash.data('ingresos');
+    tb.replaceChildren();
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    for (const i of d.data.filter((r) => enMes(r, s)).sort((a, b) => a.fecha.localeCompare(b.fecha))) {
+      tb.append(fila(i.id, [[fzDia(i.fecha)], [i.quien_pago], [fzARS2(N(i.pesos)), 'fz-r']]));
+    }
+  });
+</script>
