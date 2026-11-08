@@ -37,6 +37,7 @@ Claude los convierte en datos, arma el **Excel del mes** con la plantilla de sie
 | Arma el Excel de un mes | `Finanzas/_Herramientas/armar_planilla.py` |
 | Arma los datos del dashboard | `Finanzas/_Herramientas/exportar_dashboard.py` |
 | Código del dashboard | `Finanzas/Dashboard/index.html` |
+| Consejos de ahorro (los escribe Claude) | `Finanzas/Datos/consejos.csv` |
 | Dashboard (artifact privado, tipo Dashboard) | https://claude.ai/artifact/XpnyCv4DunkSYbZzL8dSfW — "Finanzas personales" |
 | Carpeta de Drive de Snati (cuenta personal dangelosantino29) | https://drive.google.com/drive/folders/1spneYExxL9MmlLOMD8zEre9nmkXQ3SEI |
 | Paso a paso técnico | `Finanzas/COMO_CARGAR.md` |
@@ -103,6 +104,17 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
    (`gastos`, `ingresos`, `ahorro`) al archivo nuevo → borrar el asset viejo.
 6. Mandarle el Excel a Snati.
 7. Commit y push.
+
+## 5b. Consejos para ahorrar (los escribe Claude)
+
+- Viven en `Finanzas/Datos/consejos.csv` (`id,mes,orden,titulo,detalle,ahorro_usd_mes`), con consejos para
+  cada mes y para `todo` (todos los meses juntos). El dashboard los muestra en "Consejos para ahorrar".
+- **En cada carga se revisan y reescriben** con los números nuevos: qué se repite (Uber, salidas con Tizi),
+  compras de impulso grandes, suscripciones, y cuánto apartar del cobro de SOUL (meta: 30%).
+- Cada número que aparece en un consejo sale de los datos; `ahorro_usd_mes` es una estimación.
+- Tono: directo, sin retar, con una acción concreta. Las inversiones del negocio (pauta, testeos) no se
+  tratan como gasto a recortar: se sugiere medir su retorno.
+- Después de reescribirlos: subir `consejos.csv` al dashboard y apuntar la fuente `consejos` al archivo nuevo.
 
 ## 6. Estado al 8 de noviembre de 2026
 

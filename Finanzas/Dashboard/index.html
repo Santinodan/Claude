@@ -36,6 +36,14 @@
   .fz details dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--cds-gap-xs) var(--cds-gap-md); margin: var(--cds-gap-sm) 0 0; }
   .fz details dt { color: var(--color-fg); }
   .fz details dd { margin: 0; }
+  .fz-tips { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--cds-gap-sm); }
+  .fz-tip-item { display: grid; grid-template-columns: 1fr auto; gap: var(--cds-gap-xs) var(--cds-gap-md); padding: var(--cds-pad-sm) 0; border-bottom: 1px solid var(--color-border-line); }
+  .fz-tip-item:last-child { border-bottom: 0; }
+  .fz-tip-item h3 { margin: 0; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); text-wrap: balance; }
+  .fz-tip-item p { margin: 0; grid-column: 1 / -1; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); max-width: 75ch; }
+  .fz-tip-save { font-size: var(--cds-font-size-caption); color: var(--color-ok); font-variant-numeric: tabular-nums; white-space: nowrap; align-self: start; }
+  .fz-save-line { margin: 0; font-size: var(--cds-font-size-body); }
+  .fz-save-line b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); color: var(--color-ok); font-variant-numeric: tabular-nums; }
   @media (max-width: 40rem) { .fz-hide-narrow { display: none; } .fz details dl { grid-template-columns: 1fr; } }
 </style>
 
@@ -77,6 +85,36 @@
     <h2>Mes a mes</h2>
     <p class="fz-note">Total gastado en pesos cada mes. El mes elegido va resaltado.</p>
     <div class="fz-chart" data-draw="mes-chart" data-source="por_mes"></div>
+  </article>
+
+  <section class="fz-grid" id="donde-se-fue">
+    <article class="fz-card" id="top-gastos">
+      <h2>¿A dónde se fue la plata?</h2>
+      <p class="fz-note">Los 5 gastos más grandes del período.</p>
+      <div class="fz-tablebox">
+        <table class="fz-table" data-source="gastos" data-row-key="id">
+          <thead><tr><th data-field="detalle">Detalle</th><th class="fz-hide-narrow" data-field="categoria">Categoría</th><th class="fz-r" data-field="pesos">Pesos</th><th class="fz-r" data-field="usd">USD</th></tr></thead>
+          <tbody data-draw="tabla-top"></tbody>
+        </table>
+      </div>
+    </article>
+    <article class="fz-card" id="habitos">
+      <h2>Lo que se repite</h2>
+      <p class="fz-note">Gastos parecidos que aparecen dos veces o más, sumados.</p>
+      <div class="fz-tablebox">
+        <table class="fz-table" data-source="habitos" data-row-key="mes,clave">
+          <thead><tr><th data-field="clave">Qué</th><th class="fz-r" data-field="veces">Veces</th><th class="fz-r" data-field="pesos">Pesos</th><th class="fz-r" data-field="usd">USD</th></tr></thead>
+          <tbody data-draw="tabla-habitos"></tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <article class="fz-card" id="consejos">
+    <h2>Consejos para ahorrar</h2>
+    <p class="fz-note">Los escribe Claude a partir de tus gastos y se actualizan en cada carga.</p>
+    <p class="fz-save-line">Ahorro posible: <b class="dash-skeleton" data-draw="ahorro-posible" data-source="ahorro_consejos" data-field="usd" data-where="mes=2026-11">—</b> por mes si seguís estos consejos.</p>
+    <ol class="fz-tips" data-draw="consejos-lista" data-source="consejos"></ol>
   </article>
 
   <section class="fz-grid">
@@ -307,6 +345,41 @@
     },
   });
 
+  dash.calc('habitos', {
+    title: 'Gastos que se repiten',
+    description: 'Gastos agrupados por su primera palabra (Uber, Monster, Perfume…), con 2 o más apariciones, para cada mes y para todos juntos ("todo").',
+    inputs: ['gastos'],
+    fn: (gastos) => {
+      const alias = { mosnter: 'monster', ubers: 'uber', aguas: 'agua', youtuve: 'youtube' };
+      const clave = (d) => {
+        const w = String(d).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').match(/[a-z0-9+]+/g) || ['otro'];
+        const p = /^[0-9]+$/.test(w[0]) && w[1] ? w[1] : w[0];
+        const k = alias[p] || p;
+        return k.charAt(0).toUpperCase() + k.slice(1);
+      };
+      const m = new Map();
+      for (const g of gastos) for (const mes of [g.mes, 'todo']) {
+        const c = clave(g.detalle), id = mes + '|' + c;
+        const x = m.get(id) || { mes, clave: c, veces: 0, pesos: 0, usd: 0 };
+        x.veces += 1; x.pesos += Number(g.pesos || 0); x.usd += Number(g.usd || 0); m.set(id, x);
+      }
+      return [...m.values()].filter((x) => x.veces >= 2)
+        .map((x) => ({ ...x, pesos: Math.round(x.pesos * 100) / 100, usd: Math.round(x.usd * 100) / 100 }))
+        .sort((a, b) => a.mes.localeCompare(b.mes) || b.pesos - a.pesos);
+    },
+  });
+
+  dash.calc('ahorro_consejos', {
+    title: 'Ahorro posible con los consejos',
+    description: 'Suma del ahorro mensual estimado de los consejos de cada período.',
+    inputs: ['consejos'],
+    fn: (consejos) => {
+      const m = new Map();
+      for (const c of consejos) m.set(c.mes, (m.get(c.mes) || 0) + Number(c.ahorro_usd_mes || 0));
+      return [...m.entries()].map(([mes, usd]) => ({ mes, usd }));
+    },
+  });
+
   const fail = (el) => { el.replaceChildren(); const d = document.createElement('div'); d.className = 'fz-fail'; d.textContent = 'Failed to load'; el.append(d); };
   const fila = (key, cells) => {
     const tr = document.createElement('tr'); tr.dataset.key = key;
@@ -442,6 +515,40 @@
       .on('pointerleave', () => { t.hidden = true; });
     g.append('text').attr('x', (r) => x(N(r.pesos)) + 6).attr('y', rowH / 2).attr('dy', '.35em').attr('fill', 'var(--color-fg-muted)')
       .text((r) => `${fzARS(N(r.pesos))} · ${fzPct(N(r.parte))}`);
+  });
+
+  numero('ahorro-posible', 'ahorro_consejos', 'usd', (v) => fzUSD(N(v)));
+
+  dash.draw('tabla-top', (tb) => {
+    const d = dash.data('gastos');
+    tb.replaceChildren();
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    for (const g of d.data.filter((r) => enMes(r, s)).sort((a, b) => N(b.pesos) - N(a.pesos)).slice(0, 5)) {
+      tb.append(fila(g.id, [[g.detalle], [g.categoria, 'fz-hide-narrow'], [fzARS(N(g.pesos)), 'fz-r'], [fzUSD(N(g.usd)), 'fz-r']]));
+    }
+  });
+  dash.draw('tabla-habitos', (tb) => {
+    const d = dash.data('habitos');
+    tb.replaceChildren();
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    for (const h of d.data.filter((r) => r.mes === s).slice(0, 8)) {
+      tb.append(fila(`${encodeURIComponent(h.mes)},${encodeURIComponent(h.clave)}`, [[h.clave], [String(N(h.veces)), 'fz-r'], [fzARS(N(h.pesos)), 'fz-r'], [fzUSD(N(h.usd)), 'fz-r']]));
+    }
+  });
+  dash.draw('consejos-lista', (ol) => {
+    const d = dash.data('consejos');
+    ol.replaceChildren();
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    for (const c of d.data.filter((r) => r.mes === s).sort((a, b) => N(a.orden) - N(b.orden))) {
+      const li = document.createElement('li'); li.className = 'fz-tip-item';
+      const h = document.createElement('h3'); h.textContent = c.titulo;
+      const sv = document.createElement('span'); sv.className = 'fz-tip-save'; sv.textContent = N(c.ahorro_usd_mes) > 0 ? `+${fzUSD(N(c.ahorro_usd_mes))}/mes` : '';
+      const p = document.createElement('p'); p.textContent = c.detalle;
+      li.append(h, sv, p); ol.append(li);
+    }
   });
 
   // Tablas
