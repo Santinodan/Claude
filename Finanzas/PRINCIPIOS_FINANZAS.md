@@ -52,7 +52,7 @@ Claude los convierte en datos, arma el **Excel del mes** con la plantilla de sie
 ```
 Hoja;Fecha;Detalle;Categoria;Pesos;USD;Metodo;Cuota;Cantidad;PrecioEntrada;PrecioHoy
 Gasto;06/11/2026;Cuota gym Oxigeno;Salud;55000;33,23;Mercado Pago;;;;
-Ingreso;08/11/2026;SOUL - comisiones cierre de octubre (...);;1160693,82;702;;;;;
+Ingreso;08/11/2026;SOUL - comisiones cierre de noviembre (...);;1160693,82;702;;;;;
 Ahorro;08/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
 ```
 
@@ -83,8 +83,8 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
   Snati la pasa a Mercado Pago.
 - **Transferencias de Binance a Mercado Pago no son ingreso** (aparecen como "Transferencia recibida").
 - **Fuente principal: comisiones de SOUL.** Gian manda un documento de cierre cada mes con lo que cobra
-  Snati. Se carga en la fecha en que **entra la plata** (el cierre de octubre entró el 8/11 → noviembre).
-  En el detalle se pone de qué cajas sale.
+  Snati. Se carga en la fecha en que **entra la plata** (entró el 8/11 → noviembre).
+  En el detalle se pone de qué cajas sale. Snati lo llama por el mes en que cobra: el pago del 8/11 es el "cierre de noviembre".
 - **Desde noviembre 2026, el ingreso del mes incluye:** una línea "Saldo Binance + gastado en el mes"
   (lo que había al empezar), los dólares en efectivo y los ingresos nuevos. Si después llega un saldo de
   Binance que ya incluye un ingreso nuevo, el saldo inicial es: saldo actual + gastado − ingresos nuevos.
@@ -124,14 +124,14 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 | Julio | $924.830 | 617 | 680 | Importado del Drive |
 | Agosto | $284.050 | 182 | 210 | Importado del Drive |
 | Septiembre | $198.607 | 125 | — | Importado; solo hasta el 11/9 |
-| Octubre | — | — | — | Sin planilla |
+| Octubre | — | — | 730 | Solo dato histórico: venta del monitor (US$ 300) y regalo de papá ($700.000). Gastos por cargar. No se suma a lo actual |
 | Noviembre (al 8) | $364.134 | 221 | 2.378 | En curso; patrimonio US$ 2.157,58 |
 
 **Preguntas pendientes para Snati:**
 - "Error de Pago" de junio ($40.900, mismo monto que el jogging) y "Aduana" de agosto ($7.000): sin categoría.
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
-- ¿Octubre tiene gastos? ¿Septiembre se dejó de anotar a mitad de mes?
+- Octubre: faltan las capturas de gastos (Snati las va a pasar). ¿Septiembre se dejó de anotar a mitad de mes?
 - El saldo de Binance al 8/11 (US$ 1.157,58) es estimado: confirmar con captura.
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
