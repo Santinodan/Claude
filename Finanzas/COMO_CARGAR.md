@@ -1,6 +1,6 @@
 # Cómo cargar las finanzas del mes
 
-Guía para Snati y para Claude. Si arrancás una sesión nueva, leé esto primero.
+Guía técnica paso a paso. Si arrancás una sesión nueva, leé primero `PRINCIPIOS_FINANZAS.md`.
 
 ## Regla de oro
 
@@ -78,7 +78,8 @@ Todo se arma local y Snati lo sube desde su cuenta personal (dangelosantino29).
 - **Categorías:** Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Transporte.
   Si aparece una nueva, el script la agrega sola a la tabla y al gráfico.
   - Gimnasio → Salud. Ropa de marca para Snati → Gusto. Regalos (Tizi, su familia) → Regalo.
-  - Celular (Movistar) → Suscripciones (como en los meses viejos). Wi-Fi de vuelo → Personal. Uber, DiDi, taxis → Transporte.
+  - Celular (Movistar) → Suscripciones (como en los meses viejos). Wi-Fi de vuelo → Personal.
+- **Ingresos de SOUL:** el cierre de mes de Gian se carga en la fecha en que entra la plata, con las cajas en el detalle. Uber, DiDi, taxis → Transporte.
 - **Cuotas:** columna Cuota como `3/6`. Si una cuota se debita en partes, va como un solo gasto
   (cada parte se pasa a USD con su propio día).
 - **No es ingreso:** pasar plata de Binance a Mercado Pago (aparece como "Transferencia recibida").
