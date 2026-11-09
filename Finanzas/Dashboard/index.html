@@ -1,16 +1,7 @@
 <meta name="dash-one-writer">
 <style>
-  /* Look grafito: Snati lo quiere oscuro siempre, también en modo claro. Una sola tinta de acento (menta = plata). */
-  #dash-root { --dash-gutter: 0; }
-  .fz {
-    --color-bg: #121316; --color-panel: #1a1c20; --fz-raise: #202227; --color-border-line: #2a2d33;
-    --color-fg: #ececee; --color-fg-muted: #9a9ca4; --fz-faint: #6c6f77;
-    --fz-accent: #6fd6a8; --color-ok: #6fd6a8; --color-bad: #ff8a80; --color-warn: #f0c35a;
-    --cds-chart-muted: #3b3f47; --cds-chart-grid: #24272c; --cds-chart-axis: #3b3f47;
-    --cds-surface-popover: #23262b; --cds-border: #35383f; --cds-text-secondary: #9a9ca4;
-    color-scheme: dark; background: var(--color-bg);
-    padding-block: clamp(20px, 4vw, 44px); padding-left: max(16px, 3.2vw); padding-right: max(16px, 3.2vw);
-  }
+  /* Fondo y superficies: los grises propios del dashboard. Acento menta para la plata. */
+  .fz { --fz-accent: #4fbf8f; --fz-raise: color-mix(in srgb, var(--color-fg) 6%, transparent); --fz-faint: var(--color-fg-muted); }
   .fz { display: grid; gap: calc(var(--cds-gap-lg) * 1.25); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
   .fz-head { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); align-items: flex-end; justify-content: space-between; }
   .fz-head > div { min-width: 0; flex: 1 1 22rem; }
