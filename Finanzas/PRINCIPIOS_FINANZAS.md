@@ -134,7 +134,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 - "Error de Pago" de junio ($40.900, mismo monto que el jogging) y "Aduana" de agosto ($7.000): sin categoría.
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
-- Octubre, tarjeta Binance: confirmar si hay movimientos antes del 12/10 o entre el 24 y 25/10; aclarar Alipay OtherRetail914 (142 CNY) y 9142 (104,5 CNY), KLATCH (US$ 14,83), Gumroad (US$ 11,19), Ctrip (181 CNY) y Microsoft Store ($13.999). Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
+- Octubre, tarjeta Binance: confirmar si hay movimientos antes del 12/10 o entre el 24 y 25/10; aclarar KLATCH (US$ 14,83), Gumroad (US$ 11,19) y Microsoft Store ($13.999). Ya aclarado: Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
 - El saldo de Binance al 8/11 (US$ 1.157,58) es estimado: confirmar con captura.
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
