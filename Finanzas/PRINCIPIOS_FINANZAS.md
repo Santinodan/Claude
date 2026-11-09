@@ -74,7 +74,7 @@ Ahorro;08/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
 Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Transporte.
 
 - Gimnasio, boxeo → Salud · Ropa de marca, perfumes, juegos → Gusto · Regalos (Tizi, su familia) → Regalo
-- Celular (Movistar), Spotify, YouTube, Google One → Suscripciones · Uber, DiDi, Cabify → Transporte
+- Celular (Movistar), Spotify, YouTube, Google One, Adobe, Apple, Xbox Game Pass (se cobra el 12 de cada mes) → Suscripciones · LUTs → Gusto · Uber, DiDi, Cabify → Transporte
 - Súper chino del barrio (Xiangmei Gao) → Comidas y bebidas · Peluquería (Federico Carranza) → Personal · EBANX = Uber → Transporte · Accesorios DJI → Gusto
 - Pauta de Meta, testeos, ebooks para testear → Educación · Wi-Fi de vuelo, peluquería, cuidado personal → Personal
 
@@ -134,7 +134,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 - "Error de Pago" de junio ($40.900, mismo monto que el jogging) y "Aduana" de agosto ($7.000): sin categoría.
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
-- Octubre, tarjeta Binance: confirmar si hay movimientos antes del 12/10 o entre el 24 y 25/10; aclarar KLATCH (US$ 14,83), Gumroad (US$ 11,19) y Microsoft Store ($13.999). Ya aclarado: Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
+- Octubre: cerrado con lo que hay (solo falta confirmar si la tarjeta Binance tuvo movimientos antes del 12/10). Aclarado: Gumroad = LUTs (Gusto); Microsoft Store = Xbox Game Pass mensual; KLATCH no se recuerda; Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
 - El saldo de Binance al 8/11 (US$ 1.157,58) es estimado: confirmar con captura.
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 

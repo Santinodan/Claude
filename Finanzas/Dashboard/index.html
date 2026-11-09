@@ -438,6 +438,9 @@
         if (t.includes('pedido')) return 'PedidosYa Plus';
         if (t.includes('claude')) return 'Claude';
         if (t.includes('celular') || t.includes('movistar')) return 'Movistar (celular)';
+        if (t.includes('game pass') || t.includes('microsoft')) return 'Xbox Game Pass';
+        if (t.includes('adobe')) return 'Adobe';
+        if (t.includes('apple')) return 'Apple';
         return String(d).trim();
       };
       const m = new Map();
