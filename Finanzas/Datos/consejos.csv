@@ -12,7 +12,7 @@ id,mes,orden,titulo,detalle,ahorro_usd_mes
 11,2026-08,3,Gimnasio + boxeo,"$85.000, el 30% del mes. Si pagás en efectivo, preguntá por descuento pagando tres meses juntos.",8
 12,2026-09,1,La pauta de Meta fue el 61%,$121.107 en pauta. Es inversión en el negocio: separala de los gastos personales o medí cuánto te trajo.,0
 13,2026-09,2,Mes incompleto,"Solo está cargado hasta el 11/9. Si tenés capturas del resto, el análisis va a ser más real.",0
-14,2026-11,1,El viaje concentra el mes,"Con la tarjeta de Binance gastaste $259.169, el 71% de lo que va de noviembre. Ropa (Chrome Hearts y North Face): $106.159.",0
+14,2026-11,1,El viaje concentra el mes,"Con la tarjeta de Binance gastaste $274.768, el 72% de lo que va de noviembre. Ropa (Chrome Hearts y North Face): $106.159.",0
 15,2026-11,2,Uber en Hong Kong,"Un solo viaje salió $52.701 (US$ 31,83). En viajes, el metro o DiDi suelen salir mucho menos.",0
 16,2026-11,3,Apartá ya lo del cobro,"Entraron US$ 702 de SOUL el 8/11. Separá US$ 210 ahora, antes de seguir gastando.",210
 17,todo,1,Transporte por app: tu gasto repetido más caro,"21 Uber desde junio, $213.181 (US$ 137). Sumando DiDi, Cabify y bicis: 32 viajes, $266.281 (US$ 170). Si la mitad los hacés en colectivo o compartidos, ahorrás unos US$ 14 por mes.",14
@@ -24,3 +24,4 @@ id,mes,orden,titulo,detalle,ahorro_usd_mes
 23,2026-10,2,Adobe pesa casi como todas las demás suscripciones juntas,"$46.875 de Adobe contra $50.172 de YouTube, Spotify, Apple, Movistar y Game Pass sumados. Revisá si lo pagás mensual y si lo podés pasar a gastos del trabajo.",10
 24,2026-10,3,En China te moviste bien,"DiDi y bicis compartidas: $48.350 en una semana de viaje, mucho menos que un Uber en Buenos Aires.",0
 25,2026-10,4,Hay $118.190 sin explicar,"El pago a Alejandra Matilla, dos compras en China y un cobro de KLATCH quedaron sin categoría. Anotar en el momento evita que se pierdan.",0
+26,2026-11,4,Juegos: Game Pass y Steam a la vez,"Pagás Xbox Game Pass ($13.999 por mes, se cobra el 12) y además compraste en Steam ($15.599 el 8/11). Antes de comprar un juego, fijate si ya está en el Game Pass; si casi no lo usás, cancelalo antes del 12.",8

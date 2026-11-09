@@ -61,7 +61,7 @@ Ahorro;08/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
 
 ### Cotizaciones
 
-- **Pesos → USD:** dólar cripto **venta** del día del movimiento.
+- **Pesos → USD:** dólar cripto **venta** del día del movimiento. Si la captura de Binance muestra cuántos USDT se descontaron, se usa ese monto exacto.
   Historial: `https://api.argentinadatos.com/v1/cotizaciones/dolares/cripto` · En vivo: `https://dolarapi.com/v1/dolares/cripto`.
 - **Otra moneda (CNY, HKD, BRL…):** primero a USD con el tipo de cambio oficial de ese día
   (`https://api.frankfurter.dev/v1/AAAA-MM-DD?base=USD`; fin de semana:
@@ -128,14 +128,14 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 | Agosto | $284.050 | 182 | 210 | Importado del Drive |
 | Septiembre | $198.607 | 125 | — | Importado; solo hasta el 11/9 |
 | Octubre | $611.752 | 376 | 745 | Dato histórico (no se suma a lo actual). Mercado Pago (resumen PDF) + tarjeta Binance (12 al 29/10, parte del viaje a China). Ingresos: monitor, regalo de papá, Mariana Calabrese |
-| Noviembre (al 8) | $364.134 | 221 | 2.378 | En curso; patrimonio US$ 2.157,58 |
+| Noviembre (al 8) | $379.733 | 230 | 2.378 | En curso; patrimonio US$ 2.148 |
 
 **Preguntas pendientes para Snati:**
 - "Error de Pago" de junio ($40.900, mismo monto que el jogging) y "Aduana" de agosto ($7.000): sin categoría.
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
 - Octubre: cerrado con lo que hay (solo falta confirmar si la tarjeta Binance tuvo movimientos antes del 12/10). Aclarado: Gumroad = LUTs (Gusto); Microsoft Store = Xbox Game Pass mensual; KLATCH no se recuerda; Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
-- El saldo de Binance al 8/11 (US$ 1.157,58) es estimado: confirmar con captura.
+- El saldo de Binance al 8/11 (US$ 1.148, ya descontado Steam) es estimado: confirmar con captura.
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
 ## 7. Privacidad
