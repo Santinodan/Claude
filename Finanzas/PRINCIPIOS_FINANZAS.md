@@ -74,7 +74,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 
 - **Equipo de trabajo:** cosas que le sirven a Snati para trabajar mejor (accesorios y adaptador de la DJI, barra de luz para el monitor). Se trata como inversión, igual que Educación: no se recorta, se mide qué rinde.
 
-- Gimnasio, boxeo → Salud · Ropa de marca, perfumes, juegos → Gusto · Regalos (Tizi, su familia) → Regalo
+- Gimnasio, boxeo, suplementos (creatina, wafles de proteína) → Salud · Ropa de marca, perfumes, juegos → Gusto · Regalos (Tizi, su familia) → Regalo
 - Celular (Movistar), Spotify, YouTube, Google One, Adobe, Apple, Xbox Game Pass (se cobra el 12 de cada mes) → Suscripciones · LUTs → Gusto · Uber, DiDi, Cabify → Transporte
 - Súper chino del barrio (Xiangmei Gao) → Comidas y bebidas · Peluquería (Federico Carranza) → Personal · EBANX = Uber → Transporte · Accesorios DJI → Equipo de trabajo
 - Pauta de Meta, testeos, ebooks para testear → Educación · Wi-Fi de vuelo, peluquería, cuidado personal → Personal
@@ -143,13 +143,13 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
 - Octubre: cerrado con lo que hay (solo falta confirmar si la tarjeta Binance tuvo movimientos antes del 12/10). Aclarado: Gumroad = LUTs (Gusto); Microsoft Store = Xbox Game Pass mensual; KLATCH no se recuerda; Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
-- Al 11/11: 1.000 USDT en Earn (confirmado) + 112,44 disponibles en Binance/Mercado Pago (estimado): confirmar con captura.
+- Al 11/11: 1.000 USDT en Earn (confirmado) + 60,69 disponibles en Binance/Mercado Pago (estimado, ya descontados los wafles): confirmar con captura.
 
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
 ## 6b. Compromisos del mes
 
-- **Noviembre 2026:** solo dos gastos fuertes más: wafles de proteína (5 paquetes, $83.996, envío gratis desde $80.000) y boxeo ($40.000 por 8 clases). Después, nada que pase los $30.000 hasta diciembre. Si Snati quiere comprar algo grande, recordárselo.
+- **Noviembre 2026:** solo dos gastos fuertes más: wafles de proteína (5 paquetes, $83.996, **comprados el 11/11**) y boxeo ($40.000 por 8 clases, falta pagar). Después, nada que pase los $30.000 hasta diciembre. Si Snati quiere comprar algo grande, recordárselo.
 
 ## 7. Privacidad
 
