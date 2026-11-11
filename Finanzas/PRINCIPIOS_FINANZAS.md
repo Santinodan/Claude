@@ -140,6 +140,10 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
+## 6b. Compromisos del mes
+
+- **Noviembre 2026:** solo dos gastos fuertes más: wafles de proteína (5 paquetes, $83.996, envío gratis desde $80.000) y boxeo ($40.000 por 8 clases). Después, nada que pase los $30.000 hasta diciembre. Si Snati quiere comprar algo grande, recordárselo.
+
 ## 7. Privacidad
 
 - El repo `Santinodan/Claude` **es público** (verificado el 8/11/2026). Snati dijo que no hay problema,
