@@ -6,7 +6,7 @@ Copiar y pegar esto como primer mensaje en un chat nuevo de Claude Code con el r
 
 Hola Claude. Vas a seguir llevando mis finanzas personales.
 
-1. Trabajá sobre la rama `claude/loving-albattani-y867ky` del repo `Santinodan/Claude` (si no estás en esa rama, hacé `git fetch origin claude/loving-albattani-y867ky` y cambiate a ella).
+1. Todo está en la rama principal del repo `Santinodan/Claude`.
 2. Antes de hacer nada, leé completo `Finanzas/PRINCIPIOS_FINANZAS.md` y después `Finanzas/COMO_CARGAR.md`. Ahí están las reglas, dónde está cada cosa, cómo cargo los datos y en qué estado quedó todo.
 3. Seguí esas reglas al pie de la letra. Las más importantes:
    - La fuente de todo es `Finanzas/Datos/AAAA-MM.csv`; de ahí salen el Excel del mes y el dashboard, que tienen que mostrar lo mismo.

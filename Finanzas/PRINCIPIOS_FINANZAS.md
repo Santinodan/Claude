@@ -42,8 +42,7 @@ Claude los convierte en datos, arma el **Excel del mes** con la plantilla de sie
 | Carpeta de Drive de Snati (cuenta personal dangelosantino29) | https://drive.google.com/drive/folders/1spneYExxL9MmlLOMD8zEre9nmkXQ3SEI |
 | Paso a paso técnico | `Finanzas/COMO_CARGAR.md` |
 
-**Rama de trabajo:** todo esto está en la rama `claude/loving-albattani-y867ky` del repo
-`Santinodan/Claude` (todavía no está en `main`). Un chat nuevo tiene que trabajar sobre esa rama.
+**Rama:** todo está en la rama principal del repo `Santinodan/Claude` (el pull request #1 se unió el 11/11/2026). Un chat nuevo lo encuentra directo; cada chat trabaja en su propia rama y después se une con un pull request.
 
 ## 4. Cómo se carga cada cosa
 
