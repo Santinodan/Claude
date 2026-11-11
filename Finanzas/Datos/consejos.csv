@@ -1,0 +1,28 @@
+id,mes,orden,titulo,detalle,ahorro_usd_mes
+1,2026-06,1,Gusto fue lo más grande del mes,"24% del mes: 3 perfumes ($104.500), remeras de fútbol y juegos. Elegí un solo gusto grande por mes.",35
+2,2026-06,2,Uber a Madero salió caro,"6 viajes de Uber por $77.700, y solo ida y vuelta a Madero fueron $50.800. Para salidas lejos, compartí el viaje o volvé en grupo.",15
+3,2026-06,3,Cortá las apuestas,"3 apuestas en Betano, $15.000. Es plata que no vuelve: cortarlo es ahorro directo.",10
+4,2026-06,4,Suscripciones al máximo,"$55.540 en 7 servicios, el mes más alto. Después recortaste: bien hecho.",0
+5,2026-07,1,Dos afeitadoras en 11 días,"Philips ($57.000) y Voltra ($87.700): $144.700 en lo mismo. Antes de reemplazar algo que ya compraste, probalo un mes.",0
+6,2026-07,2,Personal se llevó el 36% del mes,"$332.800, sobre todo afeitadoras y productos de cuidado. Son compras de una vez: el mes que viene no deberían repetirse.",0
+7,2026-07,3,Salidas y regalos con Tizi,"16 gastos, unos $239.000. Con un tope mensual lo tenés controlado sin dejar de salir.",30
+8,2026-07,4,Uber todas las semanas,"9 viajes, $55.000. Con colectivo en algunas vueltas, ahorrás la mitad.",15
+9,2026-08,1,Tu mejor mes de control,Gastaste 69% menos que en julio ($284.050). Este es el nivel a sostener.,0
+10,2026-08,2,Educación fue lo más grande,"$91.000 en testeos, ebook y la deuda de Meta. Es inversión: anotá qué te devolvió para saber si repetirla.",0
+11,2026-08,3,Gimnasio + boxeo,"$85.000, el 30% del mes. Si pagás en efectivo, preguntá por descuento pagando tres meses juntos.",8
+12,2026-09,1,La pauta de Meta fue el 61%,$121.107 en pauta. Es inversión en el negocio: separala de los gastos personales o medí cuánto te trajo.,0
+13,2026-09,2,Mes incompleto,"Solo está cargado hasta el 11/9. Si tenés capturas del resto, el análisis va a ser más real.",0
+14,2026-11,1,El viaje concentra el mes,"Con la tarjeta de Binance gastaste $274.768, el 72% de lo que va de noviembre. Ropa (Chrome Hearts y North Face): $106.159.",0
+15,2026-11,2,Uber en Hong Kong,"Un solo viaje salió $52.701 (US$ 31,83). En viajes, el metro o DiDi suelen salir mucho menos.",0
+16,2026-11,3,Apartá ya lo del cobro,"Entraron US$ 702 de SOUL el 8/11. Separá US$ 210 ahora, antes de seguir gastando.",210
+17,todo,1,Transporte por app: tu gasto repetido más caro,"21 Uber desde junio, $213.181 (US$ 137). Sumando DiDi, Cabify y bicis: 32 viajes, $266.281 (US$ 170). Si la mitad los hacés en colectivo o compartidos, ahorrás unos US$ 14 por mes.",14
+18,todo,2,Frená las compras de impulso grandes,"2 afeitadoras en 11 días en julio ($144.700), 4 perfumes ($136.000), remeras Chrome Hearts en China ($59.258). Regla de 48 horas: si pasa los $30.000 y no lo necesitás, esperá dos días.",40
+19,todo,3,Ponele un tope a salidas y regalos con Tizi,"32 gastos, unos $590.000: el 18% de todo lo que gastaste. Definí un monto por mes (por ejemplo US$ 120) y alterná con planes en casa.",30
+20,todo,4,"Ojo con Adobe, Apple y Game Pass","Las suscripciones venían bajando ($55.540 en junio, $25.300 en agosto), pero en octubre saltaron a $97.047: Adobe ($46.875), Apple ($16.204) y Xbox Game Pass ($13.999). Si Adobe es para editar a clientes, que lo cubra el trabajo o pasate al plan anual, y fijate si el Game Pass lo usás todos los meses.",10
+21,todo,5,"Ahorrá primero, gastá después","Con los US$ 702 de SOUL, apartá el 30% (unos US$ 210) el mismo día que cobrás y no lo toques. Lo que queda es lo que podés gastar.",210
+22,2026-10,1,La comida fue lo más grande,$132.118 en el mes. Solo PedidosYa y Rappi fueron $45.031: retirar en el local o cocinar un par de veces por semana baja eso a la mitad.,14
+23,2026-10,2,Adobe pesa casi como todas las demás suscripciones juntas,"$46.875 de Adobe contra $50.172 de YouTube, Spotify, Apple, Movistar y Game Pass sumados. Revisá si lo pagás mensual y si lo podés pasar a gastos del trabajo.",10
+24,2026-10,3,En China te moviste bien,"DiDi y bicis compartidas: $48.350 en una semana de viaje, mucho menos que un Uber en Buenos Aires.",0
+25,2026-10,4,Hay $118.190 sin explicar,"El pago a Alejandra Matilla, dos compras en China y un cobro de KLATCH quedaron sin categoría. Anotar en el momento evita que se pierdan.",0
+26,2026-11,4,Juegos: Game Pass y Steam a la vez,"Pagás Xbox Game Pass ($13.999 por mes, se cobra el 12) y además compraste un juego de PC en Steam ($15.599 el 8/11). Si tu Game Pass es el de PC (lo pagaste por Microsoft Store), antes de comprar fijate si el juego ya está incluido; si es el de consola y casi no lo usás, cancelalo antes del 12.",8
+27,todo,6,"El equipo de trabajo es inversión, no gasto a recortar","Barra de luz, accesorios y adaptador de la DJI: $182.244 desde junio. Te sirven para trabajar mejor; lo que conviene es comprarlos con un propósito claro y anotar qué te permitieron hacer.",0

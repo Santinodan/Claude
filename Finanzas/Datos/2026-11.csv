@@ -1,0 +1,27 @@
+Hoja;Fecha;Detalle;Categoria;Pesos;USD;Metodo;Cuota;Cantidad;PrecioEntrada;PrecioHoy
+Gasto;01/11/2026;Google One;Suscripciones;1965,09;1,20;Mercado Pago;;;;
+Gasto;01/11/2026;Campera North Face (China, 190 CNY);Gusto;46900,64;28,54;Binance;;;;
+Gasto;01/11/2026;Zapatillas regalo mama de Tizi (China, 226,6 CNY);Regalo;55938,95;34,04;Binance;;;;
+Gasto;01/11/2026;2 remeras Chrome Hearts (China, 240 CNY);Gusto;59258,48;36,06;Binance;;;;
+Gasto;02/11/2026;YouTube Premium Lite;Suscripciones;3582,19;2,18;Mercado Pago;;;;
+Gasto;02/11/2026;DiDi taxi (China, 9,1 CNY);Transporte;2250,13;1,37;Binance;;;;
+Gasto;03/11/2026;Uber (Hong Kong, 249,77 HKD);Transporte;52701,25;31,83;Binance;;;;
+Gasto;03/11/2026;Starbucks (Hong Kong, 59 HKD);Comidas y bebidas;12450,94;7,52;Binance;;;;
+Gasto;04/11/2026;Comida aeropuerto Los Angeles - Hudson (16,04 USD);Comidas y bebidas;26617,58;16,04;Binance;;;;
+Gasto;05/11/2026;Wi-Fi vuelo TAM (10 BRL);Personal;3050,87;1,83;Binance;;;;
+Gasto;06/11/2026;Credito MP, reloj de Tizi;Regalo;30117,79;18,25;Mercado Pago;3/6;;;
+Gasto;06/11/2026;Movistar;Suscripciones;10500;6,34;Mercado Pago;;;;
+Gasto;06/11/2026;Cuota gym Oxigeno;Salud;55000;33,23;Mercado Pago;;;;
+Gasto;06/11/2026;Monster en el gym;Comidas y bebidas;3800;2,30;Mercado Pago;;;;
+Gasto;08/11/2026;Steam (juego de PC) - Binance desconto 9,58 USDT con 0,28 USDC de reintegro;Gusto;15599;9,58;Binance;;;;
+Gasto;11/11/2026;Mercado Libre - barra de luz para monitor;Equipo de trabajo;57717,25;35,56;Mercado Pago;;;;
+Ingreso;02/11/2026;Rendimientos Mercado Pago;;2,61;0;;;;;
+Ingreso;07/11/2026;Saldo Binance + gastado en el mes;;1115881,91;676,31;;;;;
+Ingreso;07/11/2026;Dolares en efectivo;;1650090;1000;;;;;
+Ingreso;08/11/2026;SOUL - comisiones cierre de noviembre (caja 2 $578,51 + caja 3 $123,61, sin bono);;1160693,82;702;;;;;
+Ahorro;07/11/2026;USDT;Earn Binance (APR 11,58%);;;;;455,58;1;1
+Ahorro;07/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
+Ahorro;08/11/2026;USDT;Binance (455,58 + 702 - Steam 9,58, estimado);;;;;1148,00;1;1
+Ahorro;08/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
+Ahorro;11/11/2026;USDT;Binance + Mercado Pago (1148 - Mercado Libre 35,56, estimado);;;;;1112,44;1;1
+Ahorro;11/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
