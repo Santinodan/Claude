@@ -93,6 +93,13 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
   (lo que había al empezar), los dólares en efectivo y los ingresos nuevos. Si después llega un saldo de
   Binance que ya incluye un ingreso nuevo, el saldo inicial es: saldo actual + gastado − ingresos nuevos.
 
+### Binance Simple Earn
+
+- Desde el 11/11/2026 hay **1.000 USDT en Simple Earn flexible** (se pueden sacar cuando sea). La tasa de USDT es
+  escalonada (3,61% ~ 11,64%: la alta solo para un primer tramo). Se carga como `Ahorro` con tipo "Simple Earn flexible".
+- **Los rendimientos que pague Earn van como `Ingreso`** ("Rendimientos Binance Earn") en el mes que entran, y suman al saldo de Earn.
+- El resto del USDT queda como "Disponible Binance + Mercado Pago" (estimado hasta que llegue una captura).
+
 ### Cuotas y casos especiales
 
 - Cuota como `3/6`. Una cuota debitada en partes es un solo gasto (cada parte al cripto de su día).
@@ -136,7 +143,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
 - Octubre: cerrado con lo que hay (solo falta confirmar si la tarjeta Binance tuvo movimientos antes del 12/10). Aclarado: Gumroad = LUTs (Gusto); Microsoft Store = Xbox Game Pass mensual; KLATCH no se recuerda; Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
-- El saldo de Binance + Mercado Pago al 11/11 (US$ 1.112,44) es estimado (saldo informado menos gastos): confirmar con captura.
+- Al 11/11: 1.000 USDT en Earn (confirmado) + 112,44 disponibles en Binance/Mercado Pago (estimado): confirmar con captura.
 
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
