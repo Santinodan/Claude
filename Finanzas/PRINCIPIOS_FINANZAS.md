@@ -71,11 +71,13 @@ Ahorro;08/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
 
 ### Categorías
 
-Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Transporte.
+Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Transporte, Equipo de trabajo.
+
+- **Equipo de trabajo:** cosas que le sirven a Snati para trabajar mejor (accesorios y adaptador de la DJI, barra de luz para el monitor). Se trata como inversión, igual que Educación: no se recorta, se mide qué rinde.
 
 - Gimnasio, boxeo → Salud · Ropa de marca, perfumes, juegos → Gusto · Regalos (Tizi, su familia) → Regalo
 - Celular (Movistar), Spotify, YouTube, Google One, Adobe, Apple, Xbox Game Pass (se cobra el 12 de cada mes) → Suscripciones · LUTs → Gusto · Uber, DiDi, Cabify → Transporte
-- Súper chino del barrio (Xiangmei Gao) → Comidas y bebidas · Peluquería (Federico Carranza) → Personal · EBANX = Uber → Transporte · Accesorios DJI → Gusto
+- Súper chino del barrio (Xiangmei Gao) → Comidas y bebidas · Peluquería (Federico Carranza) → Personal · EBANX = Uber → Transporte · Accesorios DJI → Equipo de trabajo
 - Pauta de Meta, testeos, ebooks para testear → Educación · Wi-Fi de vuelo, peluquería, cuidado personal → Personal
 
 ### Ingresos
@@ -136,7 +138,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
 - Octubre: cerrado con lo que hay (solo falta confirmar si la tarjeta Binance tuvo movimientos antes del 12/10). Aclarado: Gumroad = LUTs (Gusto); Microsoft Store = Xbox Game Pass mensual; KLATCH no se recuerda; Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
 - El saldo de Binance + Mercado Pago al 11/11 (US$ 1.112,44) es estimado (saldo informado menos gastos): confirmar con captura.
-- Compra de Mercado Libre del 11/11 ($57.717): cargada como barra de luz para monitor según la foto; confirmar.
+
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
 ## 7. Privacidad

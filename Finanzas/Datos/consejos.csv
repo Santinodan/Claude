@@ -16,7 +16,7 @@ id,mes,orden,titulo,detalle,ahorro_usd_mes
 15,2026-11,2,Uber en Hong Kong,"Un solo viaje salió $52.701 (US$ 31,83). En viajes, el metro o DiDi suelen salir mucho menos.",0
 16,2026-11,3,Apartá ya lo del cobro,"Entraron US$ 702 de SOUL el 8/11. Separá US$ 210 ahora, antes de seguir gastando.",210
 17,todo,1,Transporte por app: tu gasto repetido más caro,"21 Uber desde junio, $213.181 (US$ 137). Sumando DiDi, Cabify y bicis: 32 viajes, $266.281 (US$ 170). Si la mitad los hacés en colectivo o compartidos, ahorrás unos US$ 14 por mes.",14
-18,todo,2,Frená las compras de impulso grandes,"2 afeitadoras en 11 días en julio ($144.700), 4 perfumes ($136.000), accesorios de la DJI en Temu ($89.527). Regla de 48 horas: si pasa los $30.000 y no lo necesitás, esperá dos días.",40
+18,todo,2,Frená las compras de impulso grandes,"2 afeitadoras en 11 días en julio ($144.700), 4 perfumes ($136.000), remeras Chrome Hearts en China ($59.258). Regla de 48 horas: si pasa los $30.000 y no lo necesitás, esperá dos días.",40
 19,todo,3,Ponele un tope a salidas y regalos con Tizi,"32 gastos, unos $590.000: el 18% de todo lo que gastaste. Definí un monto por mes (por ejemplo US$ 120) y alterná con planes en casa.",30
 20,todo,4,"Ojo con Adobe, Apple y Game Pass","Las suscripciones venían bajando ($55.540 en junio, $25.300 en agosto), pero en octubre saltaron a $97.047: Adobe ($46.875), Apple ($16.204) y Xbox Game Pass ($13.999). Si Adobe es para editar a clientes, que lo cubra el trabajo o pasate al plan anual, y fijate si el Game Pass lo usás todos los meses.",10
 21,todo,5,"Ahorrá primero, gastá después","Con los US$ 702 de SOUL, apartá el 30% (unos US$ 210) el mismo día que cobrás y no lo toques. Lo que queda es lo que podés gastar.",210
@@ -25,3 +25,4 @@ id,mes,orden,titulo,detalle,ahorro_usd_mes
 24,2026-10,3,En China te moviste bien,"DiDi y bicis compartidas: $48.350 en una semana de viaje, mucho menos que un Uber en Buenos Aires.",0
 25,2026-10,4,Hay $118.190 sin explicar,"El pago a Alejandra Matilla, dos compras en China y un cobro de KLATCH quedaron sin categoría. Anotar en el momento evita que se pierdan.",0
 26,2026-11,4,Juegos: Game Pass y Steam a la vez,"Pagás Xbox Game Pass ($13.999 por mes, se cobra el 12) y además compraste un juego de PC en Steam ($15.599 el 8/11). Si tu Game Pass es el de PC (lo pagaste por Microsoft Store), antes de comprar fijate si el juego ya está incluido; si es el de consola y casi no lo usás, cancelalo antes del 12.",8
+27,todo,6,"El equipo de trabajo es inversión, no gasto a recortar","Barra de luz, accesorios y adaptador de la DJI: $182.244 desde junio. Te sirven para trabajar mejor; lo que conviene es comprarlos con un propósito claro y anotar qué te permitieron hacer.",0
