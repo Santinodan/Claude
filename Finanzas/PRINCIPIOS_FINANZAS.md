@@ -149,7 +149,12 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 
 ## 6b. Compromisos del mes
 
-- **Noviembre 2026:** solo dos gastos fuertes más: wafles de proteína (5 paquetes, $83.996, **comprados el 11/11**) y boxeo ($40.000 por 8 clases, falta pagar). Después, nada que pase los $30.000 hasta diciembre. Si Snati quiere comprar algo grande, recordárselo.
+- **Noviembre 2026:** solo dos gastos fuertes más: wafles de proteína (5 paquetes, $83.996, **comprados el 11/11**) y boxeo ($48.000 por 8 clases, **pagado el 12/11**; subió de $40.000). Compromiso cumplido. Después, nada que pase los $30.000 hasta diciembre. Si Snati quiere comprar algo grande, recordárselo.
+
+## 6c. Planes a futuro (datos, no cargados)
+
+- **Viaje a Dubái en diciembre 2026:** Snati pensaba gastar unos **US$ 2.000**. Es casi todo su patrimonio actual (~US$ 2.030). Lo dejó como dato, no decidido.
+- **Nvidia (NVDA):** el 12/11/2026 Snati evaluó comprar acciones tras la caída por la renuncia de Jensen Huang. Si compra, se carga como `Inversion` (ticker, cantidad, precio de entrada).
 
 ## 7. Privacidad
 
