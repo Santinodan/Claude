@@ -143,7 +143,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
 - Octubre: cerrado con lo que hay (solo falta confirmar si la tarjeta Binance tuvo movimientos antes del 12/10). Aclarado: Gumroad = LUTs (Gusto); Microsoft Store = Xbox Game Pass mensual; KLATCH no se recuerda; Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
-- Al 11/11: 1.000 USDT en Earn (confirmado) + 60,69 disponibles en Binance/Mercado Pago (estimado, ya descontados los wafles): confirmar con captura.
+- Al 11/11: 1.000 USDT en Earn (confirmado) + 30,20 disponibles en Binance/Mercado Pago (estimado, al 13/11): confirmar con captura.
 
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
