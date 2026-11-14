@@ -5,11 +5,11 @@ Dashboard (artifact privado, tipo Data): "Habitos" -> https://claude.ai/artifact
 Misma estetica que Finanzas (ver Diseno/ESTETICA_DASHBOARDS.md).
 
 Que muestra (por habito, con selector):
-  - Esta semana: dias hechos de tu objetivo semanal, y comparacion con la semana anterior.
-  - Racha: semanas seguidas cumpliendo el objetivo (la semana en curso suma cuando se cumple y no corta mientras tanto).
   - Constancia: dias hechos / dias propuestos en las ultimas 4 semanas.
-  - Camino al habito: racha contra la meta de semanas (12) para darlo por "formado".
+  - Promedio por semana: dias por semana en promedio (semanas completas), contra el objetivo (Gimnasio = 4).
+  - Dias en total.
   - Semana a semana, calendario para mirar para atras y que dias de la semana lo hace mas.
+  Snati pidio NO mostrar "esta semana", "racha" ni "camino al habito".
 
 Datos (la fuente de todo):
   Datos/habitos.csv    habito,objetivo_semanal,meta_semanas,inicio,hasta,descripcion

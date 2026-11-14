@@ -99,7 +99,7 @@
     <div>
       <p class="fz-eyebrow">Snati · Hábitos</p>
       <div class="fz-titlerow"><h1>Hábitos</h1><span class="fz-pill" data-draw="habito-pill">—</span></div>
-      <p>Esta semana hiciste <b class="dash-skeleton" data-draw="t-semana" data-source="resumen" data-field="esta_semana" data-where="habito=Gimnasio">—</b> de <b data-draw="t-objetivo" data-source="resumen" data-field="objetivo" data-where="habito=Gimnasio">—</b> días. Llevás <b class="dash-skeleton" data-draw="t-racha" data-source="resumen" data-field="racha" data-where="habito=Gimnasio">—</b> cumpliendo el objetivo.</p>
+      <p>En las últimas 4 semanas cumpliste el <b class="dash-skeleton" data-draw="t-constancia" data-source="resumen" data-field="constancia_4s" data-where="habito=Gimnasio">—</b> de los días que te propusiste. En promedio vas <b class="dash-skeleton" data-draw="t-promedio" data-source="resumen" data-field="promedio_semana" data-where="habito=Gimnasio">—</b> días por semana, con un objetivo de <b data-draw="t-objetivo" data-source="resumen" data-field="objetivo" data-where="habito=Gimnasio">—</b>.</p>
     </div>
     <label class="fz-pick" for="fz-habito">Hábito
       <select class="dash-select" id="fz-habito" data-draw="habito-select" data-source="habitos"></select>
@@ -110,19 +110,14 @@
     <p class="fz-eyebrow">Resumen</p>
     <section class="fz-tiles" aria-label="Totales">
       <div class="fz-tile">
-        <span class="fz-label">Esta semana</span>
-        <span class="fz-num dash-skeleton" data-draw="tile-semana" data-source="resumen" data-field="esta_semana" data-where="habito=Gimnasio">—</span>
-        <span class="fz-sub">de <span data-draw="tile-objetivo" data-source="resumen" data-field="objetivo" data-where="habito=Gimnasio">—</span> días · <span class="fz-delta" data-draw="d-semana" data-source="resumen" data-field="delta_semana" data-where="habito=Gimnasio">—</span></span>
-      </div>
-      <div class="fz-tile">
-        <span class="fz-label">Racha</span>
-        <span class="fz-num dash-skeleton" data-draw="tile-racha" data-source="resumen" data-field="racha" data-where="habito=Gimnasio">—</span>
-        <span class="fz-sub">semanas seguidas cumpliendo · mejor: <span data-draw="tile-mejor" data-source="resumen" data-field="mejor_racha" data-where="habito=Gimnasio">—</span></span>
-      </div>
-      <div class="fz-tile">
         <span class="fz-label">Constancia</span>
         <span class="fz-num dash-skeleton" data-draw="tile-constancia" data-source="resumen" data-field="constancia_4s" data-where="habito=Gimnasio">—</span>
         <span class="fz-sub">de los días que te propusiste, últimas 4 semanas</span>
+      </div>
+      <div class="fz-tile">
+        <span class="fz-label">Promedio por semana</span>
+        <span class="fz-num dash-skeleton" data-draw="tile-promedio" data-source="resumen" data-field="promedio_semana" data-where="habito=Gimnasio">—</span>
+        <span class="fz-sub">días por semana · objetivo: <span data-draw="tile-objetivo" data-source="resumen" data-field="objetivo" data-where="habito=Gimnasio">—</span></span>
       </div>
       <div class="fz-tile">
         <span class="fz-label">Días en total</span>
@@ -130,16 +125,6 @@
         <span class="fz-sub">desde que empezaste a registrarlo</span>
       </div>
     </section>
-
-    <article class="fz-card" id="camino">
-      <h2>Camino al hábito</h2>
-      <p class="fz-note">Un hábito se considera formado cuando cumplís tu objetivo semanal varias semanas seguidas.</p>
-      <div class="fz-progress-row">
-        <span><span class="fz-num" data-draw="camino-racha" data-source="resumen" data-field="racha_n" data-where="habito=Gimnasio">—</span> <span class="fz-note">de <span data-draw="camino-meta" data-source="resumen" data-field="meta_semanas" data-where="habito=Gimnasio">—</span> semanas seguidas</span></span>
-        <span class="fz-state" data-draw="camino-estado" data-source="resumen" data-field="estado" data-where="habito=Gimnasio">—</span>
-      </div>
-      <div class="fz-progress" data-draw="camino-barra" data-source="resumen" role="img" aria-label="Progreso hacia el hábito formado"></div>
-    </article>
   </section>
 
   <section class="fz-sec" aria-label="Constancia">
@@ -183,9 +168,8 @@
     <dl>
       <dt>Semana</dt><dd>De lunes a domingo.</dd>
       <dt>Objetivo</dt><dd>Los días por semana que te propusiste para cada hábito.</dd>
-      <dt>Racha</dt><dd>Semanas seguidas en las que llegaste al objetivo. La semana en curso suma apenas lo cumplís; mientras tanto no corta la racha.</dd>
+      <dt>Promedio por semana</dt><dd>Días que lo hiciste en promedio por semana, contando las semanas completas desde que empezaste a registrarlo (la semana en curso entra solo si todavía no hay ninguna completa).</dd>
       <dt>Constancia</dt><dd>Días que lo hiciste en las últimas 4 semanas, sobre los días que te habías propuesto.</dd>
-      <dt>Hábito formado</dt><dd>Cuando la racha llega a la meta de semanas seguidas (12 al principio, unas 12 semanas es lo que suele tardar un hábito en volverse automático).</dd>
     </dl>
   </details>
 </div>
@@ -227,7 +211,7 @@
 
   dash.calc('resumen', {
     title: 'Resumen por hábito',
-    description: 'Para cada hábito: días de la última semana, objetivo, racha de semanas cumplidas, mejor racha, constancia de las últimas 4 semanas, total de días y avance hacia el hábito formado.',
+    description: 'Para cada hábito: objetivo, promedio de días por semana, constancia de las últimas 4 semanas y total de días.',
     inputs: ['habitos', 'semanas', 'registros'],
     fn: (habitos, semanas, registros) => habitos.map((h) => {
       const ss = semanas.filter((s) => s.habito === h.habito);
@@ -251,6 +235,7 @@
         constancia_4s: meta4 ? Math.round((hechos / meta4) * 1000) / 1000 : 0,
         total_dias: new Set(registros.filter((r) => r.habito === h.habito).map((r) => r.fecha)).size,
         meta_semanas: meta, progreso: Math.min(1, racha / meta),
+        promedio_semana: (() => { const comp = ss.filter((x) => !x.en_curso); const base = comp.length ? comp : ss; return base.length ? Math.round((base.reduce((a, x) => a + x.dias, 0) / base.length) * 10) / 10 : 0; })(),
         estado: racha >= meta ? 'Hábito formado' : racha > 0 ? 'En construcción' : 'Arrancando',
       };
     }),
@@ -296,47 +281,15 @@
     if (r) { el.textContent = fmt(r[field], r); el.classList.remove('dash-skeleton'); }
     else { el.textContent = '—'; if (d.status === 'ok' || d.status === 'error') el.classList.remove('dash-skeleton'); }
   });
-  numero('t-semana', 'esta_semana', (v) => String(N(v)));
   numero('t-objetivo', 'objetivo', (v) => String(N(v)));
-  numero('t-racha', 'racha', (v) => fzSemanas(N(v)));
-  numero('tile-semana', 'esta_semana', (v) => String(N(v)));
   numero('tile-objetivo', 'objetivo', (v) => String(N(v)));
-  numero('tile-racha', 'racha', (v) => fzSemanas(N(v)));
-  numero('tile-mejor', 'mejor_racha', (v) => fzSemanas(N(v)));
   numero('tile-constancia', 'constancia_4s', (v) => fzPct(N(v)));
+  numero('t-constancia', 'constancia_4s', (v) => fzPct(N(v)));
+  numero('t-promedio', 'promedio_semana', (v) => new Intl.NumberFormat('es-AR', { maximumFractionDigits: 1 }).format(N(v)));
+  numero('tile-promedio', 'promedio_semana', (v) => new Intl.NumberFormat('es-AR', { maximumFractionDigits: 1 }).format(N(v)));
   numero('tile-total', 'total_dias', (v) => String(N(v)));
-  numero('camino-racha', 'racha_n', (v) => String(N(v)));
-  numero('camino-meta', 'meta_semanas', (v) => String(N(v)));
-  dash.draw('camino-estado', (el) => {
-    const s = fzSel();
-    el.dataset.where = `habito=${encodeURIComponent(s)}`;
-    const d = dash.data('resumen');
-    const r = d.status === 'ok' ? d.data.find((x) => x.habito === s) : null;
-    el.textContent = r ? r.estado : '—';
-    el.classList.toggle('fz-on', !!r && N(r.progreso) >= 1);
-    el.classList.toggle('fz-mid', !r || N(r.progreso) < 1);
-  });
 
-  dash.draw('d-semana', (el) => {
-    const s = fzSel();
-    el.dataset.where = `habito=${encodeURIComponent(s)}`;
-    const d = dash.data('resumen');
-    const r = d.status === 'ok' ? d.data.find((x) => x.habito === s) : null;
-    el.classList.remove('fz-up', 'fz-down');
-    if (!r || r.delta_semana === null || r.delta_semana === undefined) { el.textContent = 'primera semana'; return; }
-    const v = N(r.delta_semana);
-    el.classList.add(v >= 0 ? 'fz-down' : 'fz-up');
-    el.textContent = v === 0 ? 'igual que la anterior' : `${v > 0 ? '▲' : '▼'} ${Math.abs(v)} vs semana anterior`;
-  });
 
-  dash.draw('camino-barra', (el) => {
-    const s = fzSel();
-    const d = dash.data('resumen');
-    const r = d.status === 'ok' ? d.data.find((x) => x.habito === s) : null;
-    el.replaceChildren();
-    if (!r) return;
-    const bar = document.createElement('span'); bar.style.width = `${Math.max(2, N(r.progreso) * 100)}%`; el.append(bar);
-  });
 
   // Tooltip
   const tip = (el) => { const t = document.createElement('div'); t.className = 'fz-tip'; t.hidden = true; el.append(t); return t; };
