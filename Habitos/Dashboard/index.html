@@ -80,7 +80,7 @@
   .fz-state.fz-on { color: var(--fz-accent); border-color: color-mix(in srgb, var(--fz-accent) 45%, transparent); }
   .fz-state.fz-mid { color: var(--color-fg-muted); }
   .fz-heat-box { overflow-x: auto; }
-  .fz-heat { display: grid; gap: 4px; min-width: max-content; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-heat { display: grid; gap: 4px; width: max-content; min-width: max-content; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .fz-heat .fz-hc { width: 18px; height: 18px; border-radius: 4px; background: var(--fz-raise); }
   .fz-heat .fz-hc.fz-done { background: var(--fz-accent); }
   .fz-heat .fz-hc.fz-before { background: transparent; border: 1px dashed var(--color-border-line); }
@@ -131,22 +131,20 @@
     <p class="fz-eyebrow">Constancia</p>
     <article class="fz-card" id="semana-a-semana">
       <h2>Semana a semana</h2>
-      <p class="fz-note">Días que lo hiciste cada semana. La línea punteada es tu objetivo; en menta, las semanas que lo cumpliste.</p>
+      <p class="fz-note">Días que lo hiciste cada semana desde que empezaste a registrarlo. La línea punteada es tu objetivo; en menta, las semanas que lo cumpliste.</p>
       <div class="fz-chart" data-draw="semanas-chart" data-source="semanas"></div>
     </article>
-    <section class="fz-grid">
-      <article class="fz-card" id="calendario">
-        <h2>Mirando para atrás</h2>
-        <p class="fz-note">Cada cuadrado es un día. Así ves cómo se va armando el hábito.</p>
-        <div class="fz-heat-box"><div class="fz-heat" data-draw="calendario" data-source="registros habitos"></div></div>
-        <div class="fz-legend"><span><i class="fz-done"></i>Lo hiciste</span><span><i></i>No</span><span><i class="fz-before"></i>Antes de empezar a registrar</span></div>
-      </article>
-      <article class="fz-card" id="dias">
-        <h2>Tus días</h2>
-        <p class="fz-note">Qué días de la semana lo hacés más seguido.</p>
-        <div class="fz-chart" data-draw="dias-chart" data-source="por_dia_semana"></div>
-      </article>
-    </section>
+    <article class="fz-card" id="calendario">
+      <h2>Mirando para atrás</h2>
+      <p class="fz-note">Cada cuadrado es un día. Así ves cómo se va armando el hábito.</p>
+      <div class="fz-heat-box"><div class="fz-heat" data-draw="calendario" data-source="registros habitos"></div></div>
+      <div class="fz-legend"><span><i class="fz-done"></i>Lo hiciste</span><span><i></i>No</span><span><i class="fz-before"></i>Antes de empezar a registrar</span></div>
+    </article>
+    <article class="fz-card" id="dias">
+      <h2>Tus días</h2>
+      <p class="fz-note">Qué días de la semana lo hacés más seguido.</p>
+      <div class="fz-chart" data-draw="dias-chart" data-source="por_dia_semana"></div>
+    </article>
   </section>
 
   <section class="fz-sec" aria-label="Detalle">
@@ -310,7 +308,7 @@
     if (d.status === 'error') return fail(el);
     if (d.status !== 'ok') return;
     const s = fzSel();
-    const rows = d.data.filter((r) => r.habito === s).slice(-16);
+    const rows = d.data.filter((r) => r.habito === s).slice(-53);
     if (!rows.length) return;
     const obj = N(rows[rows.length - 1].objetivo);
     const W = Math.max(260, el.clientWidth), H = 224;
@@ -373,7 +371,7 @@
     const hechos = new Set(r.data.filter((x) => x.habito === s).map((x) => x.fecha));
     const fin = [hab.hasta, ...hechos].sort().pop();
     const lunes = (iso) => { const d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return d; };
-    const semanas = 18;
+    const semanas = Math.min(53, Math.max(18, Math.round((lunes(fin) - lunes(hab.inicio)) / 604800000) + 1));
     const start = lunes(fin); start.setUTCDate(start.getUTCDate() - 7 * (semanas - 1));
     el.style.gridTemplateColumns = `auto repeat(${semanas}, 18px)`;
     el.style.gridTemplateRows = `14px repeat(7, 18px)`;
