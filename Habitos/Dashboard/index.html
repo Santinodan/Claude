@@ -1,0 +1,457 @@
+<meta name="dash-one-writer">
+<style>
+  /* Fondo y superficies: los grises propios del dashboard. Acento menta para la plata. */
+  .fz { --fz-accent: #4fbf8f; --fz-raise: color-mix(in srgb, var(--color-fg) 6%, transparent); --fz-faint: var(--color-fg-muted); }
+  .fz { display: grid; gap: calc(var(--cds-gap-lg) * 1.25); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+  .fz-head { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); align-items: flex-end; justify-content: space-between; }
+  .fz-head > div { min-width: 0; flex: 1 1 22rem; }
+  .fz-eyebrow { margin: 0; font-size: var(--cds-font-size-caption); letter-spacing: .14em; text-transform: uppercase; color: var(--fz-faint); }
+  .fz-titlerow { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--cds-gap-sm) var(--cds-gap-md); margin-top: var(--cds-gap-xs); }
+  .fz-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.05; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
+  .fz-pill { display: inline-block; padding: 2px 10px; border: 1px solid var(--color-border-line); border-radius: 999px; font-size: var(--cds-font-size-caption); color: var(--fz-accent); text-transform: capitalize; white-space: nowrap; }
+  .fz-head p { margin: var(--cds-gap-sm) 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 70ch; }
+  .fz-head b { color: var(--color-fg); font-weight: 600; }
+  .fz-pick { display: grid; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-pick select { min-width: 12rem; background-color: var(--fz-raise); color: var(--color-fg); border-color: var(--color-border-line); }
+  .fz-tiles { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); }
+  .fz-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 14px; padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-xs); align-content: start; }
+  .fz-tile .fz-label, .fz-sus-top .fz-label { font-size: var(--cds-font-size-caption); letter-spacing: .08em; text-transform: uppercase; color: var(--fz-faint); }
+  .fz-tile .fz-num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.6rem, 3.4vw, 2.25rem); line-height: 1.1; font-variant-numeric: tabular-nums; min-height: 1.3em; }
+  .fz-tile .fz-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .fz-grid { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+  .fz-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 14px; padding: var(--cds-pad-lg); min-width: 0; display: grid; gap: var(--cds-gap-sm); align-content: start; }
+  .fz-card h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .fz-card .fz-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-chart { position: relative; min-height: 14rem; }
+  .fz-chart svg { display: block; }
+  .fz-chart text { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .fz-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+  .fz-tip .fz-tip-k { color: var(--cds-text-secondary); }
+  .fz-tablebox { overflow: auto; max-height: 28rem; }
+  .fz-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .fz-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .fz-table td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  .fz-table tbody tr:hover td { background: var(--fz-raise); }
+  .fz-delta { font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .fz-delta.fz-up { color: var(--color-bad); }
+  .fz-delta.fz-down { color: var(--color-ok); }
+  .fz-sec { display: grid; gap: var(--cds-gap-md); }
+  .fz-sec > .fz-eyebrow { padding-bottom: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
+  .fz-table .fz-r { text-align: right; white-space: nowrap; }
+  .fz-fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .fz-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+  .fz [data-dash-source-state=empty] { color: transparent; }
+  .fz [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  .fz details { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz details summary { cursor: pointer; color: var(--color-fg); }
+  .fz details dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--cds-gap-xs) var(--cds-gap-md); margin: var(--cds-gap-sm) 0 0; }
+  .fz details dt { color: var(--color-fg); }
+  .fz details dd { margin: 0; }
+  .fz-tips { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--cds-gap-sm); }
+  .fz-tip-item { display: grid; grid-template-columns: 1fr auto; gap: var(--cds-gap-xs) var(--cds-gap-md); padding: var(--cds-pad-sm) 0; border-bottom: 1px solid var(--color-border-line); }
+  .fz-tip-item:last-child { border-bottom: 0; }
+  .fz-tip-item h3 { margin: 0; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); text-wrap: balance; }
+  .fz-tip-item p { margin: 0; grid-column: 1 / -1; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); max-width: 75ch; }
+  .fz-tip-save { font-size: var(--cds-font-size-caption); color: var(--fz-accent); font-variant-numeric: tabular-nums; white-space: nowrap; align-self: start; }
+  .fz-save-line { margin: 0; font-size: var(--cds-font-size-body); }
+  .fz-save-line b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); color: var(--fz-accent); font-variant-numeric: tabular-nums; }
+  .fz-sus-top { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
+  .fz-sus-top > div { display: grid; gap: var(--cds-gap-xs); }
+  .fz-sus-top .fz-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-sus-top .fz-num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; min-height: 1.3em; }
+  .fz-sus-top .fz-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .fz-card h3 { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+  .fz-matrix-box { overflow-x: auto; }
+  .fz-matrix { display: grid; gap: 1px; min-width: max-content; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .fz-matrix > div { padding: var(--cds-pad-xs) var(--cds-pad-sm); white-space: nowrap; }
+  .fz-matrix .fz-mh { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); text-align: right; border-bottom: 1px solid var(--color-border-line); }
+  .fz-matrix .fz-mh.fz-ml { text-align: left; }
+  .fz-matrix .fz-mn { color: var(--color-fg); }
+  .fz-matrix .fz-mc { text-align: right; border-radius: var(--cds-radius); }
+  .fz-matrix .fz-mc.fz-on { background: color-mix(in srgb, var(--fz-accent) 16%, transparent); color: var(--color-fg); }
+  .fz-matrix .fz-mc.fz-off { color: var(--color-fg-muted); }
+  @media (max-width: 40rem) { .fz-hide-narrow { display: none; } .fz details dl { grid-template-columns: 1fr; } }
+  /* Propios de Hábitos (misma estética que Finanzas) */
+  .fz-progress { position: relative; height: 10px; border-radius: 999px; background: var(--fz-raise); overflow: hidden; }
+  .fz-progress > span { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--fz-accent); }
+  .fz-progress-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--cds-gap-xs) var(--cds-gap-md); }
+  .fz-progress-row .fz-num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.6rem, 3.4vw, 2.25rem); line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .fz-state { display: inline-block; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); white-space: nowrap; }
+  .fz-state.fz-on { color: var(--fz-accent); border-color: color-mix(in srgb, var(--fz-accent) 45%, transparent); }
+  .fz-state.fz-mid { color: var(--color-fg-muted); }
+  .fz-heat-box { overflow-x: auto; }
+  .fz-heat { display: grid; gap: 4px; min-width: max-content; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-heat .fz-hc { width: 18px; height: 18px; border-radius: 4px; background: var(--fz-raise); }
+  .fz-heat .fz-hc.fz-done { background: var(--fz-accent); }
+  .fz-heat .fz-hc.fz-before { background: transparent; border: 1px dashed var(--color-border-line); }
+  .fz-heat .fz-hc.fz-future { background: transparent; }
+  .fz-heat .fz-hc.fz-today { outline: 1px solid var(--color-fg-muted); outline-offset: 1px; }
+  .fz-heat .fz-hl { padding-right: 6px; line-height: 18px; }
+  .fz-heat .fz-hm { height: 14px; white-space: nowrap; }
+  .fz-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); align-items: center; }
+  .fz-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -2px; background: var(--fz-raise); }
+  .fz-legend i.fz-done { background: var(--fz-accent); }
+  .fz-legend i.fz-before { background: transparent; border: 1px dashed var(--color-border-line); }
+</style>
+
+<div class="fz" lang="es-AR">
+  <header class="fz-head" id="resumen">
+    <div>
+      <p class="fz-eyebrow">Snati · Hábitos</p>
+      <div class="fz-titlerow"><h1>Hábitos</h1><span class="fz-pill" data-draw="habito-pill">—</span></div>
+      <p>Esta semana hiciste <b class="dash-skeleton" data-draw="t-semana" data-source="resumen" data-field="esta_semana" data-where="habito=Gimnasio">—</b> de <b data-draw="t-objetivo" data-source="resumen" data-field="objetivo" data-where="habito=Gimnasio">—</b> días. Llevás <b class="dash-skeleton" data-draw="t-racha" data-source="resumen" data-field="racha" data-where="habito=Gimnasio">—</b> cumpliendo el objetivo.</p>
+    </div>
+    <label class="fz-pick" for="fz-habito">Hábito
+      <select class="dash-select" id="fz-habito" data-draw="habito-select" data-source="habitos"></select>
+    </label>
+  </header>
+
+  <section class="fz-sec" aria-label="Resumen">
+    <p class="fz-eyebrow">Resumen</p>
+    <section class="fz-tiles" aria-label="Totales">
+      <div class="fz-tile">
+        <span class="fz-label">Esta semana</span>
+        <span class="fz-num dash-skeleton" data-draw="tile-semana" data-source="resumen" data-field="esta_semana" data-where="habito=Gimnasio">—</span>
+        <span class="fz-sub">de <span data-draw="tile-objetivo" data-source="resumen" data-field="objetivo" data-where="habito=Gimnasio">—</span> días · <span class="fz-delta" data-draw="d-semana" data-source="resumen" data-field="delta_semana" data-where="habito=Gimnasio">—</span></span>
+      </div>
+      <div class="fz-tile">
+        <span class="fz-label">Racha</span>
+        <span class="fz-num dash-skeleton" data-draw="tile-racha" data-source="resumen" data-field="racha" data-where="habito=Gimnasio">—</span>
+        <span class="fz-sub">semanas seguidas cumpliendo · mejor: <span data-draw="tile-mejor" data-source="resumen" data-field="mejor_racha" data-where="habito=Gimnasio">—</span></span>
+      </div>
+      <div class="fz-tile">
+        <span class="fz-label">Constancia</span>
+        <span class="fz-num dash-skeleton" data-draw="tile-constancia" data-source="resumen" data-field="constancia_4s" data-where="habito=Gimnasio">—</span>
+        <span class="fz-sub">de los días que te propusiste, últimas 4 semanas</span>
+      </div>
+      <div class="fz-tile">
+        <span class="fz-label">Días en total</span>
+        <span class="fz-num dash-skeleton" data-draw="tile-total" data-source="resumen" data-field="total_dias" data-where="habito=Gimnasio">—</span>
+        <span class="fz-sub">desde que empezaste a registrarlo</span>
+      </div>
+    </section>
+
+    <article class="fz-card" id="camino">
+      <h2>Camino al hábito</h2>
+      <p class="fz-note">Un hábito se considera formado cuando cumplís tu objetivo semanal varias semanas seguidas.</p>
+      <div class="fz-progress-row">
+        <span><span class="fz-num" data-draw="camino-racha" data-source="resumen" data-field="racha_n" data-where="habito=Gimnasio">—</span> <span class="fz-note">de <span data-draw="camino-meta" data-source="resumen" data-field="meta_semanas" data-where="habito=Gimnasio">—</span> semanas seguidas</span></span>
+        <span class="fz-state" data-draw="camino-estado" data-source="resumen" data-field="estado" data-where="habito=Gimnasio">—</span>
+      </div>
+      <div class="fz-progress" data-draw="camino-barra" data-source="resumen" role="img" aria-label="Progreso hacia el hábito formado"></div>
+    </article>
+  </section>
+
+  <section class="fz-sec" aria-label="Constancia">
+    <p class="fz-eyebrow">Constancia</p>
+    <article class="fz-card" id="semana-a-semana">
+      <h2>Semana a semana</h2>
+      <p class="fz-note">Días que lo hiciste cada semana. La línea punteada es tu objetivo; en menta, las semanas que lo cumpliste.</p>
+      <div class="fz-chart" data-draw="semanas-chart" data-source="semanas"></div>
+    </article>
+    <section class="fz-grid">
+      <article class="fz-card" id="calendario">
+        <h2>Mirando para atrás</h2>
+        <p class="fz-note">Cada cuadrado es un día. Así ves cómo se va armando el hábito.</p>
+        <div class="fz-heat-box"><div class="fz-heat" data-draw="calendario" data-source="registros habitos"></div></div>
+        <div class="fz-legend"><span><i class="fz-done"></i>Lo hiciste</span><span><i></i>No</span><span><i class="fz-before"></i>Antes de empezar a registrar</span></div>
+      </article>
+      <article class="fz-card" id="dias">
+        <h2>Tus días</h2>
+        <p class="fz-note">Qué días de la semana lo hacés más seguido.</p>
+        <div class="fz-chart" data-draw="dias-chart" data-source="por_dia_semana"></div>
+      </article>
+    </section>
+  </section>
+
+  <section class="fz-sec" aria-label="Detalle">
+    <p class="fz-eyebrow">Detalle</p>
+    <article class="fz-card" id="registro">
+      <h2>Registro</h2>
+      <p class="fz-note">Cada día que lo hiciste, del más nuevo al más viejo.</p>
+      <div class="fz-tablebox">
+        <table class="fz-table" data-source="registros" data-row-key="id">
+          <thead><tr><th data-field="fecha">Fecha</th><th>Día</th><th data-field="habito">Hábito</th><th class="fz-hide-narrow" data-field="nota">Nota</th></tr></thead>
+          <tbody data-draw="tabla-registro"></tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <details>
+    <summary>Cómo se calculan los números</summary>
+    <dl>
+      <dt>Semana</dt><dd>De lunes a domingo.</dd>
+      <dt>Objetivo</dt><dd>Los días por semana que te propusiste para cada hábito.</dd>
+      <dt>Racha</dt><dd>Semanas seguidas en las que llegaste al objetivo. La semana en curso suma apenas lo cumplís; mientras tanto no corta la racha.</dd>
+      <dt>Constancia</dt><dd>Días que lo hiciste en las últimas 4 semanas, sobre los días que te habías propuesto.</dd>
+      <dt>Hábito formado</dt><dd>Cuando la racha llega a la meta de semanas seguidas (12 al principio, unas 12 semanas es lo que suele tardar un hábito en volverse automático).</dd>
+    </dl>
+  </details>
+</div>
+
+<script>
+  const N = (x) => { const v = Number(x); return Number.isFinite(v) ? v : 0; };
+  window.fzPct = (v) => new Intl.NumberFormat('es-AR', { style: 'percent', maximumFractionDigits: 0 }).format(v);
+  window.fzDia = (iso) => { const [, m, d] = String(iso).slice(0, 10).split('-'); return `${d}/${m}`; };
+  window.fzDiaSemana = (iso) => new Intl.DateTimeFormat('es-AR', { weekday: 'long', timeZone: 'UTC' }).format(new Date(iso + 'T00:00:00Z'));
+  window.fzSemanas = (n) => `${n} ${N(n) === 1 ? 'semana' : 'semanas'}`;
+  window.fzSel = () => {
+    const p = dash.params().habito;
+    if (p) return p;
+    const h = dash.data('habitos');
+    return h.status === 'ok' && h.data.length ? h.data[0].habito : '';
+  };
+
+  dash.calc('semanas', {
+    title: 'Días por semana',
+    description: 'Días hechos de cada hábito en cada semana (lunes a domingo), desde que empezó el registro hasta la última actualización, y si se cumplió el objetivo.',
+    inputs: ['habitos', 'registros'],
+    fn: (habitos, registros) => {
+      const lunes = (iso) => { const d = new Date(iso + 'T00:00:00Z'); const w = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - w); return d.toISOString().slice(0, 10); };
+      const out = [];
+      for (const h of habitos) {
+        const regs = registros.filter((r) => r.habito === h.habito);
+        const fin = [h.hasta, ...regs.map((r) => r.fecha)].sort().pop();
+        const objetivo = Number(h.objetivo_semanal || 0);
+        for (let d = new Date(lunes(h.inicio) + 'T00:00:00Z'); d.toISOString().slice(0, 10) <= fin; d.setUTCDate(d.getUTCDate() + 7)) {
+          const s = d.toISOString().slice(0, 10);
+          const e = new Date(d); e.setUTCDate(e.getUTCDate() + 6); const ee = e.toISOString().slice(0, 10);
+          const dias = new Set(regs.filter((r) => r.fecha >= s && r.fecha <= ee).map((r) => r.fecha)).size;
+          out.push({ habito: h.habito, semana: s, dias, objetivo, cumplida: dias >= objetivo ? 1 : 0, en_curso: ee >= fin ? 1 : 0 });
+        }
+      }
+      return out;
+    },
+  });
+
+  dash.calc('resumen', {
+    title: 'Resumen por hábito',
+    description: 'Para cada hábito: días de la última semana, objetivo, racha de semanas cumplidas, mejor racha, constancia de las últimas 4 semanas, total de días y avance hacia el hábito formado.',
+    inputs: ['habitos', 'semanas', 'registros'],
+    fn: (habitos, semanas, registros) => habitos.map((h) => {
+      const ss = semanas.filter((s) => s.habito === h.habito);
+      const ult = ss[ss.length - 1], prev = ss[ss.length - 2];
+      let racha = 0;
+      for (let i = ss.length - 1; i >= 0; i--) {
+        if (ss[i].cumplida) racha += 1;
+        else if (ss[i].en_curso) continue;
+        else break;
+      }
+      let mejor = 0, run = 0;
+      for (const s of ss) { run = s.cumplida ? run + 1 : 0; mejor = Math.max(mejor, run); }
+      const ult4 = ss.slice(-4);
+      const hechos = ult4.reduce((a, s) => a + Math.min(s.dias, s.objetivo), 0), meta4 = ult4.reduce((a, s) => a + s.objetivo, 0);
+      const meta = Number(h.meta_semanas || 12);
+      return {
+        habito: h.habito, objetivo: Number(h.objetivo_semanal || 0),
+        esta_semana: ult ? ult.dias : 0,
+        delta_semana: ult && prev ? ult.dias - prev.dias : null,
+        racha, racha_n: racha, mejor_racha: mejor,
+        constancia_4s: meta4 ? Math.round((hechos / meta4) * 1000) / 1000 : 0,
+        total_dias: new Set(registros.filter((r) => r.habito === h.habito).map((r) => r.fecha)).size,
+        meta_semanas: meta, progreso: Math.min(1, racha / meta),
+        estado: racha >= meta ? 'Hábito formado' : racha > 0 ? 'En construcción' : 'Arrancando',
+      };
+    }),
+  });
+
+  dash.calc('por_dia_semana', {
+    title: 'Por día de la semana',
+    description: 'Cuántas veces se hizo cada hábito según el día de la semana (lunes a domingo).',
+    inputs: ['habitos', 'registros'],
+    fn: (habitos, registros) => {
+      const nombres = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'];
+      const out = [];
+      for (const h of habitos) {
+        const c = [0, 0, 0, 0, 0, 0, 0];
+        for (const r of registros.filter((x) => x.habito === h.habito)) c[(new Date(r.fecha + 'T00:00:00Z').getUTCDay() + 6) % 7] += 1;
+        c.forEach((n, i) => out.push({ habito: h.habito, dia: nombres[i], orden: i, veces: n }));
+      }
+      return out;
+    },
+  });
+
+  const fila = (key, cells) => {
+    const tr = document.createElement('tr'); tr.dataset.key = key;
+    for (const [txt, cls] of cells) { const td = document.createElement('td'); if (cls) td.className = cls; td.textContent = txt; tr.append(td); }
+    return tr;
+  };
+  const fail = (el) => { el.replaceChildren(); const d = document.createElement('div'); d.className = 'fz-fail'; d.textContent = 'Failed to load'; el.append(d); };
+
+  dash.draw('habito-select', (sel) => {
+    const h = dash.data('habitos');
+    const hs = h.status === 'ok' ? h.data.map((r) => r.habito) : [];
+    sel.replaceChildren(...hs.map((x) => new Option(x, x)));
+    sel.value = fzSel();
+    sel.onchange = () => dash.setParams({ habito: sel.value });
+  });
+  dash.draw('habito-pill', (el) => { el.textContent = fzSel() || '—'; });
+
+  const numero = (name, field, fmt) => dash.draw(name, (el) => {
+    const s = fzSel();
+    el.dataset.where = `habito=${encodeURIComponent(s)}`;
+    const d = dash.data('resumen');
+    const r = d.status === 'ok' ? d.data.find((x) => x.habito === s) : null;
+    if (r) { el.textContent = fmt(r[field], r); el.classList.remove('dash-skeleton'); }
+    else { el.textContent = '—'; if (d.status === 'ok' || d.status === 'error') el.classList.remove('dash-skeleton'); }
+  });
+  numero('t-semana', 'esta_semana', (v) => String(N(v)));
+  numero('t-objetivo', 'objetivo', (v) => String(N(v)));
+  numero('t-racha', 'racha', (v) => fzSemanas(N(v)));
+  numero('tile-semana', 'esta_semana', (v) => String(N(v)));
+  numero('tile-objetivo', 'objetivo', (v) => String(N(v)));
+  numero('tile-racha', 'racha', (v) => fzSemanas(N(v)));
+  numero('tile-mejor', 'mejor_racha', (v) => fzSemanas(N(v)));
+  numero('tile-constancia', 'constancia_4s', (v) => fzPct(N(v)));
+  numero('tile-total', 'total_dias', (v) => String(N(v)));
+  numero('camino-racha', 'racha_n', (v) => String(N(v)));
+  numero('camino-meta', 'meta_semanas', (v) => String(N(v)));
+  dash.draw('camino-estado', (el) => {
+    const s = fzSel();
+    el.dataset.where = `habito=${encodeURIComponent(s)}`;
+    const d = dash.data('resumen');
+    const r = d.status === 'ok' ? d.data.find((x) => x.habito === s) : null;
+    el.textContent = r ? r.estado : '—';
+    el.classList.toggle('fz-on', !!r && N(r.progreso) >= 1);
+    el.classList.toggle('fz-mid', !r || N(r.progreso) < 1);
+  });
+
+  dash.draw('d-semana', (el) => {
+    const s = fzSel();
+    el.dataset.where = `habito=${encodeURIComponent(s)}`;
+    const d = dash.data('resumen');
+    const r = d.status === 'ok' ? d.data.find((x) => x.habito === s) : null;
+    el.classList.remove('fz-up', 'fz-down');
+    if (!r || r.delta_semana === null || r.delta_semana === undefined) { el.textContent = 'primera semana'; return; }
+    const v = N(r.delta_semana);
+    el.classList.add(v >= 0 ? 'fz-down' : 'fz-up');
+    el.textContent = v === 0 ? 'igual que la anterior' : `${v > 0 ? '▲' : '▼'} ${Math.abs(v)} vs semana anterior`;
+  });
+
+  dash.draw('camino-barra', (el) => {
+    const s = fzSel();
+    const d = dash.data('resumen');
+    const r = d.status === 'ok' ? d.data.find((x) => x.habito === s) : null;
+    el.replaceChildren();
+    if (!r) return;
+    const bar = document.createElement('span'); bar.style.width = `${Math.max(2, N(r.progreso) * 100)}%`; el.append(bar);
+  });
+
+  // Tooltip
+  const tip = (el) => { const t = document.createElement('div'); t.className = 'fz-tip'; t.hidden = true; el.append(t); return t; };
+  const showTip = (el, t, ev, k, v) => {
+    t.replaceChildren();
+    const a = document.createElement('div'); a.className = 'fz-tip-k'; a.textContent = k;
+    const b = document.createElement('div'); b.textContent = v;
+    t.append(a, b); t.hidden = false;
+    const box = el.getBoundingClientRect();
+    let x = ev.clientX - box.left + 12, y = ev.clientY - box.top + 12;
+    x = Math.min(x, el.clientWidth - t.offsetWidth - 4); y = Math.min(y, el.clientHeight - t.offsetHeight - 4);
+    t.style.left = Math.max(0, x) + 'px'; t.style.top = Math.max(0, y) + 'px';
+  };
+
+  dash.draw('semanas-chart', (el) => {
+    const d = dash.data('semanas');
+    el.replaceChildren();
+    if (d.status === 'error') return fail(el);
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    const rows = d.data.filter((r) => r.habito === s).slice(-16);
+    if (!rows.length) return;
+    const obj = N(rows[rows.length - 1].objetivo);
+    const W = Math.max(260, el.clientWidth), H = 224;
+    const y = d3.scaleLinear([0, 7], [H - 24, 10]);
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Días por semana');
+    const ticks = [0, 1, 2, 3, 4, 5, 6, 7];
+    const ml = 22;
+    const x = d3.scaleBand(rows.map((r) => r.semana), [ml, W - 4]).padding(0.3);
+    const bw = Math.min(32, x.bandwidth());
+    svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', ml).attr('x2', W - 4).attr('y1', (v) => y(v)).attr('y2', (v) => y(v)).style('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(ticks.filter((v) => v % 2 === 1 || v === 0 || v === 7)).join('text').attr('x', ml - 6).attr('y', (v) => y(v)).attr('dy', '.35em').attr('text-anchor', 'end').style('fill', 'var(--color-fg-muted)').text((v) => v);
+    const t = tip(el);
+    svg.append('g').selectAll('rect').data(rows).join('rect')
+      .attr('x', (r) => x(r.semana) + (x.bandwidth() - bw) / 2).attr('width', bw)
+      .attr('y', (r) => y(N(r.dias))).attr('height', (r) => Math.max(N(r.dias) ? 2 : 0, y(0) - y(N(r.dias)))).attr('rx', 3)
+      .style('fill', (r) => N(r.cumplida) ? 'var(--fz-accent)' : 'var(--cds-chart-muted)')
+      .on('pointermove', (ev, r) => showTip(el, t, ev, `Semana del ${fzDia(r.semana)}${N(r.en_curso) ? ' (en curso)' : ''}`, `${r.dias} de ${r.objetivo} días`))
+      .on('pointerleave', () => { t.hidden = true; });
+    svg.append('line').attr('x1', ml).attr('x2', W - 4).attr('y1', y(obj)).attr('y2', y(obj)).style('stroke', 'var(--color-fg-muted)').attr('stroke-dasharray', '4 4');
+    svg.append('text').attr('x', W - 6).attr('y', y(obj) - 6).attr('text-anchor', 'end').style('fill', 'var(--color-fg-muted)').text(`objetivo: ${obj} días`);
+    const every = Math.max(1, Math.ceil(rows.length / Math.max(1, Math.floor((W - ml) / 48))));
+    svg.append('g').selectAll('text').data(rows.filter((r, i) => i % every === 0)).join('text')
+      .attr('x', (r) => x(r.semana) + x.bandwidth() / 2).attr('y', H - 6).attr('text-anchor', 'middle').style('fill', 'var(--color-fg-muted)').text((r) => fzDia(r.semana));
+  });
+
+  dash.draw('dias-chart', (el) => {
+    const d = dash.data('por_dia_semana');
+    el.replaceChildren();
+    if (d.status === 'error') return fail(el);
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    const rows = d.data.filter((r) => r.habito === s).sort((a, b) => N(a.orden) - N(b.orden));
+    if (!rows.length) return;
+    const W = Math.max(260, el.clientWidth), H = 224;
+    const max = Math.max(1, d3.max(rows, (r) => N(r.veces)));
+    const y = d3.scaleLinear([0, max], [H - 24, 26]).nice();
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Veces por día de la semana');
+    const x = d3.scaleBand(rows.map((r) => r.dia), [8, W - 8]).padding(0.3);
+    const bw = Math.min(32, x.bandwidth());
+    svg.append('g').selectAll('line').data(y.ticks(Math.min(4, max))).join('line').attr('x1', 8).attr('x2', W - 8).attr('y1', (v) => y(v)).attr('y2', (v) => y(v)).style('stroke', 'var(--cds-chart-grid)');
+    const t = tip(el);
+    svg.append('g').selectAll('rect').data(rows).join('rect')
+      .attr('x', (r) => x(r.dia) + (x.bandwidth() - bw) / 2).attr('width', bw)
+      .attr('y', (r) => y(N(r.veces))).attr('height', (r) => Math.max(0, y(0) - y(N(r.veces)))).attr('rx', 3)
+      .style('fill', (r) => N(r.veces) === max ? 'var(--fz-accent)' : 'var(--cds-chart-muted)')
+      .on('pointermove', (ev, r) => showTip(el, t, ev, r.dia, `${r.veces} ${N(r.veces) === 1 ? 'vez' : 'veces'}`))
+      .on('pointerleave', () => { t.hidden = true; });
+    svg.append('g').selectAll('text').data(rows).join('text').attr('x', (r) => x(r.dia) + x.bandwidth() / 2).attr('y', (r) => y(N(r.veces)) - 6).attr('text-anchor', 'middle').style('fill', 'var(--color-fg-muted)').text((r) => N(r.veces) ? r.veces : '');
+    svg.append('g').selectAll('text.d').data(rows).join('text').attr('x', (r) => x(r.dia) + x.bandwidth() / 2).attr('y', H - 6).attr('text-anchor', 'middle').style('fill', 'var(--color-fg-muted)').text((r) => r.dia);
+  });
+
+  dash.draw('calendario', (el) => {
+    const r = dash.data('registros'), h = dash.data('habitos');
+    el.replaceChildren();
+    if (r.status === 'error' || h.status === 'error') return fail(el);
+    if (r.status !== 'ok' || h.status !== 'ok') return;
+    const s = fzSel();
+    const hab = h.data.find((x) => x.habito === s);
+    if (!hab) return;
+    const hechos = new Set(r.data.filter((x) => x.habito === s).map((x) => x.fecha));
+    const fin = [hab.hasta, ...hechos].sort().pop();
+    const lunes = (iso) => { const d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return d; };
+    const semanas = 18;
+    const start = lunes(fin); start.setUTCDate(start.getUTCDate() - 7 * (semanas - 1));
+    el.style.gridTemplateColumns = `auto repeat(${semanas}, 18px)`;
+    el.style.gridTemplateRows = `14px repeat(7, 18px)`;
+    const nombres = ['lun', '', 'mié', '', 'vie', '', 'dom'];
+    const cell = (cls, txt, col, row, title) => { const c = document.createElement('div'); c.className = cls; if (txt) c.textContent = txt; c.style.gridColumn = col; c.style.gridRow = row; if (title) c.title = title; el.append(c); };
+    let mesPrev = '';
+    for (let w = 0; w < semanas; w++) {
+      const d0 = new Date(start); d0.setUTCDate(d0.getUTCDate() + 7 * w);
+      const mes = new Intl.DateTimeFormat('es-AR', { month: 'short', timeZone: 'UTC' }).format(d0).replace('.', '');
+      cell('fz-hm', mes !== mesPrev ? mes : '', w + 2, 1); mesPrev = mes;
+      for (let k = 0; k < 7; k++) {
+        const dd = new Date(d0); dd.setUTCDate(dd.getUTCDate() + k);
+        const iso = dd.toISOString().slice(0, 10);
+        let cls = 'fz-hc';
+        if (iso < hab.inicio) cls += ' fz-before';
+        else if (iso > fin) cls += ' fz-future';
+        else if (hechos.has(iso)) cls += ' fz-done';
+        if (iso === fin) cls += ' fz-today';
+        cell(cls, '', w + 2, k + 2, `${fzDia(iso)} · ${hechos.has(iso) ? 'lo hiciste' : iso < hab.inicio ? 'sin registro' : 'no'}`);
+      }
+    }
+    nombres.forEach((n, k) => cell('fz-hl', n, 1, k + 2));
+  });
+
+  dash.draw('tabla-registro', (tb) => {
+    const d = dash.data('registros');
+    tb.replaceChildren();
+    if (d.status !== 'ok') return;
+    const s = fzSel();
+    for (const r of d.data.filter((x) => x.habito === s).sort((a, b) => b.fecha.localeCompare(a.fecha))) {
+      tb.append(fila(r.id, [[fzDia(r.fecha)], [fzDiaSemana(r.fecha)], [r.habito], [r.nota || '', 'fz-hide-narrow']]));
+    }
+  });
+</script>

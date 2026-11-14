@@ -31,6 +31,8 @@
 | `Finanzas/PRINCIPIOS_FINANZAS.md` | **Punto de partida de finanzas**: reglas, dónde está cada cosa, estado actual y pendientes. `Finanzas/PROMPT_NUEVO_CHAT.md` = prompt para seguir en otro chat. |
 | `Finanzas/COMO_CARGAR.md` | Paso a paso para cargar gastos, ingresos y ahorro del mes (capturas → CSV → Excel → Drive personal). |
 | `Finanzas/Datos/`, `Finanzas/Planillas/` | Datos de cada mes (CSV, fuente de todo) y Excel mensuales. El **dashboard** (artifact "Finanzas personales", código en `Finanzas/Dashboard/`) es la vista gráfica del Excel: siempre tienen que coincidir. |
+| `Habitos/` | Seguimiento de hábitos (gimnasio y los que vengan): datos en CSV y dashboard "Hábitos" (constancia, racha, calendario). Ver `Habitos/LEEME.txt`. |
+| `Diseno/ESTETICA_DASHBOARDS.md` | **Estética obligatoria de todos los dashboards** (gris oscuro + acento menta), con capturas en `Diseno/capturas/` y visor para sacarlas en `Diseno/visor/`. |
 | `.claude/skills/creador-de-luts/` | Skill **Creador de LUTs**: receta del look que funcionó, scripts para generar, retocar y comparar LUTs. |
 
 ## Áreas de trabajo

@@ -1,0 +1,29 @@
+HABITOS - seguimiento de constancia
+===================================
+
+Dashboard (artifact privado, tipo Data): "Habitos" -> https://claude.ai/artifact/RRuyE8cU164ur1NAW9vSEg
+Misma estetica que Finanzas (ver Diseno/ESTETICA_DASHBOARDS.md).
+
+Que muestra (por habito, con selector):
+  - Esta semana: dias hechos de tu objetivo semanal, y comparacion con la semana anterior.
+  - Racha: semanas seguidas cumpliendo el objetivo (la semana en curso suma cuando se cumple y no corta mientras tanto).
+  - Constancia: dias hechos / dias propuestos en las ultimas 4 semanas.
+  - Camino al habito: racha contra la meta de semanas (12) para darlo por "formado".
+  - Semana a semana, calendario para mirar para atras y que dias de la semana lo hace mas.
+
+Datos (la fuente de todo):
+  Datos/habitos.csv    habito,objetivo_semanal,meta_semanas,inicio,hasta,descripcion
+                       - objetivo_semanal: dias por semana que se propone (Gimnasio = 4).
+                       - inicio: primer dia registrado. hasta: ultimo dia que Snati informo (con o sin habito).
+  Datos/registros.csv  id,fecha,habito,nota   (una fila por dia que lo hizo; fecha AAAA-MM-DD)
+
+Como cargar (cuando Snati cuenta que dias lo hizo):
+  1. Agregar una fila por dia en registros.csv (id siguiente) y actualizar "hasta" en habitos.csv
+     con la fecha del ultimo dia informado (asi las semanas sin registro cuentan como no cumplidas).
+  2. Habito nuevo: una fila en habitos.csv (preguntar objetivo semanal).
+  3. Subir los dos CSV al dashboard (Artifact publish con asset:true en su url) y apuntar las fuentes
+     "habitos" y "registros" al archivo nuevo (ArtifactData update de datasets/<id>, con source, updated y edit).
+     Borrar el asset viejo.
+  4. Commit y push.
+
+Semana = lunes a domingo. No se usa la memoria de Claude: todo queda en este repo.

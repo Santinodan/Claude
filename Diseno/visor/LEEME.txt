@@ -1,0 +1,20 @@
+VISOR LOCAL PARA CAPTURAS DE LOS DASHBOARDS
+===========================================
+
+Reproduce una pagina de dashboard (tipo Data de Claude) con los CSV de datos y le saca una foto,
+para documentar la estetica (ver ../ESTETICA_DASHBOARDS.md).
+
+Preparar (una vez por sesion):
+  1. Bajar los estilos del tipo: Artifact action "read", url del dashboard, path "artifact-type/app.css",
+     y copiar ese archivo aca como app.css (no se sube al repo: es del tipo, no nuestro).
+  2. cd Diseno/visor && npm init -y && npm install d3@7.9.0
+
+Usar:
+  python3 armar_visor.py ../../Habitos/Dashboard/index.html habitos.html \
+      habitos=../../Habitos/Datos/habitos.csv registros=../../Habitos/Datos/registros.csv
+  node captura.js "$PWD/habitos.html" ../capturas/habitos_escritorio.png 1280
+  node captura.js "$PWD/habitos.html" ../capturas/habitos_celular.png 420
+
+Para Finanzas, primero armar los CSV con Finanzas/_Herramientas/exportar_dashboard.py y pasar
+gastos=, ingresos=, ahorro= y consejos=Finanzas/Datos/consejos.csv.
+Las capturas salen al doble de resolucion; achicarlas a la mitad antes de subirlas.
