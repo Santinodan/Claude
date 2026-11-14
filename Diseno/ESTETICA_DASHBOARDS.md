@@ -86,7 +86,7 @@ una columna y las columnas secundarias de las tablas se esconden (`.fz-hide-narr
 - **Línea de objetivo**: punteada (`stroke-dasharray 4 4`) en muted, con el texto `objetivo: 4 días` al final.
 - **Tooltip** (`.fz-tip`): cajita flotante con fondo `--cds-surface-popover`, borde, sombra, radio; primera
   línea en gris (qué es), segunda con el valor. Va dentro del gráfico.
-- **Grilla mes por mes / calendario**: celdas redondeadas; las "activas" en menta (suave o lleno), las vacías
+- **Grilla mes por mes / calendario**: un bloque por mes con su nombre y total arriba, separados por un espacio; celdas redondeadas que se achican para entrar en el ancho; las "activas" en menta (suave o lleno), las vacías
   en `--fz-raise`, las de antes de empezar con borde punteado.
 - **Barra de progreso** (`.fz-progress`): 10px de alto, redonda, fondo `--fz-raise`, relleno menta.
 - Los SVG van con `width="100%"` y `viewBox`, y se dibujan según `clientWidth`.

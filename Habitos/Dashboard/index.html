@@ -80,14 +80,16 @@
   .fz-state.fz-on { color: var(--fz-accent); border-color: color-mix(in srgb, var(--fz-accent) 45%, transparent); }
   .fz-state.fz-mid { color: var(--color-fg-muted); }
   .fz-heat-box { overflow-x: auto; }
-  .fz-heat { display: grid; gap: 4px; width: max-content; min-width: max-content; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-heat { display: flex; align-items: flex-start; gap: var(--fz-mgap, 12px); width: max-content; min-width: max-content; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fz-heat .fz-hdays, .fz-heat .fz-month { display: grid; gap: var(--fz-gap, 4px); grid-auto-flow: column; }
+  .fz-heat .fz-mname { grid-row: 1; white-space: nowrap; color: var(--color-fg); }
+  .fz-heat .fz-mname span { color: var(--color-fg-muted); }
   .fz-heat .fz-hc { width: var(--fz-cell, 18px); height: var(--fz-cell, 18px); border-radius: calc(var(--fz-cell, 18px) / 4.5); background: var(--fz-raise); }
   .fz-heat .fz-hc.fz-done { background: var(--fz-accent); }
   .fz-heat .fz-hc.fz-before { background: transparent; border: 1px dashed var(--color-border-line); }
   .fz-heat .fz-hc.fz-future { background: transparent; }
   .fz-heat .fz-hc.fz-today { outline: 1px solid var(--color-fg-muted); outline-offset: 1px; }
   .fz-heat .fz-hl { padding-right: 6px; line-height: var(--fz-cell, 18px); }
-  .fz-heat .fz-hm { height: 14px; white-space: nowrap; }
   .fz-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); align-items: center; }
   .fz-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -2px; background: var(--fz-raise); }
   .fz-legend i.fz-done { background: var(--fz-accent); }
@@ -136,7 +138,7 @@
     </article>
     <article class="fz-card" id="calendario">
       <h2>Mirando para atrás</h2>
-      <p class="fz-note">Los últimos 8 meses: cada cuadrado es un día. Así ves cómo se va armando el hábito.</p>
+      <p class="fz-note">Los últimos 8 meses, uno por bloque, con los días que fuiste en cada uno. Cada cuadrado es un día.</p>
       <div class="fz-heat-box"><div class="fz-heat" data-draw="calendario" data-source="registros habitos"></div></div>
       <div class="fz-legend"><span><i class="fz-done"></i>Lo hiciste</span><span><i></i>No</span><span><i class="fz-before"></i>Antes de empezar a registrar</span></div>
     </article>
@@ -370,37 +372,53 @@
     if (!hab) return;
     const hechos = new Set(r.data.filter((x) => x.habito === s).map((x) => x.fecha));
     const fin = [hab.hasta, ...hechos].sort().pop();
-    const lunes = (iso) => { const d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return d; };
-    // Últimos 8 meses hasta el último día informado, y cuadrados que entran en el ancho disponible.
-    const desde = new Date(fin + 'T00:00:00Z'); desde.setUTCMonth(desde.getUTCMonth() - 8);
-    const start = lunes(desde.toISOString().slice(0, 10));
-    const semanas = Math.round((lunes(fin) - start) / 604800000) + 1;
-    const ancho = (el.parentElement ? el.parentElement.clientWidth : 600) - 36;
-    const gap = ancho / semanas < 12 ? 2 : 4;
-    const size = Math.max(7, Math.min(18, Math.floor(ancho / semanas) - gap));
-    el.style.setProperty('--fz-cell', `${size}px`);
-    el.style.gap = `${gap}px`;
-    el.style.gridTemplateColumns = `auto repeat(${semanas}, ${size}px)`;
-    el.style.gridTemplateRows = `14px repeat(7, ${size}px)`;
-    const nombres = ['lun', '', 'mié', '', 'vie', '', 'dom'];
-    const cell = (cls, txt, col, row, title) => { const c = document.createElement('div'); c.className = cls; if (txt) c.textContent = txt; c.style.gridColumn = col; c.style.gridRow = row; if (title) c.title = title; el.append(c); };
-    let mesPrev = '';
-    for (let w = 0; w < semanas; w++) {
-      const d0 = new Date(start); d0.setUTCDate(d0.getUTCDate() + 7 * w);
-      const mes = new Intl.DateTimeFormat('es-AR', { month: 'short', timeZone: 'UTC' }).format(d0).replace('.', '');
-      cell('fz-hm', mes !== mesPrev ? mes : '', w + 2, 1); mesPrev = mes;
-      for (let k = 0; k < 7; k++) {
-        const dd = new Date(d0); dd.setUTCDate(dd.getUTCDate() + k);
-        const iso = dd.toISOString().slice(0, 10);
-        let cls = 'fz-hc';
-        if (iso < hab.inicio) cls += ' fz-before';
-        else if (iso > fin) cls += ' fz-future';
-        else if (hechos.has(iso)) cls += ' fz-done';
-        if (iso === fin) cls += ' fz-today';
-        cell(cls, '', w + 2, k + 2, `${fzDia(iso)} · ${hechos.has(iso) ? 'lo hiciste' : iso < hab.inicio ? 'sin registro' : 'no'}`);
-      }
+    const iso = (d) => d.toISOString().slice(0, 10);
+    const wd = (d) => (d.getUTCDay() + 6) % 7; // 0 = lunes
+    // Últimos 8 meses (el actual y los 7 anteriores), un bloque por mes.
+    const [fy, fm] = fin.split('-').map(Number);
+    const meses = [];
+    for (let k = 7; k >= 0; k--) {
+      const first = new Date(Date.UTC(fy, fm - 1 - k, 1));
+      const last = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0));
+      const cols = Math.ceil((wd(first) + last.getUTCDate()) / 7);
+      meses.push({ first, last, cols });
     }
-    nombres.forEach((n, k) => cell('fz-hl', n, 1, k + 2));
+    const totalCols = meses.reduce((a, m) => a + m.cols, 0);
+    const ancho = (el.parentElement ? el.parentElement.clientWidth : 600) - 30;
+    const mgap = ancho < 520 ? 5 : 12;
+    const porCol = (ancho - mgap * 8) / totalCols;
+    const gap = porCol < 12 ? 1 : 3;
+    const size = Math.max(4, Math.min(18, Math.floor(porCol) - gap));
+    el.style.setProperty('--fz-cell', `${size}px`);
+    el.style.setProperty('--fz-gap', `${gap}px`);
+    el.style.setProperty('--fz-mgap', `${mgap}px`);
+    const rows = `14px repeat(7, ${size}px)`;
+    // columna con los nombres de los días
+    const dias = document.createElement('div'); dias.className = 'fz-hdays'; dias.style.gridTemplateRows = rows;
+    ['', 'lun', '', 'mié', '', 'vie', '', 'dom'].forEach((n, k) => { const c = document.createElement('div'); c.className = k ? 'fz-hl' : ''; c.textContent = n; c.style.gridRow = String(k + 1); dias.append(c); });
+    el.append(dias);
+    for (const m of meses) {
+      const blk = document.createElement('div'); blk.className = 'fz-month';
+      blk.style.gridTemplateRows = rows; blk.style.gridTemplateColumns = `repeat(${m.cols}, ${size}px)`;
+      let n = 0;
+      for (let d = new Date(m.first); d <= m.last; d.setUTCDate(d.getUTCDate() + 1)) {
+        const day = iso(d);
+        const col = Math.floor((wd(m.first) + d.getUTCDate() - 1) / 7) + 1;
+        let cls = 'fz-hc';
+        if (day < hab.inicio) cls += ' fz-before';
+        else if (day > fin) cls += ' fz-future';
+        else if (hechos.has(day)) { cls += ' fz-done'; n += 1; }
+        if (day === fin) cls += ' fz-today';
+        const c = document.createElement('div'); c.className = cls; c.style.gridColumn = String(col); c.style.gridRow = String(wd(d) + 2);
+        c.title = `${fzDia(day)} · ${hechos.has(day) ? 'lo hiciste' : day < hab.inicio ? 'sin registro' : 'no'}`;
+        blk.append(c);
+      }
+      const name = document.createElement('div'); name.className = 'fz-mname'; name.style.gridColumn = `1 / span ${m.cols}`;
+      name.textContent = new Intl.DateTimeFormat('es-AR', { month: 'short', timeZone: 'UTC' }).format(m.first).replace('.', '');
+      if (size >= 11) { const sp = document.createElement('span'); sp.textContent = ` · ${n}`; name.append(sp); }
+      blk.prepend(name);
+      el.append(blk);
+    }
   });
 
   dash.draw('tabla-registro', (tb) => {
