@@ -60,7 +60,7 @@ Ahorro;08/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
 
 ### Cotizaciones
 
-- **Pesos → USD:** dólar cripto **venta** del día del movimiento. Si la captura de Binance muestra cuántos USDT se descontaron, se usa ese monto exacto.
+- **Pesos → USD:** dólar cripto **venta** del día del movimiento. Si la captura de Binance muestra cuántos USDT se descontaron, se usa ese monto exacto. Si Snati retira de Binance a Mercado Pago para pagar algo (ej. 70.000 pesos = 41,6 USDT), se usa el cambio de ese retiro para esos gastos.
   Historial: `https://api.argentinadatos.com/v1/cotizaciones/dolares/cripto` · En vivo: `https://dolarapi.com/v1/dolares/cripto`.
 - **Otra moneda (CNY, HKD, BRL…):** primero a USD con el tipo de cambio oficial de ese día
   (`https://api.frankfurter.dev/v1/AAAA-MM-DD?base=USD`; fin de semana:
@@ -143,13 +143,13 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
 - Octubre: cerrado con lo que hay (solo falta confirmar si la tarjeta Binance tuvo movimientos antes del 12/10). Aclarado: Gumroad = LUTs (Gusto); Microsoft Store = Xbox Game Pass mensual; KLATCH no se recuerda; Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
-- Al 11/11: 1.000 USDT en Earn (confirmado) + 30,20 disponibles en Binance/Mercado Pago (estimado, al 13/11): confirmar con captura.
+- Al 11/11: 1.000 USDT en Earn (confirmado) + 20,83 disponibles en Binance/Mercado Pago (estimado, al 18/11): confirmar con captura.
 
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
 ## 6b. Compromisos del mes
 
-- **Noviembre 2026:** solo dos gastos fuertes más: wafles de proteína (5 paquetes, $83.996, **comprados el 11/11**) y boxeo ($48.000 por 8 clases, **pagado el 12/11**; subió de $40.000). Compromiso cumplido. Después, nada que pase los $30.000 hasta diciembre. Si Snati quiere comprar algo grande, recordárselo.
+- **Noviembre 2026:** solo dos gastos fuertes más: wafles de proteína (5 paquetes, $83.996, **comprados el 11/11**) y boxeo ($48.000 por 8 clases, **pagado el 18/11**; subió de $40.000). Compromiso cumplido. Después, nada que pase los $30.000 hasta diciembre. Si Snati quiere comprar algo grande, recordárselo.
 
 ## 6c. Planes a futuro (datos, no cargados)
 
