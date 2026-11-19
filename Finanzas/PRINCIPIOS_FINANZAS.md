@@ -153,7 +153,9 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 
 ## 6c. Planes a futuro (datos, no cargados)
 
-- **Viaje a Dubái en diciembre 2026:** Snati pensaba gastar unos **US$ 2.000**. Es casi todo su patrimonio actual (~US$ 2.030). Lo dejó como dato, no decidido.
+- ~~Viaje a Dubái en diciembre 2026 (~US$ 2.000)~~: **cancelado** (19/11/2026).
+- ~~WHOOP (pulsera, plan Peak ~US$ 239/año)~~: **cancelado** (19/11/2026).
+- **Xbox Series S (~US$ 403) para jugar GTA 6:** Snati la va a comprar. Si la paga en cuotas, cada cuota va en el mes que se paga; si la paga de contado, va entera en el mes del pago (no se reparte a mano). El GTA 6 se compra aparte (Series S es solo digital).
 - **Nvidia (NVDA):** el 12/11/2026 Snati evaluó comprar acciones tras la caída por la renuncia de Jensen Huang. Si compra, se carga como `Inversion` (ticker, cantidad, precio de entrada).
 
 ## 7. Privacidad
