@@ -41,6 +41,8 @@
   .fz-delta { font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .fz-delta.fz-up { color: var(--color-bad); }
   .fz-delta.fz-down { color: var(--color-ok); }
+  .fz-delta.fz-pos { color: var(--color-ok); }
+  .fz-delta.fz-neg { color: var(--color-bad); }
   .fz-sec { display: grid; gap: var(--cds-gap-md); }
   .fz-sec > .fz-eyebrow { padding-bottom: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
   .fz-table .fz-r { text-align: right; white-space: nowrap; }
@@ -103,6 +105,7 @@
       <span class="fz-label">Gastado en dólares</span>
       <span class="fz-num dash-skeleton" data-draw="tile-usd" data-source="totales" data-field="usd" data-where="mes=2026-11">—</span>
       <span class="fz-sub">Al cripto del día · <span class="fz-delta" data-draw="d-usd" data-source="vs_anterior" data-field="delta_usd" data-where="mes=2026-11">—</span></span>
+      <span class="fz-sub">Ganaste <span data-draw="p-ganado" data-source="profit" data-field="ganado_usd" data-where="mes=2026-11">—</span> · <span style="white-space: nowrap">profit <span class="fz-delta" data-draw="p-profit" data-source="profit" data-field="profit_usd" data-where="mes=2026-11">—</span></span></span>
     </div>
     <div class="fz-tile">
       <span class="fz-label">Ahorro</span>
@@ -267,6 +270,7 @@
       <dt>Pesos a dólares</dt><dd>Cada gasto se pasa con el dólar cripto venta del día en que se hizo, no con el de hoy.</dd>
       <dt>Otras monedas</dt><dd>Yuanes, dólares de Hong Kong o reales se pasan primero a dólares con el tipo de cambio oficial de ese día, y después a pesos con el dólar cripto.</dd>
       <dt>Ingresos</dt><dd>Desde noviembre, el ingreso del mes es lo que tenés en Binance más lo que gastaste en el mes, más los dólares en efectivo. Las transferencias de Binance a Mercado Pago no se suman aparte: son plata tuya que se mueve.</dd>
+      <dt>Profit</dt><dd>Lo que ganaste en el mes en dólares (comisiones, ventas, regalos, rendimientos) menos lo que gastaste. No cuenta como ganancia el saldo de Binance ni los dólares en efectivo con los que arrancaste el mes.</dd>
       <dt>Cuotas</dt><dd>Una cuota debitada en partes cuenta como un solo gasto.</dd>
       <dt>Ahorro</dt><dd>Suma de Binance y dólares en efectivo, con el último saldo que informaste dentro del período elegido.</dd>
     </dl>
@@ -414,6 +418,21 @@
         c.pesos += Number(i.pesos || 0); c.usd += Number(i.usd || 0); m.set(k, c);
       }
       return [...m.values()].map((c) => ({ ...c, pesos: Math.round(c.pesos * 100) / 100, usd: Math.round(c.usd * 100) / 100 }));
+    },
+  });
+
+  dash.calc('profit', {
+    title: 'Profit del mes',
+    description: 'Lo que ganaste en dólares (ingresos sin contar el saldo de Binance ni los dólares en efectivo con los que arrancaste el mes) menos lo que gastaste, por mes y de todos juntos ("todo").',
+    inputs: ['gastos', 'ingresos', 'meses'],
+    fn: (gastos, ingresos, meses) => {
+      const saldo = /^(saldo binance|d[oó]lares en efectivo)/i;
+      const m = new Map([['todo', { mes: 'todo', ganado_usd: 0, gastado_usd: 0 }], ...meses.map((x) => [x.mes, { mes: x.mes, ganado_usd: 0, gastado_usd: 0 }])]);
+      const add = (k, f, v) => { const c = m.get(k) || { mes: k, ganado_usd: 0, gastado_usd: 0 }; c[f] += v; m.set(k, c); };
+      for (const i of ingresos) if (!saldo.test(String(i.quien_pago || '').trim())) for (const k of [i.mes, 'todo']) add(k, 'ganado_usd', Number(i.usd || 0));
+      for (const g of gastos) for (const k of [g.mes, 'todo']) add(k, 'gastado_usd', Number(g.usd || 0));
+      const r2 = (v) => Math.round(v * 100) / 100;
+      return [...m.values()].map((c) => ({ mes: c.mes, ganado_usd: r2(c.ganado_usd), gastado_usd: r2(c.gastado_usd), profit_usd: r2(c.ganado_usd - c.gastado_usd) }));
     },
   });
 
@@ -573,6 +592,18 @@
   numero('tile-pesos', 'totales', 'pesos', (v) => fzARS(N(v)));
   numero('tile-usd', 'totales', 'usd', (v) => fzUSD(N(v)));
   numero('tile-cant', 'totales', 'cantidad', (v) => String(N(v)));
+  numero('p-ganado', 'profit', 'ganado_usd', (v) => fzUSD(N(v)));
+  dash.draw('p-profit', (el) => {
+    const s = fzSel();
+    el.dataset.where = `mes=${encodeURIComponent(s)}`;
+    const d = dash.data('profit');
+    const r = d.status === 'ok' ? d.data.find((x) => x.mes === s) : null;
+    el.classList.remove('fz-pos', 'fz-neg');
+    if (!r) { el.textContent = '—'; return; }
+    const v = N(r.profit_usd);
+    el.classList.add(v >= 0 ? 'fz-pos' : 'fz-neg');
+    el.textContent = `${v >= 0 ? '+' : '−'}${fzUSD(Math.abs(v))}`;
+  });
   numero('tile-ahorro', 'ahorro_actual', 'usd', (v) => fzUSD(N(v)));
   numero('tile-ing', 'ingresos_total', 'pesos', (v) => fzARS2(N(v)));
   numero('top-cat', 'top_categoria', 'categoria', (v) => String(v));
