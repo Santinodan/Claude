@@ -26,7 +26,7 @@ Gasto;20/11/2026;Colectivo;Transporte;3000,00;1,73;Mercado Pago;;;;
 Gasto;20/11/2026;Colectivo;Transporte;1276,00;0,74;Mercado Pago;;;;
 Gasto;21/11/2026;Colectivo;Transporte;5000,00;2,79;Mercado Pago;;;;
 Gasto;21/11/2026;Colectivo;Transporte;1063,00;0,59;Mercado Pago;;;;
-Gasto;21/11/2026;Xbox Series S para GTA 6 (un mes de uso, $800.000 a USDT 1.775, en diciembre se divide a la mitad);Gusto;800000,00;450,70;Mercado Pago;;;;
+Gasto;21/11/2026;Xbox Series S para GTA 6 (un mes de uso, $800.000 = US$ 450,70 a USDT 1.775, menos $450.000 de la venta de la PS4 y el juego + parte de papa pasados a Binance = 253 USDT);Gusto;350000;197,70;Mercado Pago;;;;
 Gasto;21/11/2026;Donacion a cantantes en el colectivo;Personal;1000,00;0,56;Mercado Pago;;;;
 Gasto;21/11/2026;Colectivo;Transporte;1276,00;0,71;Mercado Pago;;;;
 Gasto;21/11/2026;Salida con amigos (pancho, sanguche y dos cocas);Comidas y bebidas;29000,00;16,19;Mercado Pago;;;;
@@ -34,9 +34,7 @@ Ingreso;02/11/2026;Rendimientos Mercado Pago;;2,61;0;;;;;
 Ingreso;07/11/2026;Saldo Binance + gastado en el mes;;1115881,91;676,31;;;;;
 Ingreso;07/11/2026;Dolares en efectivo;;1650090;1000;;;;;
 Ingreso;08/11/2026;SOUL - comisiones cierre de noviembre (caja 2 $578,51 + caja 3 $123,61, sin bono);;1160693,82;702;;;;;
-Ingreso;20/11/2026;Venta de un juego de la Play;;25000;14,41;;;;;
-Ingreso;21/11/2026;Papa;;68000;37,96;;;;;
-Ingreso;21/11/2026;Venta de la PlayStation 4;;400000;223,30;;;;;
+Ingreso;21/11/2026;Papa ($68.000, $25.000 fueron a la Xbox);;43000;24,01;;;;;
 Ahorro;07/11/2026;USDT;Binance (disponible, no estaba en Earn);;;;;455,58;1;1
 Ahorro;07/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
 Ahorro;08/11/2026;USDT;Binance (455,58 + 702 - Steam 9,58, estimado);;;;;1148,00;1;1
@@ -53,5 +51,5 @@ Ahorro;13/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
 Ahorro;18/11/2026;USDT;Binance Simple Earn flexible;;;;;1000;1;1
 Ahorro;18/11/2026;USDT;Disponible Binance + Mercado Pago (estimado, ya descontados boxeo, peluqueria, Monster y Spotify);;;;;19,77;1;1
 Ahorro;18/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
-Ahorro;21/11/2026;USDT;Binance (Earn + disponible) + Mercado Pago (estimado, incluye los 253 USDT de la venta de la PS4);;;;;820,69;1;1
+Ahorro;21/11/2026;USDT;Binance (Earn + disponible) + Mercado Pago (estimado, incluye los 253 USDT de la venta de la PS4);;;;;822,03;1;1
 Ahorro;21/11/2026;USD;Efectivo (dolares);;;;;1000;1;1

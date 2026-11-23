@@ -143,7 +143,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
   ¿El error de pago se devolvió?
 - "Uber vuelta madero" de junio está en Comidas y bebidas: ¿pasarlo a Transporte?
 - Octubre: cerrado con lo que hay (solo falta confirmar si la tarjeta Binance tuvo movimientos antes del 12/10). Aclarado: Gumroad = LUTs (Gusto); Microsoft Store = Xbox Game Pass mensual; KLATCH no se recuerda; Ctrip = SIM del viaje; OtherRetail914 y 9142 no se recuerdan; los Alipay chicos fueron comida. Mercado Pago ya aclarado: Franco Pennella ($548.000) fue pase a Binance (no es gasto); Alejandra Matilla ($32.900) no se recuerda.
-- Al 21/11: US$ 820,69 entre Earn, disponible de Binance y Mercado Pago (estimado, ya con la Xbox y los 253 USDT de la venta de la PS4) + US$ 1.000 en efectivo. Falta captura del saldo de Binance para separar Earn y disponible.
+- Al 21/11: US$ 822,03 entre Earn, disponible de Binance y Mercado Pago (estimado, ya con la Xbox neta y los 253 USDT de la venta de la PS4) + US$ 1.000 en efectivo. Falta captura del saldo de Binance para separar Earn y disponible.
 
 - El cierre de Gian dice US$ 702,12; se cargó US$ 702 (lo que entró). Confirmar.
 
@@ -155,7 +155,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 
 - ~~Viaje a Dubái en diciembre 2026 (~US$ 2.000)~~: **cancelado** (19/11/2026).
 - ~~WHOOP (pulsera, plan Peak ~US$ 239/año)~~: **cancelado** (19/11/2026).
-- **Xbox Series S para GTA 6:** comprada el 21/11 (un mes de uso) por $800.000 a USDT 1.775 = **US$ 450,70**, cargada entera en noviembre. **PENDIENTE para diciembre: dividirla, pasando la mitad (US$ 225,35) a diciembre** (Xbox 1/2 en noviembre, 2/2 en diciembre). Al hacerlo, recalcular el Excel de noviembre y de diciembre y avisarle a Snati cómo queda el patrimonio. Ese mismo día vendió la PS4 ($400.000) y el 20/11 un juego de la Play ($25.000), cargados como ingresos. El GTA 6 se compra aparte.
+- **Xbox Series S para GTA 6:** comprada el 21/11 (un mes de uso) por $800.000 a USDT 1.775 = US$ 450,70. Snati vendió la PS4 ($400.000) y un juego ($25.000) y pasó $450.000 a Binance (253 USDT; incluye $25.000 de los $68.000 de papá): eso **se descuenta de la Xbox**, no va como ingreso. Gasto neto cargado: **$350.000 = US$ 197,70** (papá queda como ingreso por $43.000). **PENDIENTE: sumar el GTA 6 cuando pase el monto y dividir Xbox + GTA mitad en noviembre y mitad en diciembre** (crear Datos/2026-12.csv y su Excel), y avisarle a Snati cómo queda el patrimonio.
 - **Nvidia (NVDA):** el 12/11/2026 Snati evaluó comprar acciones tras la caída por la renuncia de Jensen Huang. Si compra, se carga como `Inversion` (ticker, cantidad, precio de entrada).
 
 ## 7. Privacidad
