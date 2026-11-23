@@ -283,12 +283,16 @@
     const [y, m] = String(mes).split('-').map(Number);
     return new Intl.DateTimeFormat('es-AR', { month: 'short', timeZone: 'UTC' }).format(new Date(Date.UTC(y, m - 1, 1))).replace('.', '') + ' ' + String(y).slice(2);
   };
-  // Mes elegido: el del filtro, o el último con datos.
+  // Mes elegido: el del filtro, o el mes actual (o el último con datos hasta hoy).
   window.fzSel = () => {
     const p = dash.params().mes;
     if (p) return p;
     const m = dash.data('meses');
-    return m.status === 'ok' && m.data.length ? m.data[0].mes : '';
+    if (m.status !== 'ok' || !m.data.length) return '';
+    const hoy = new Date();
+    const actual = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`;
+    const hasta = m.data.find((x) => x.mes <= actual);
+    return (hasta || m.data[0]).mes;
   };
 
   dash.calc('meses', {

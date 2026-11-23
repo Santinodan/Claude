@@ -16,24 +16,28 @@ Gasto;06/11/2026;Monster en el gym;Comidas y bebidas;3800;2,30;Mercado Pago;;;;
 Gasto;08/11/2026;Steam (juego de PC) - Binance desconto 9,58 USDT con 0,28 USDC de reintegro;Gusto;15599;9,58;Binance;;;;
 Gasto;11/11/2026;Mercado Libre - barra de luz para monitor;Equipo de trabajo;57717,25;35,56;Mercado Pago;;;;
 Gasto;11/11/2026;Wafles de proteina x5 paquetes (Suqua Fitness, 30 wafles de 39 g, envio gratis);Salud;83996;51,75;Mercado Pago;;;;
-Gasto;18/11/2026;Boxeo - 8 clases (Mercado Pago desconto $40.000, retiro de Binance a $1.682,69 por USDT);Salud;40000;23,77;Mercado Pago;;;;
 Gasto;13/11/2026;Agua en el gym (Oxigeno Temperley, 1,5166 USDT);Comidas y bebidas;2500;1,52;Binance;;;;
-Gasto;18/11/2026;Peluqueria;Personal;16500;9,81;Mercado Pago;;;;
+Gasto;16/11/2026;Monster (Binance Pay QR, 2,2874 USDT);Comidas y bebidas;3849,42;2,29;Binance;;;;
+Gasto;18/11/2026;Boxeo - 8 clases (Mercado Pago desconto $40.000, retiro de Binance de 41,68 USDT por $70.000);Salud;40000;23,82;Mercado Pago;;;;
+Gasto;18/11/2026;Peluqueria;Personal;16500;9,82;Mercado Pago;;;;
 Gasto;18/11/2026;Monster en el gym;Comidas y bebidas;3800,00;2,26;Mercado Pago;;;;
-Gasto;18/11/2026;Spotify;Suscripciones;5995,00;3,56;Mercado Pago;;;;
+Gasto;18/11/2026;Spotify;Suscripciones;5995,00;3,57;Mercado Pago;;;;
+Gasto;19/11/2026;Tarjeta Binance sin identificar (12,15 USDT, no se recuerda);Sin categoría;20882,11;12,15;Binance;;;;
 Gasto;20/11/2026;Colectivo;Transporte;1276,00;0,74;Mercado Pago;;;;
 Gasto;20/11/2026;Colectivo;Transporte;3000,00;1,73;Mercado Pago;;;;
 Gasto;20/11/2026;Colectivo;Transporte;1276,00;0,74;Mercado Pago;;;;
 Gasto;21/11/2026;Colectivo;Transporte;5000,00;2,79;Mercado Pago;;;;
 Gasto;21/11/2026;Colectivo;Transporte;1063,00;0,59;Mercado Pago;;;;
-Gasto;21/11/2026;Xbox Series S para GTA 6 (un mes de uso, $800.000 = US$ 450,70 a USDT 1.775, menos $450.000 de la venta de la PS4 y el juego + parte de papa pasados a Binance = 253 USDT);Gusto;350000;197,70;Mercado Pago;;;;
 Gasto;21/11/2026;Donacion a cantantes en el colectivo;Personal;1000,00;0,56;Mercado Pago;;;;
 Gasto;21/11/2026;Colectivo;Transporte;1276,00;0,71;Mercado Pago;;;;
 Gasto;21/11/2026;Salida con amigos (pancho, sanguche y dos cocas);Comidas y bebidas;29000,00;16,19;Mercado Pago;;;;
+Gasto;21/11/2026;Juego de autos (0,21 USDT);Gusto;378,02;0,21;Binance;;;;
+Gasto;21/11/2026;Xbox Series S + GTA 6 (Xbox $800.000 = 450,77 USDT + GTA 79,83 USDT con impuestos - venta PS4 y juego 253,66 USDT = US$ 276,94, mitad en noviembre y mitad en diciembre);Gusto;246500,07;138,47;Binance;1/2;;;
 Ingreso;02/11/2026;Rendimientos Mercado Pago;;2,61;0;;;;;
 Ingreso;07/11/2026;Saldo Binance + gastado en el mes;;1115881,91;676,31;;;;;
 Ingreso;07/11/2026;Dolares en efectivo;;1650090;1000;;;;;
 Ingreso;08/11/2026;SOUL - comisiones cierre de noviembre (caja 2 $578,51 + caja 3 $123,61, sin bono);;1160693,82;702;;;;;
+Ingreso;18/11/2026;Rendimientos Binance Earn (0,50 al rescatar + 3 pagos de 0,21917);;1966,00;1,16;;;;;
 Ingreso;21/11/2026;Papa ($68.000, $25.000 fueron a la Xbox);;43000;24,01;;;;;
 Ahorro;07/11/2026;USDT;Binance (disponible, no estaba en Earn);;;;;455,58;1;1
 Ahorro;07/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
@@ -48,8 +52,8 @@ Ahorro;12/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
 Ahorro;13/11/2026;USDT;Binance Simple Earn flexible;;;;;1000;1;1
 Ahorro;13/11/2026;USDT;Disponible Binance + Mercado Pago (estimado, ya descontada el agua);;;;;59,17;1;1
 Ahorro;13/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
-Ahorro;18/11/2026;USDT;Binance Simple Earn flexible;;;;;1000;1;1
+Ahorro;18/11/2026;USDT;Binance (Earn rescatado ese dia, paso a spot);;;;;1000;1;1
 Ahorro;18/11/2026;USDT;Disponible Binance + Mercado Pago (estimado, ya descontados boxeo, peluqueria, Monster y Spotify);;;;;19,77;1;1
 Ahorro;18/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
-Ahorro;21/11/2026;USDT;Binance (Earn + disponible) + Mercado Pago (estimado, incluye los 253 USDT de la venta de la PS4);;;;;822,03;1;1
-Ahorro;21/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
+Ahorro;22/11/2026;USDT;Binance spot + Mercado Pago (estimado, Earn rescatado el 18/11, incluye 253,66 USDT de la PS4 y la mitad de Xbox + GTA que se descuenta en diciembre);;;;;867,70;1;1
+Ahorro;22/11/2026;USD;Efectivo (dolares);;;;;1000;1;1
