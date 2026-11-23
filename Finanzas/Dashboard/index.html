@@ -27,6 +27,12 @@
   .fz-chart text { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
   .fz-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
   .fz-tip .fz-tip-k { color: var(--cds-text-secondary); }
+  .fz-tip-list { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 2px var(--cds-gap-sm); margin-top: var(--cds-gap-xs); padding-top: var(--cds-gap-xs); border-top: 1px solid var(--color-border-line); font-variant-numeric: tabular-nums; }
+  .fz-tip-list span { white-space: nowrap; }
+  .fz-tip-list .fz-tip-d { max-width: min(22rem, 52vw); overflow: hidden; text-overflow: ellipsis; }
+  .fz-tip-list .fz-tip-k, .fz-tip-more { color: var(--cds-text-secondary); }
+  .fz-tip-list .fz-r { text-align: right; }
+  .fz-tip-more { margin-top: 2px; }
   .fz-tablebox { overflow: auto; max-height: 28rem; }
   .fz-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
   .fz-table th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
@@ -124,7 +130,7 @@
     <article class="fz-card" id="categorias">
       <h2>Gastos por categoría</h2>
       <p class="fz-note">En pesos, con el porcentaje del total del período.</p>
-      <div class="fz-chart" data-draw="cat-chart" data-source="por_categoria"></div>
+      <div class="fz-chart" data-draw="cat-chart" data-source="por_categoria gastos"></div>
     </article>
     <article class="fz-card fz-card-dia" id="por-dia">
       <h2>Gasto por día</h2>
@@ -633,6 +639,27 @@
     barras(el, rows, (r) => r.fecha, (r) => fzDia(r.fecha), (r) => N(r.pesos), (r) => fzARS(N(r.pesos)), () => 'var(--fz-accent)', 'Gasto por día');
   });
 
+  // Tooltip con los 10 gastos más grandes de una categoría
+  const showTipLista = (el, t, ev, k, v, items, resto) => {
+    t.replaceChildren();
+    const a = document.createElement('div'); a.className = 'fz-tip-k'; a.textContent = k;
+    const b = document.createElement('div'); b.textContent = v;
+    const l = document.createElement('div'); l.className = 'fz-tip-list';
+    for (const g of items) {
+      const f = document.createElement('span'); f.className = 'fz-tip-k'; f.textContent = fzDia(g.fecha);
+      const dd = document.createElement('span'); dd.className = 'fz-tip-d'; dd.textContent = g.detalle; dd.title = g.detalle;
+      const m = document.createElement('span'); m.className = 'fz-r'; m.textContent = fzARS(N(g.pesos));
+      l.append(f, dd, m);
+    }
+    t.append(a, b, l);
+    if (resto > 0) { const r = document.createElement('div'); r.className = 'fz-tip-more'; r.textContent = `y ${resto} más`; t.append(r); }
+    t.hidden = false;
+    const box = el.getBoundingClientRect();
+    let x = ev.clientX - box.left + 12, y = ev.clientY - box.top + 12;
+    x = Math.min(x, el.clientWidth - t.offsetWidth - 4);
+    if (y + t.offsetHeight > el.clientHeight) y = Math.max(el.clientHeight - t.offsetHeight - 4, ev.clientY - box.top - t.offsetHeight - 12);
+    t.style.left = Math.max(0, x) + 'px'; t.style.top = y + 'px';
+  };
   // Barras horizontales por categoría
   dash.draw('cat-chart', (el) => {
     const d = dash.data('por_categoria');
@@ -651,13 +678,20 @@
     const x0 = lw + 10, x1 = W - vw - 10;
     const x = d3.scaleLinear([0, d3.max(rows, (r) => N(r.pesos)) || 1], [x0, Math.max(x0 + 20, x1)]);
     const t = tip(el);
-    const g = svg.selectAll('g.row').data(rows).join('g').attr('class', 'row').attr('transform', (r, i) => `translate(0,${i * rowH + 4})`);
+    const gd = dash.data('gastos');
+    const delMes = gd.status === 'ok' ? gd.data.filter((r) => enMes(r, s)) : [];
+    const porCat = d3.group(delMes, (r) => r.categoria);
+    const hover = (ev, r) => {
+      const todos = (porCat.get(r.categoria) || []).slice().sort((a, b) => N(b.pesos) - N(a.pesos));
+      showTipLista(el, t, ev, r.categoria, `${fzARS(N(r.pesos))} · ${fzUSD(N(r.usd))} · ${r.cantidad} gasto${N(r.cantidad) === 1 ? '' : 's'}`, todos.slice(0, 10), todos.length - 10);
+    };
+    const g = svg.selectAll('g.row').data(rows).join('g').attr('class', 'row').attr('transform', (r, i) => `translate(0,${i * rowH + 4})`)
+      .on('pointermove', hover).on('pointerleave', () => { t.hidden = true; });
+    g.append('rect').attr('x', 0).attr('y', 0).attr('width', W).attr('height', rowH).style('fill', 'transparent');
     g.append('text').attr('x', lw).attr('y', rowH / 2).attr('dy', '.35em').attr('text-anchor', 'end').style('fill', 'var(--color-fg)').text((r) => r.categoria);
     g.append('rect').attr('x', x0).attr('y', 6).attr('height', rowH - 12).attr('rx', 3)
       .attr('width', (r) => Math.max(2, x(N(r.pesos)) - x0))
-      .style('fill', (r, i) => i === 0 ? 'var(--fz-accent)' : 'var(--cds-chart-muted)')
-      .on('pointermove', (ev, r) => showTip(el, t, ev, r.categoria, `${fzARS(N(r.pesos))} · ${fzUSD(N(r.usd))} · ${r.cantidad} gasto${N(r.cantidad) === 1 ? '' : 's'}`))
-      .on('pointerleave', () => { t.hidden = true; });
+      .style('fill', (r, i) => i === 0 ? 'var(--fz-accent)' : 'var(--cds-chart-muted)');
     g.append('text').attr('x', (r) => x(N(r.pesos)) + 6).attr('y', rowH / 2).attr('dy', '.35em').style('fill', 'var(--color-fg-muted)')
       .text((r) => `${fzARS(N(r.pesos))} · ${fzPct(N(r.parte))}`);
   });
