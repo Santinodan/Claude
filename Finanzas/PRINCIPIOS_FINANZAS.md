@@ -149,7 +149,7 @@ Salud, Gusto, Suscripciones, Educación, Comidas y bebidas, Regalo, Personal, Tr
 
 ## 6b. Compromisos del mes
 
-- **Noviembre 2026:** solo dos gastos fuertes más: wafles de proteína (5 paquetes, $83.996, **comprados el 11/11**) y boxeo ($48.000 por 8 clases, **pagado el 18/11**; subió de $40.000). Compromiso cumplido. Después, nada que pase los $30.000 hasta diciembre. Si Snati quiere comprar algo grande, recordárselo.
+- **Noviembre 2026:** solo dos gastos fuertes más: wafles de proteína (5 paquetes, $83.996, **comprados el 11/11**) y boxeo ($40.000 por 8 clases, **pagado el 18/11**, confirmado por Snati). Después sumó la Xbox como excepción (ver 6c). Compromiso cumplido. Después, nada que pase los $30.000 hasta diciembre. Si Snati quiere comprar algo grande, recordárselo.
 
 ## 6c. Planes a futuro (datos, no cargados)
 
